@@ -96,8 +96,9 @@
       letter-spacing: .02em;
     }
     .vc-grid .vc-hdr {
-      background: #c5d6ea; color: var(--stage); padding: 6px 5px; text-align: center;
-      font-weight: 600; font-size: 10px; line-height: 1.25;
+      background: #c5d6ea; color: #0f2744; padding: 8px 5px; text-align: center;
+      font-weight: 600; font-size: 10px; line-height: 1.3; min-height: 40px;
+      display: flex; align-items: center; justify-content: center;
     }
     .vc-grid .func-hdr {
       background: #e8eef5; padding: 8px; font-weight: 600; display: flex; flex-direction: column; justify-content: center;
@@ -650,7 +651,8 @@
     vcDocument = typeof FSS_VC !== 'undefined' ? FSS_VC.deepClone(doc) : JSON.parse(JSON.stringify(doc));
     if (typeof FSS_VC !== 'undefined') {
       const compiled = FSS_VC.compile(vcDocument);
-      STAGES = compiled.STAGES;
+      // Value Chain labels always come from the document (not dropped by compile field renames)
+      STAGES = normalizeStages(vcDocument.stages);
       SHOPFRONT_STAGES = compiled.SHOPFRONT_STAGES;
       VC_ROWS = compiled.VC_ROWS;
       return;
@@ -685,11 +687,7 @@
       });
       return stages;
     }
-    STAGES = (doc.stages || []).map((s) => ({
-      id: s.id,
-      label: s.label,
-      valueChain: s.valueChain || s.journey || ''
-    }));
+    STAGES = normalizeStages(doc.stages);
     const tpl = doc.shopfrontTemplate || {};
     SHOPFRONT_STAGES = tplStages(tpl);
     VC_ROWS = (doc.rows || []).map((row) => {
@@ -878,6 +876,13 @@
     return '';
   }
 
+  function normalizeStages(list) {
+    return (list || []).map((s) => {
+      const valueChain = s.valueChain || s.journey || s.value_chain || '';
+      return { id: s.id, label: s.label, valueChain, journey: valueChain };
+    });
+  }
+
   function stageCol(stageId) {
     return STAGES.findIndex(s => s.id === stageId) + 2;
   }
@@ -891,6 +896,10 @@
   }
 
   function renderValueChain() {
+    // Prefer live document stages so Value Chain labels never drop during compile/field renames
+    const stages = normalizeStages((vcDocument && vcDocument.stages && vcDocument.stages.length) ? vcDocument.stages : STAGES);
+    if (stages.length) STAGES = stages;
+
     let html = '<div class="panel">';
     html += `<div class="vc-key">
       <span class="vc-key-title">Key</span>
@@ -904,38 +913,40 @@
         <div><strong>Function</strong> - left-hand rows (Shopfront, Self Care, ...)</div>
       </div>
     </div>`;
-    html += '<div class="vc-grid">';
-    html += '<div class="corner">Journey</div>';
-    STAGES.forEach(s => {
-      html += `<div class="journey-hdr">${esc(s.label)}</div>`;
+    html += `<div class="vc-grid" style="grid-template-rows: auto auto repeat(${VC_ROWS.length}, auto)">`;
+    html += '<div class="corner" style="grid-row:1;grid-column:1">Journey</div>';
+    stages.forEach((s, i) => {
+      html += `<div class="journey-hdr" style="grid-row:1;grid-column:${i + 2}">${esc(s.label)}</div>`;
     });
-    html += '<div class="corner corner-vc">Function / Value Chain</div>';
-    STAGES.forEach(s => {
-      html += `<div class="vc-hdr">${esc(s.valueChain || s.journey || '')}</div>`;
+    html += '<div class="corner corner-vc" style="grid-row:2;grid-column:1">Function</div>';
+    stages.forEach((s, i) => {
+      html += `<div class="vc-hdr" style="grid-row:2;grid-column:${i + 2}">${esc(s.valueChain || '')}</div>`;
     });
-    VC_ROWS.forEach(row => {
-      html += `<div class="func-hdr">${esc(row.label)}<small>${esc(row.sub)}</small></div>`;
+    VC_ROWS.forEach((row, ri) => {
+      const gridRow = ri + 3;
+      html += `<div class="func-hdr" style="grid-row:${gridRow};grid-column:1">${esc(row.label)}<small>${esc(row.sub)}</small></div>`;
       const rs = rowStages(row) || {};
       const spans = (row.spans && row.spans.length)
         ? row.spans
         : (row.spanStages && row.spanStages.length ? [{ spanStages: row.spanStages, cell: row.cell }] : []);
       const covered = new Set();
       spans.forEach((sp) => (sp.spanStages || []).forEach((id) => covered.add(id)));
-      STAGES.forEach(st => {
+      stages.forEach(st => {
         const startSpan = spans.find((sp) => sp.spanStages && sp.spanStages[0] === st.id);
         if (startSpan) {
           const c = startSpan.cell || {};
           const start = stageCol(startSpan.spanStages[0]);
           const end = stageCol(startSpan.spanStages[startSpan.spanStages.length - 1]) + 1;
-          html += `<div class="vc-cell" style="grid-column:${start}/${end}" data-e="${esc(c.e || '')}" data-stage="${esc(st.id)}" data-func="${esc(row.id)}">${cellHtml(c, row)}</div>`;
+          html += `<div class="vc-cell" style="grid-row:${gridRow};grid-column:${start}/${end}" data-e="${esc(c.e || '')}" data-stage="${esc(st.id)}" data-func="${esc(row.id)}">${cellHtml(c, row)}</div>`;
           return;
         }
         if (covered.has(st.id)) return;
         const c = rs[st.id];
-        if (!c) html += '<div class="vc-cell empty"></div>';
+        const col = stageCol(st.id);
+        if (!c) html += `<div class="vc-cell empty" style="grid-row:${gridRow};grid-column:${col}"></div>`;
         else {
           const eid = c.e || (c.multi && c.multi[0].e) || '';
-          html += `<div class="vc-cell" data-e="${esc(eid)}" data-stage="${st.id}" data-func="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
+          html += `<div class="vc-cell" style="grid-row:${gridRow};grid-column:${col}" data-e="${esc(eid)}" data-stage="${st.id}" data-func="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
         }
       });
     });

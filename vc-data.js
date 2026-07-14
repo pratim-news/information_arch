@@ -88,11 +88,10 @@
   }
 
   function compile(data) {
-    const STAGES = (data.stages || []).map((s) => ({
-      id: s.id,
-      label: s.label,
-      valueChain: s.valueChain || s.journey || '',
-    }));
+    const STAGES = (data.stages || []).map((s) => {
+      const valueChain = s.valueChain || s.journey || s.value_chain || '';
+      return { id: s.id, label: s.label, valueChain, journey: valueChain };
+    });
 
     const tpl = data.shopfrontTemplate || {};
     const SHOPFRONT_STAGES = templateToStages(tpl);
