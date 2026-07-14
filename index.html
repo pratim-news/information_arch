@@ -56,8 +56,16 @@
     .layer-head p { margin: 0; color: var(--muted); max-width: 52em; }
     .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
     .toolbar label { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-    .ref-img { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; margin-top: 12px; display: none; }
+    .ref-img { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; margin-top: 10px; display: none; }
     .ref-img.show { display: block; }
+    .admin-footer {
+      margin-top: 28px; padding-top: 16px; border-top: 1px dashed var(--line);
+    }
+    .admin-footer .admin-muted-control {
+      font-size: 11px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer; font-weight: 400;
+    }
+    .admin-footer .admin-muted-control:hover { color: var(--accent); }
     .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow: auto; }
 
     /* Value chain grid - Journey (deep blue) over Value Chain (light blue); left = Function */
@@ -175,7 +183,7 @@
     }
 
     /* Value chain editor - admin control (de-emphasized) */
-    .vc-editor { margin-top: 28px; margin-bottom: 8px; padding-top: 16px; border-top: 1px dashed var(--line); }
+    .vc-editor { margin-top: 10px; margin-bottom: 8px; }
     .vc-ed-toggle {
       font-size: 11px; padding: 0; border: 0; background: transparent;
       color: var(--muted); cursor: pointer; font-weight: 400; text-decoration: underline;
@@ -887,12 +895,13 @@
     main.innerHTML = `
       <div class="breadcrumb">Layer <strong>${Object.keys(LAYERS).indexOf(currentLayer) + 1}</strong> of 6</div>
       <div class="layer-head"><h2>${esc(L.title)}</h2><p>${esc(L.desc)}</p></div>
-      <div class="toolbar">
-        <label><input type="checkbox" id="show-ref" /> Show reference slide image</label>
-      </div>
       ${body}
-      <img class="ref-img" id="ref-img" src="${esc(L.img)}" alt="Reference slide" />
-      <div id="vc-editor-slot"></div>
+      <div class="admin-footer">
+        <p class="vc-ed-admin-note">Admin</p>
+        <label class="admin-muted-control"><input type="checkbox" id="show-ref" /> Show reference slide image</label>
+        <img class="ref-img" id="ref-img" src="${esc(L.img)}" alt="Reference slide" />
+        <div id="vc-editor-slot"></div>
+      </div>
     `;
     if (currentLayer === 'valuechain') {
       const slot = document.getElementById('vc-editor-slot');
