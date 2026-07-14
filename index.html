@@ -60,7 +60,22 @@
     .ref-img.show { display: block; }
     .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow: auto; }
 
-    /* Value chain grid */
+    /* Value chain grid - Journey (deep blue) over Value Chain (light blue); left = Function */
+    .vc-key {
+      display: flex; align-items: stretch; gap: 14px; margin-bottom: 12px; flex-wrap: wrap;
+      padding: 10px 12px; border: 1px dashed var(--line); border-radius: 8px; background: #fff;
+    }
+    .vc-key .vc-key-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-right: 4px; align-self: center; }
+    .vc-key .vc-key-sample {
+      border: 1px solid var(--line); background: #fafcfe; padding: 8px 10px; min-width: 140px; border-radius: 2px;
+    }
+    .vc-key .vc-key-sample .cap { color: var(--cap); font-weight: 600; font-size: 11px; }
+    .vc-key .vc-key-sample .obj {
+      color: var(--obj); font-size: 11px; margin-top: 4px; border: 1px solid #b8cfe0; border-radius: 10px;
+      display: inline-block; padding: 1px 8px; background: #fff;
+    }
+    .vc-key .vc-key-labels { font-size: 12px; color: var(--muted); display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+    .vc-key .vc-key-labels strong { color: var(--ink); }
     .vc-grid {
       display: grid;
       grid-template-columns: 140px repeat(7, minmax(100px, 1fr));
@@ -68,15 +83,25 @@
       font-size: 11px;
       min-width: 900px;
     }
-    .vc-grid .corner { background: var(--stage); color: #fff; padding: 8px; font-weight: 600; }
-    .vc-grid .stage-hdr {
-      background: var(--stage); color: #fff; padding: 8px 6px; text-align: center; font-weight: 600;
+    .vc-grid .corner {
+      background: var(--stage); color: #fff; padding: 8px; font-weight: 600; font-size: 10px;
+      text-transform: uppercase; letter-spacing: .03em; display: flex; align-items: center;
     }
-    .vc-grid .stage-hdr small { display: block; font-weight: 400; opacity: .85; font-size: 10px; margin-top: 3px; }
-    .vc-grid .plat-hdr {
+    .vc-grid .corner.corner-vc {
+      background: #c5d6ea; color: var(--stage);
+    }
+    .vc-grid .journey-hdr {
+      background: var(--stage); color: #fff; padding: 8px 6px; text-align: center; font-weight: 700;
+      letter-spacing: .02em;
+    }
+    .vc-grid .vc-hdr {
+      background: #c5d6ea; color: var(--stage); padding: 6px 5px; text-align: center;
+      font-weight: 600; font-size: 10px; line-height: 1.25;
+    }
+    .vc-grid .func-hdr {
       background: #e8eef5; padding: 8px; font-weight: 600; display: flex; flex-direction: column; justify-content: center;
     }
-    .vc-grid .plat-hdr small { font-weight: 400; color: var(--muted); font-size: 10px; }
+    .vc-grid .func-hdr small { font-weight: 400; color: var(--muted); font-size: 10px; }
     .vc-cell {
       background: #fafcfe; border: 1px solid var(--line); padding: 6px; min-height: 52px;
       cursor: pointer; transition: background .15s, box-shadow .15s;
@@ -231,7 +256,7 @@
   <main class="main" id="main"></main>
 
   <aside class="detail" id="detail">
-    <div class="empty" id="detail-empty">Select a capability, entity, platform cell, or SoR/MC cell to see cross-layer detail and navigation links.</div>
+    <div class="empty" id="detail-empty">Select a cell (Capability / Business Object), entity, or SoR/MC cell to see Journey, Value Chain, Function, and cross-layer links.</div>
     <div id="detail-body" hidden></div>
   </aside>
 </div>
@@ -241,32 +266,93 @@
   "version": 1,
   "updated": "2026-07-14",
   "stages": [
-    { "id": "attract", "label": "ATTRACT", "journey": "Prospect to Registered User" },
-    { "id": "acquire", "label": "ACQUIRE", "journey": "Registered User to Subscriber" },
-    { "id": "subscribe", "label": "SUBSCRIBE", "journey": "Order to Subscription" },
-    { "id": "fulfill", "label": "FULFILL", "journey": "Order to Fulfillment" },
-    { "id": "bill", "label": "BILL", "journey": "Charge to Invoice / Payment to Revenue" },
-    { "id": "retain", "label": "RETAIN", "journey": "Subscription to Renewal / Enquiry to Resolution / Recognition to Reward" },
-    { "id": "leave", "label": "LEAVE", "journey": "Subscription to Termination" }
+    {
+      "id": "attract",
+      "label": "ATTRACT",
+      "valueChain": "Prospect to Registered User"
+    },
+    {
+      "id": "acquire",
+      "label": "ACQUIRE",
+      "valueChain": "Registered User to Subscriber"
+    },
+    {
+      "id": "subscribe",
+      "label": "SUBSCRIBE",
+      "valueChain": "Order to Subscription"
+    },
+    {
+      "id": "fulfill",
+      "label": "FULFILL",
+      "valueChain": "Order to Fulfillment"
+    },
+    {
+      "id": "bill",
+      "label": "BILL",
+      "valueChain": "Charge to Invoice / Payment to Revenue"
+    },
+    {
+      "id": "retain",
+      "label": "RETAIN",
+      "valueChain": "Subscription to Renewal / Enquiry to Resolution / Recognition to Reward"
+    },
+    {
+      "id": "leave",
+      "label": "LEAVE",
+      "valueChain": "Subscription to Termination"
+    }
   ],
   "shopfrontTemplate": {
     "cells": {
-      "attract": { "cap": "B2C Profile Management", "obj": "Registered User", "entity": "registeredUser" },
-      "acquire": { "cap": "B2C Profile Management", "obj": "Subscriber", "entity": "subscriber" },
-      "subscribe": { "cap": "Order Management", "obj": "Order", "entity": "order" }
+      "attract": {
+        "cap": "B2C Profile Management",
+        "obj": "Registered User",
+        "entity": "registeredUser"
+      },
+      "acquire": {
+        "cap": "B2C Profile Management",
+        "obj": "Subscriber",
+        "entity": "subscriber"
+      },
+      "subscribe": {
+        "cap": "Order Management",
+        "obj": "Order",
+        "entity": "order"
+      }
     },
     "spans": [
       {
         "from": "bill",
         "to": "retain",
-        "blocks": [{ "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }]
+        "blocks": [
+          {
+            "cap": "Billing Management",
+            "obj": "Invoice, Payment/Receipt",
+            "entity": "invoice"
+          }
+        ]
       }
     ]
   },
   "rows": [
-    { "id": "shopfront", "label": "Shopfront", "sub": "WordPress", "useShopfrontTemplate": true },
-    { "id": "selfcare", "label": "Self Care", "sub": "Salesforce & Genesys", "useShopfrontTemplate": true },
-    { "id": "assisted", "label": "Assisted Care", "sub": "Salesforce & Genesys", "useShopfrontTemplate": true },
+    {
+      "id": "shopfront",
+      "label": "Shopfront",
+      "sub": "WordPress",
+      "useShopfrontTemplate": true
+    },
+    {
+      "id": "selfcare",
+      "label": "Self Care",
+      "sub": "Salesforce & Genesys",
+      "useShopfrontTemplate": true
+    },
+    {
+      "id": "assisted",
+      "label": "Assisted Care",
+      "sub": "Salesforce & Genesys",
+      "useShopfrontTemplate": true
+    },
     {
       "id": "paywall",
       "label": "Paywall",
@@ -275,7 +361,13 @@
         {
           "from": "acquire",
           "to": "leave",
-          "blocks": [{ "cap": "Subscription Entitlements", "obj": "Entitlement", "entity": "entitlement" }]
+          "blocks": [
+            {
+              "cap": "Subscription Entitlements",
+              "obj": "Entitlement",
+              "entity": "entitlement"
+            }
+          ]
         }
       ]
     },
@@ -287,11 +379,23 @@
         {
           "from": "attract",
           "to": "acquire",
-          "blocks": [{ "cap": "Experimentation", "obj": "Experiment", "entity": "experiment" }]
+          "blocks": [
+            {
+              "cap": "Experimentation",
+              "obj": "Experiment",
+              "entity": "experiment"
+            }
+          ]
         }
       ],
       "cells": {
-        "retain": [{ "cap": "Experimentation", "obj": "Experiment", "entity": "experiment" }]
+        "retain": [
+          {
+            "cap": "Experimentation",
+            "obj": "Experiment",
+            "entity": "experiment"
+          }
+        ]
       }
     },
     {
@@ -299,7 +403,13 @@
       "label": "Loyalty",
       "sub": "Clock Rewards",
       "cells": {
-        "retain": [{ "cap": "Loyalty Management", "obj": "Reward", "entity": "reward" }]
+        "retain": [
+          {
+            "cap": "Loyalty Management",
+            "obj": "Reward",
+            "entity": "reward"
+          }
+        ]
       }
     },
     {
@@ -310,7 +420,13 @@
         {
           "from": "attract",
           "to": "leave",
-          "blocks": [{ "cap": "Campaign Management", "obj": "Campaign, Target Audience, Marketing Comm", "entity": "campaign" }]
+          "blocks": [
+            {
+              "cap": "Campaign Management",
+              "obj": "Campaign, Target Audience, Marketing Comm",
+              "entity": "campaign"
+            }
+          ]
         }
       ]
     },
@@ -322,7 +438,13 @@
         {
           "from": "attract",
           "to": "retain",
-          "blocks": [{ "cap": "Identity Management", "obj": "External User, Internal User", "entity": "externalUser" }]
+          "blocks": [
+            {
+              "cap": "Identity Management",
+              "obj": "External User, Internal User",
+              "entity": "externalUser"
+            }
+          ]
         }
       ]
     },
@@ -331,12 +453,48 @@
       "label": "CRM",
       "sub": "Salesforce",
       "cells": {
-        "attract": [{ "cap": "B2C Profile Mgmt", "obj": "Registered User", "entity": "registeredUser" }],
-        "acquire": [{ "cap": "Consent & Pref Mgmt", "obj": "Consent & Preferences", "entity": "consent" }],
-        "subscribe": [{ "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }],
-        "bill": [{ "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }],
-        "retain": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }],
-        "leave": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }]
+        "attract": [
+          {
+            "cap": "B2C Profile Mgmt",
+            "obj": "Registered User",
+            "entity": "registeredUser"
+          }
+        ],
+        "acquire": [
+          {
+            "cap": "Consent & Pref Mgmt",
+            "obj": "Consent & Preferences",
+            "entity": "consent"
+          }
+        ],
+        "subscribe": [
+          {
+            "cap": "B2C Profile Mgmt",
+            "obj": "Subscriber",
+            "entity": "subscriber"
+          }
+        ],
+        "bill": [
+          {
+            "cap": "Billing Management",
+            "obj": "Invoice, Payment/Receipt",
+            "entity": "invoice"
+          }
+        ],
+        "retain": [
+          {
+            "cap": "Renewal & Termination",
+            "obj": "Subscription",
+            "entity": "subscription"
+          }
+        ],
+        "leave": [
+          {
+            "cap": "Renewal & Termination",
+            "obj": "Subscription",
+            "entity": "subscription"
+          }
+        ]
       }
     },
     {
@@ -344,9 +502,27 @@
       "label": "Subscription & Billing",
       "sub": "Future Subscription Platform",
       "cells": {
-        "attract": [{ "cap": "Product Cat Mgmt", "obj": "Product", "entity": "product" }],
-        "acquire": [{ "cap": "Offer & Promotion Mgmt", "obj": "Promotion, Offer", "entity": "promotion" }],
-        "subscribe": [{ "cap": "Subscription Management", "obj": "Subscription", "entity": "subscription" }]
+        "attract": [
+          {
+            "cap": "Product Cat Mgmt",
+            "obj": "Product",
+            "entity": "product"
+          }
+        ],
+        "acquire": [
+          {
+            "cap": "Offer & Promotion Mgmt",
+            "obj": "Promotion, Offer",
+            "entity": "promotion"
+          }
+        ],
+        "subscribe": [
+          {
+            "cap": "Subscription Management",
+            "obj": "Subscription",
+            "entity": "subscription"
+          }
+        ]
       }
     },
     {
@@ -357,7 +533,13 @@
         {
           "from": "bill",
           "to": "retain",
-          "blocks": [{ "cap": "Payments", "obj": "Payment", "entity": "payment" }]
+          "blocks": [
+            {
+              "cap": "Payments",
+              "obj": "Payment",
+              "entity": "payment"
+            }
+          ]
         }
       ]
     },
@@ -369,12 +551,24 @@
         {
           "from": "attract",
           "to": "subscribe",
-          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
+          "blocks": [
+            {
+              "cap": "Next Best Action / Offer / Personalisation",
+              "obj": "Offer, Action",
+              "entity": "offer"
+            }
+          ]
         },
         {
           "from": "bill",
           "to": "retain",
-          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
+          "blocks": [
+            {
+              "cap": "Next Best Action / Offer / Personalisation",
+              "obj": "Offer, Action",
+              "entity": "offer"
+            }
+          ]
         }
       ]
     },
@@ -383,7 +577,13 @@
       "label": "Print Delivery",
       "sub": "Naviga",
       "cells": {
-        "fulfill": [{ "cap": "Print Service Fulfilment", "obj": "Subscription", "entity": "subscription" }]
+        "fulfill": [
+          {
+            "cap": "Print Service Fulfilment",
+            "obj": "Subscription",
+            "entity": "subscription"
+          }
+        ]
       }
     },
     {
@@ -391,11 +591,41 @@
       "label": "Business Intelligence",
       "sub": "Google BigQuery & Looker",
       "cells": {
-        "attract": [{ "cap": "Analytics & Insights", "obj": "", "entity": null }],
-        "subscribe": [{ "cap": "Analytics & Insights", "obj": "LTV", "entity": "ltv" }],
-        "fulfill": [{ "cap": "Analytics & Insights", "obj": "Customer Scores", "entity": "customerScores" }],
-        "bill": [{ "cap": "Analytics & Insights", "obj": "Customer Segment", "entity": "customerSegment" }],
-        "retain": [{ "cap": "Analytics & Insights", "obj": "Engagement", "entity": "engagementMetric" }]
+        "attract": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "",
+            "entity": null
+          }
+        ],
+        "subscribe": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "LTV",
+            "entity": "ltv"
+          }
+        ],
+        "fulfill": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "Customer Scores",
+            "entity": "customerScores"
+          }
+        ],
+        "bill": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "Customer Segment",
+            "entity": "customerSegment"
+          }
+        ],
+        "retain": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "Engagement",
+            "entity": "engagementMetric"
+          }
+        ]
       }
     }
   ]
@@ -454,7 +684,11 @@
       });
       return stages;
     }
-    STAGES = (doc.stages || []).map((s) => ({ id: s.id, label: s.label, journey: s.journey }));
+    STAGES = (doc.stages || []).map((s) => ({
+      id: s.id,
+      label: s.label,
+      valueChain: s.valueChain || s.journey || ''
+    }));
     const tpl = doc.shopfrontTemplate || {};
     SHOPFRONT_STAGES = tplStages(tpl);
     VC_ROWS = (doc.rows || []).map((row) => {
@@ -616,7 +850,7 @@
   const MIG_LABELS = { think: 'THINK', auth0: 'Auth0', sfcrm: 'SF CRM', zuora: 'Zuora', zephrL: 'Zephr (L)', zephrN: 'Zephr (N)', ods: 'ODS', sfmcA: 'SFMCA', sfmce: 'SFMCE', naviga: 'Naviga', nq: 'NQ' };
 
   const LAYERS = {
-    valuechain: { title: 'Consumer Value Chain', desc: 'Future state mapping of journey stages to platform capabilities and business objects (EIA slide).', img: 'fss-consumer-data-model-interactive/01-value-chain.png' },
+    valuechain: { title: 'Consumer Journey / Value Chain', desc: 'Maps Functions to Journey stages and Value Chain transitions. Cells hold Capabilities and Business Objects (EIA slide).', img: 'fss-consumer-data-model-interactive/01-value-chain.png' },
     capability: { title: 'Conceptual Data Model | Business Capabilities', desc: 'Data entities grouped by business capability. Supports the consumer domain value chain.', img: 'fss-consumer-data-model-interactive/02-capability-overlay.png' },
     asset: { title: 'Conceptual Data Model | Information Assets', desc: 'Same entities framed as enterprise information assets for IA portfolio modelling.', img: 'fss-consumer-data-model-interactive/03-information-asset-overlay.png' },
     platform: { title: 'Conceptual Data Model | Platform Overlay', desc: 'Which target platform masters or holds each entity.', img: 'fss-consumer-data-model-interactive/04-platform-overlay.png' },
@@ -656,15 +890,31 @@
   }
 
   function renderValueChain() {
-    let html = '<div class="panel"><div class="vc-grid">';
-    html += '<div class="corner">Platform / Capability</div>';
+    let html = '<div class="panel">';
+    html += `<div class="vc-key">
+      <span class="vc-key-title">Key</span>
+      <div class="vc-key-sample">
+        <div class="cap">Capability</div>
+        <div class="obj">Business Object</div>
+      </div>
+      <div class="vc-key-labels">
+        <div><strong>Journey</strong> - deep blue column headers (Attract to Leave)</div>
+        <div><strong>Value Chain</strong> - light blue row under Journey</div>
+        <div><strong>Function</strong> - left-hand rows (Shopfront, Self Care, ...)</div>
+      </div>
+    </div>`;
+    html += '<div class="vc-grid">';
+    html += '<div class="corner">Journey</div>';
     STAGES.forEach(s => {
-      html += `<div class="stage-hdr">${esc(s.label)}<small>${esc(s.journey)}</small></div>`;
+      html += `<div class="journey-hdr">${esc(s.label)}</div>`;
+    });
+    html += '<div class="corner corner-vc">Function / Value Chain</div>';
+    STAGES.forEach(s => {
+      html += `<div class="vc-hdr">${esc(s.valueChain || s.journey || '')}</div>`;
     });
     VC_ROWS.forEach(row => {
-      html += `<div class="plat-hdr">${esc(row.label)}<small>${esc(row.sub)}</small></div>`;
+      html += `<div class="func-hdr">${esc(row.label)}<small>${esc(row.sub)}</small></div>`;
       const rs = rowStages(row) || {};
-      // Support multi-band rows: spans[], plus legacy spanStages+cell
       const spans = (row.spans && row.spans.length)
         ? row.spans
         : (row.spanStages && row.spanStages.length ? [{ spanStages: row.spanStages, cell: row.cell }] : []);
@@ -676,7 +926,7 @@
           const c = startSpan.cell || {};
           const start = stageCol(startSpan.spanStages[0]);
           const end = stageCol(startSpan.spanStages[startSpan.spanStages.length - 1]) + 1;
-          html += `<div class="vc-cell" style="grid-column:${start}/${end}" data-e="${esc(c.e || '')}" data-stage="${esc(st.id)}" data-plat="${esc(row.id)}">${cellHtml(c, row)}</div>`;
+          html += `<div class="vc-cell" style="grid-column:${start}/${end}" data-e="${esc(c.e || '')}" data-stage="${esc(st.id)}" data-func="${esc(row.id)}">${cellHtml(c, row)}</div>`;
           return;
         }
         if (covered.has(st.id)) return;
@@ -684,7 +934,7 @@
         if (!c) html += '<div class="vc-cell empty"></div>';
         else {
           const eid = c.e || (c.multi && c.multi[0].e) || '';
-          html += `<div class="vc-cell" data-e="${esc(eid)}" data-stage="${st.id}" data-plat="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
+          html += `<div class="vc-cell" data-e="${esc(eid)}" data-stage="${st.id}" data-func="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
         }
       });
     });
@@ -844,11 +1094,13 @@
     let html = `<h2>${esc(payload.title || (e && e.name) || 'Detail')}</h2>`;
 
     if (payload.type === 'vc') {
+      const st = STAGES.find(s => s.id === payload.stage);
       html += `<dl>
-        <dt>Value chain stage</dt><dd>${esc(STAGES.find(s => s.id === payload.stage)?.label || payload.stage)}</dd>
-        <dt>Platform</dt><dd>${esc(payload.platformLabel || '')}</dd>
+        <dt>Journey</dt><dd>${esc(st?.label || payload.stage)}</dd>
+        <dt>Value Chain</dt><dd>${esc(st?.valueChain || st?.journey || '-')}</dd>
+        <dt>Function</dt><dd>${esc(payload.functionLabel || '')}</dd>
         <dt>Capability</dt><dd>${esc(payload.capability || '')}</dd>
-        <dt>Business object</dt><dd>${esc(payload.object || '-')}</dd>
+        <dt>Business Object</dt><dd>${esc(payload.object || '-')}</dd>
       </dl>`;
     } else if (payload.type === 'sor') {
       html += `<dl>
@@ -912,7 +1164,7 @@
     main.querySelectorAll('.vc-cell:not(.empty)').forEach(cell => {
       cell.addEventListener('click', () => {
         const eid = cell.dataset.e;
-        const row = VC_ROWS.find(r => r.id === cell.dataset.plat);
+        const row = VC_ROWS.find(r => r.id === (cell.dataset.func || cell.dataset.plat));
         const st = cell.dataset.stage;
         let stageData;
         if (row) {
@@ -930,7 +1182,7 @@
         showDetail({
           type: 'vc', entityId: entityId || null,
           title: stageData && (stageData.obj || (stageData.multi && stageData.multi.map(m => m.obj).join(', '))),
-          stage: st, platformLabel: row ? row.label + ' (' + row.sub + ')' : '',
+          stage: st, functionLabel: row ? row.label + (row.sub ? ' (' + row.sub + ')' : '') : '',
           capability: stageData && (stageData.cap || (stageData.multi && stageData.multi.map(m => m.cap).join(' / '))),
           object: stageData && (stageData.obj || (stageData.multi && stageData.multi.map(m => m.obj).join(', ')))
         });

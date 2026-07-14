@@ -2,32 +2,93 @@
   "version": 1,
   "updated": "2026-07-14",
   "stages": [
-    { "id": "attract", "label": "ATTRACT", "journey": "Prospect to Registered User" },
-    { "id": "acquire", "label": "ACQUIRE", "journey": "Registered User to Subscriber" },
-    { "id": "subscribe", "label": "SUBSCRIBE", "journey": "Order to Subscription" },
-    { "id": "fulfill", "label": "FULFILL", "journey": "Order to Fulfillment" },
-    { "id": "bill", "label": "BILL", "journey": "Charge to Invoice / Payment to Revenue" },
-    { "id": "retain", "label": "RETAIN", "journey": "Subscription to Renewal / Enquiry to Resolution / Recognition to Reward" },
-    { "id": "leave", "label": "LEAVE", "journey": "Subscription to Termination" }
+    {
+      "id": "attract",
+      "label": "ATTRACT",
+      "valueChain": "Prospect to Registered User"
+    },
+    {
+      "id": "acquire",
+      "label": "ACQUIRE",
+      "valueChain": "Registered User to Subscriber"
+    },
+    {
+      "id": "subscribe",
+      "label": "SUBSCRIBE",
+      "valueChain": "Order to Subscription"
+    },
+    {
+      "id": "fulfill",
+      "label": "FULFILL",
+      "valueChain": "Order to Fulfillment"
+    },
+    {
+      "id": "bill",
+      "label": "BILL",
+      "valueChain": "Charge to Invoice / Payment to Revenue"
+    },
+    {
+      "id": "retain",
+      "label": "RETAIN",
+      "valueChain": "Subscription to Renewal / Enquiry to Resolution / Recognition to Reward"
+    },
+    {
+      "id": "leave",
+      "label": "LEAVE",
+      "valueChain": "Subscription to Termination"
+    }
   ],
   "shopfrontTemplate": {
     "cells": {
-      "attract": { "cap": "B2C Profile Management", "obj": "Registered User", "entity": "registeredUser" },
-      "acquire": { "cap": "B2C Profile Management", "obj": "Subscriber", "entity": "subscriber" },
-      "subscribe": { "cap": "Order Management", "obj": "Order", "entity": "order" }
+      "attract": {
+        "cap": "B2C Profile Management",
+        "obj": "Registered User",
+        "entity": "registeredUser"
+      },
+      "acquire": {
+        "cap": "B2C Profile Management",
+        "obj": "Subscriber",
+        "entity": "subscriber"
+      },
+      "subscribe": {
+        "cap": "Order Management",
+        "obj": "Order",
+        "entity": "order"
+      }
     },
     "spans": [
       {
         "from": "bill",
         "to": "retain",
-        "blocks": [{ "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }]
+        "blocks": [
+          {
+            "cap": "Billing Management",
+            "obj": "Invoice, Payment/Receipt",
+            "entity": "invoice"
+          }
+        ]
       }
     ]
   },
   "rows": [
-    { "id": "shopfront", "label": "Shopfront", "sub": "WordPress", "useShopfrontTemplate": true },
-    { "id": "selfcare", "label": "Self Care", "sub": "Salesforce & Genesys", "useShopfrontTemplate": true },
-    { "id": "assisted", "label": "Assisted Care", "sub": "Salesforce & Genesys", "useShopfrontTemplate": true },
+    {
+      "id": "shopfront",
+      "label": "Shopfront",
+      "sub": "WordPress",
+      "useShopfrontTemplate": true
+    },
+    {
+      "id": "selfcare",
+      "label": "Self Care",
+      "sub": "Salesforce & Genesys",
+      "useShopfrontTemplate": true
+    },
+    {
+      "id": "assisted",
+      "label": "Assisted Care",
+      "sub": "Salesforce & Genesys",
+      "useShopfrontTemplate": true
+    },
     {
       "id": "paywall",
       "label": "Paywall",
@@ -36,7 +97,13 @@
         {
           "from": "acquire",
           "to": "leave",
-          "blocks": [{ "cap": "Subscription Entitlements", "obj": "Entitlement", "entity": "entitlement" }]
+          "blocks": [
+            {
+              "cap": "Subscription Entitlements",
+              "obj": "Entitlement",
+              "entity": "entitlement"
+            }
+          ]
         }
       ]
     },
@@ -48,11 +115,23 @@
         {
           "from": "attract",
           "to": "acquire",
-          "blocks": [{ "cap": "Experimentation", "obj": "Experiment", "entity": "experiment" }]
+          "blocks": [
+            {
+              "cap": "Experimentation",
+              "obj": "Experiment",
+              "entity": "experiment"
+            }
+          ]
         }
       ],
       "cells": {
-        "retain": [{ "cap": "Experimentation", "obj": "Experiment", "entity": "experiment" }]
+        "retain": [
+          {
+            "cap": "Experimentation",
+            "obj": "Experiment",
+            "entity": "experiment"
+          }
+        ]
       }
     },
     {
@@ -60,7 +139,13 @@
       "label": "Loyalty",
       "sub": "Clock Rewards",
       "cells": {
-        "retain": [{ "cap": "Loyalty Management", "obj": "Reward", "entity": "reward" }]
+        "retain": [
+          {
+            "cap": "Loyalty Management",
+            "obj": "Reward",
+            "entity": "reward"
+          }
+        ]
       }
     },
     {
@@ -71,7 +156,13 @@
         {
           "from": "attract",
           "to": "leave",
-          "blocks": [{ "cap": "Campaign Management", "obj": "Campaign, Target Audience, Marketing Comm", "entity": "campaign" }]
+          "blocks": [
+            {
+              "cap": "Campaign Management",
+              "obj": "Campaign, Target Audience, Marketing Comm",
+              "entity": "campaign"
+            }
+          ]
         }
       ]
     },
@@ -83,7 +174,13 @@
         {
           "from": "attract",
           "to": "retain",
-          "blocks": [{ "cap": "Identity Management", "obj": "External User, Internal User", "entity": "externalUser" }]
+          "blocks": [
+            {
+              "cap": "Identity Management",
+              "obj": "External User, Internal User",
+              "entity": "externalUser"
+            }
+          ]
         }
       ]
     },
@@ -92,12 +189,48 @@
       "label": "CRM",
       "sub": "Salesforce",
       "cells": {
-        "attract": [{ "cap": "B2C Profile Mgmt", "obj": "Registered User", "entity": "registeredUser" }],
-        "acquire": [{ "cap": "Consent & Pref Mgmt", "obj": "Consent & Preferences", "entity": "consent" }],
-        "subscribe": [{ "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }],
-        "bill": [{ "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }],
-        "retain": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }],
-        "leave": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }]
+        "attract": [
+          {
+            "cap": "B2C Profile Mgmt",
+            "obj": "Registered User",
+            "entity": "registeredUser"
+          }
+        ],
+        "acquire": [
+          {
+            "cap": "Consent & Pref Mgmt",
+            "obj": "Consent & Preferences",
+            "entity": "consent"
+          }
+        ],
+        "subscribe": [
+          {
+            "cap": "B2C Profile Mgmt",
+            "obj": "Subscriber",
+            "entity": "subscriber"
+          }
+        ],
+        "bill": [
+          {
+            "cap": "Billing Management",
+            "obj": "Invoice, Payment/Receipt",
+            "entity": "invoice"
+          }
+        ],
+        "retain": [
+          {
+            "cap": "Renewal & Termination",
+            "obj": "Subscription",
+            "entity": "subscription"
+          }
+        ],
+        "leave": [
+          {
+            "cap": "Renewal & Termination",
+            "obj": "Subscription",
+            "entity": "subscription"
+          }
+        ]
       }
     },
     {
@@ -105,9 +238,27 @@
       "label": "Subscription & Billing",
       "sub": "Future Subscription Platform",
       "cells": {
-        "attract": [{ "cap": "Product Cat Mgmt", "obj": "Product", "entity": "product" }],
-        "acquire": [{ "cap": "Offer & Promotion Mgmt", "obj": "Promotion, Offer", "entity": "promotion" }],
-        "subscribe": [{ "cap": "Subscription Management", "obj": "Subscription", "entity": "subscription" }]
+        "attract": [
+          {
+            "cap": "Product Cat Mgmt",
+            "obj": "Product",
+            "entity": "product"
+          }
+        ],
+        "acquire": [
+          {
+            "cap": "Offer & Promotion Mgmt",
+            "obj": "Promotion, Offer",
+            "entity": "promotion"
+          }
+        ],
+        "subscribe": [
+          {
+            "cap": "Subscription Management",
+            "obj": "Subscription",
+            "entity": "subscription"
+          }
+        ]
       }
     },
     {
@@ -118,7 +269,13 @@
         {
           "from": "bill",
           "to": "retain",
-          "blocks": [{ "cap": "Payments", "obj": "Payment", "entity": "payment" }]
+          "blocks": [
+            {
+              "cap": "Payments",
+              "obj": "Payment",
+              "entity": "payment"
+            }
+          ]
         }
       ]
     },
@@ -130,12 +287,24 @@
         {
           "from": "attract",
           "to": "subscribe",
-          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
+          "blocks": [
+            {
+              "cap": "Next Best Action / Offer / Personalisation",
+              "obj": "Offer, Action",
+              "entity": "offer"
+            }
+          ]
         },
         {
           "from": "bill",
           "to": "retain",
-          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
+          "blocks": [
+            {
+              "cap": "Next Best Action / Offer / Personalisation",
+              "obj": "Offer, Action",
+              "entity": "offer"
+            }
+          ]
         }
       ]
     },
@@ -144,7 +313,13 @@
       "label": "Print Delivery",
       "sub": "Naviga",
       "cells": {
-        "fulfill": [{ "cap": "Print Service Fulfilment", "obj": "Subscription", "entity": "subscription" }]
+        "fulfill": [
+          {
+            "cap": "Print Service Fulfilment",
+            "obj": "Subscription",
+            "entity": "subscription"
+          }
+        ]
       }
     },
     {
@@ -152,11 +327,41 @@
       "label": "Business Intelligence",
       "sub": "Google BigQuery & Looker",
       "cells": {
-        "attract": [{ "cap": "Analytics & Insights", "obj": "", "entity": null }],
-        "subscribe": [{ "cap": "Analytics & Insights", "obj": "LTV", "entity": "ltv" }],
-        "fulfill": [{ "cap": "Analytics & Insights", "obj": "Customer Scores", "entity": "customerScores" }],
-        "bill": [{ "cap": "Analytics & Insights", "obj": "Customer Segment", "entity": "customerSegment" }],
-        "retain": [{ "cap": "Analytics & Insights", "obj": "Engagement", "entity": "engagementMetric" }]
+        "attract": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "",
+            "entity": null
+          }
+        ],
+        "subscribe": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "LTV",
+            "entity": "ltv"
+          }
+        ],
+        "fulfill": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "Customer Scores",
+            "entity": "customerScores"
+          }
+        ],
+        "bill": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "Customer Segment",
+            "entity": "customerSegment"
+          }
+        ],
+        "retain": [
+          {
+            "cap": "Analytics & Insights",
+            "obj": "Engagement",
+            "entity": "engagementMetric"
+          }
+        ]
       }
     }
   ]

@@ -91,7 +91,7 @@
     const STAGES = (data.stages || []).map((s) => ({
       id: s.id,
       label: s.label,
-      journey: s.journey,
+      valueChain: s.valueChain || s.journey || '',
     }));
 
     const tpl = data.shopfrontTemplate || {};
@@ -245,14 +245,14 @@
               <button type="button" class="vc-ed-danger" id="vc-clear-draft">Discard draft</button>
             </div>
             <div class="vc-ed-steps">
-              <span><b>1.</b> Pick a platform row on the left</span>
-              <span><b>2.</b> Click a stage (blue) or edit a band (green)</span>
-              <span><b>3.</b> Click Apply to grid, then Export JSON to publish</span>
+              <span><b>1.</b> Pick a Function row on the left</span>
+              <span><b>2.</b> Edit Journey stages (blue) or bands (green)</span>
+              <span><b>3.</b> Set Capability + Business Object, then Apply</span>
             </div>
             <div class="vc-ed-body">
               <div class="vc-ed-layout">
                 <div class="vc-ed-side">
-                  <div class="vc-ed-side-head">Platform rows</div>
+                  <div class="vc-ed-side-head">Functions</div>
                   <div class="vc-ed-rowlist">
                     ${rows.map((r, i) => `
                       <button type="button" class="vc-ed-rowbtn ${i === selectedRowIdx ? 'on' : ''}" data-row-idx="${i}">
@@ -268,9 +268,9 @@
                 <div class="vc-ed-main">
                   ${row ? `
                     <div class="vc-ed-rowmeta">
-                      <label>Id<input id="vc-row-id" value="${esc(row.id)}" /></label>
-                      <label>Label<input id="vc-row-label" value="${esc(row.label)}" /></label>
-                      <label>Subtitle<input id="vc-row-sub" value="${esc(row.sub || '')}" /></label>
+                    <label>Id<input id="vc-row-id" value="${esc(row.id)}" /></label>
+                    <label>Function<input id="vc-row-label" value="${esc(row.label)}" /></label>
+                    <label>Platform / product<input id="vc-row-sub" value="${esc(row.sub || '')}" /></label>
                       <label>Layout<select id="vc-row-layout">
                         <option value="cells" ${!row.useShopfrontTemplate ? 'selected' : ''}>Custom cells / bands</option>
                         <option value="shopfront" ${row.useShopfrontTemplate ? 'selected' : ''}>Shopfront shared template</option>
@@ -312,16 +312,16 @@
       const sp = spans[0];
       const b = (sp.blocks && sp.blocks[0]) || {};
       return `
-        <p class="vc-ed-hint">Shared by Shopfront, Self Care, and Assisted Care.</p>
-        <h4 class="vc-ed-h4">Single-stage cells</h4>
-        <table class="vc-ed-table"><thead><tr><th>Stage</th><th>Capability</th><th>Objects</th><th>Entity</th></tr></thead>
+        <p class="vc-ed-hint">Shared by Shopfront, Self Care, and Assisted Care Functions.</p>
+        <h4 class="vc-ed-h4">Single Journey stage cells</h4>
+        <table class="vc-ed-table"><thead><tr><th>Journey</th><th>Capability</th><th>Business Object</th><th>Entity</th></tr></thead>
         <tbody>${cellRows}</tbody></table>
         <h4 class="vc-ed-h4">Band (Billing Management on slide)</h4>
         <div class="vc-ed-band">
           <label>From<select data-sf-span="from">${stageOptions(stages, sp.from)}</select></label>
           <label>To<select data-sf-span="to">${stageOptions(stages, sp.to)}</select></label>
           <label>Capability<input data-sf-span="cap" value="${esc(b.cap || '')}" /></label>
-          <label>Objects<input data-sf-span="obj" value="${esc(b.obj || '')}" /></label>
+          <label>Business Object<input data-sf-span="obj" value="${esc(b.obj || '')}" /></label>
           <label>Entity<input data-sf-span="entity" value="${esc(b.entity || '')}" /></label>
         </div>`;
     }
@@ -355,7 +355,7 @@
             ${blocks.map((b, i) => `
               <div class="vc-ed-block">
                 <label>Capability<input data-cell-stage="${esc(activeStage)}" data-cell-idx="${i}" data-f="cap" value="${esc(b.cap || '')}" /></label>
-                <label>Objects<input data-cell-stage="${esc(activeStage)}" data-cell-idx="${i}" data-f="obj" value="${esc(b.obj || '')}" /></label>
+                <label>Business Object<input data-cell-stage="${esc(activeStage)}" data-cell-idx="${i}" data-f="obj" value="${esc(b.obj || '')}" /></label>
                 <label>Entity id<input data-cell-stage="${esc(activeStage)}" data-cell-idx="${i}" data-f="entity" value="${esc(b.entity || '')}" /></label>
                 <button type="button" data-del-block="${esc(activeStage)}" data-del-idx="${i}">Remove block</button>
               </div>`).join('')}
@@ -373,23 +373,23 @@
             <label>From<select data-span-idx="${si}" data-span-f="from">${stageOptions(stages, sp.from)}</select></label>
             <label>To<select data-span-idx="${si}" data-span-f="to">${stageOptions(stages, sp.to)}</select></label>
             <label>Capability<input data-span-idx="${si}" data-span-f="cap" value="${esc(b.cap || '')}" /></label>
-            <label>Objects<input data-span-idx="${si}" data-span-f="obj" value="${esc(b.obj || '')}" /></label>
+            <label>Business Object<input data-span-idx="${si}" data-span-f="obj" value="${esc(b.obj || '')}" /></label>
             <label>Entity<input data-span-idx="${si}" data-span-f="entity" value="${esc(b.entity || '')}" /></label>
           </div>
         </div>`;
       }).join('');
 
       return `
-        <h4 class="vc-ed-h4">Stage strip (click a stage to edit its cell)</h4>
+        <h4 class="vc-ed-h4">Journey strip (click a Journey stage to edit the cell)</h4>
         <p class="vc-ed-legend">
-          <span><i style="background:#e8f0f8;border-color:#9bb8d4"></i> Single-stage cell</span>
+          <span><i style="background:#e8f0f8;border-color:#9bb8d4"></i> Single-stage Capability</span>
           <span><i style="background:#e8f6ef;border-color:#8fc5a8"></i> Covered by a band</span>
           <span><i style="background:#f0f2f5"></i> Empty</span>
         </p>
         <div class="vc-ed-strip">${stageStrip}</div>
         ${stageEdit}
-        <h4 class="vc-ed-h4">Bands (span multiple stages)</h4>
-        ${spanCards || '<p class="vc-ed-hint">No bands yet. Use bands for capabilities that stretch across columns (e.g. CDP, Stripe).</p>'}
+        <h4 class="vc-ed-h4">Bands (Capability spanning multiple Journey stages)</h4>
+        ${spanCards || '<p class="vc-ed-hint">No bands yet. Use bands for Capabilities that stretch across Journey columns (e.g. Campaign Management).</p>'}
         <div class="vc-ed-actions-row">
           <button type="button" id="vc-add-span">+ Add band</button>
         </div>`;
@@ -511,7 +511,7 @@
       });
       container.querySelector('#vc-add-row')?.addEventListener('click', () => {
         const data = syncFromDom();
-        data.rows.push({ id: 'row-' + data.rows.length, label: 'New platform', sub: '', cells: {}, spans: [] });
+        data.rows.push({ id: 'row-' + data.rows.length, label: 'New function', sub: '', cells: {}, spans: [] });
         selectedRowIdx = data.rows.length - 1;
         setData(data);
       });

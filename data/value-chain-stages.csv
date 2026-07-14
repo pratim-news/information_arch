@@ -1,4 +1,4 @@
-stage_id,label,journey
+stage_id,label,value_chain
 attract,ATTRACT,Prospect to Registered User
 acquire,ACQUIRE,Registered User to Subscriber
 subscribe,SUBSCRIBE,Order to Subscription
