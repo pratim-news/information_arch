@@ -174,13 +174,15 @@
       .detail.open { transform: translateX(0); }
     }
 
-    /* Value chain editor */
-    .vc-editor { margin-bottom: 16px; }
+    /* Value chain editor - admin control (de-emphasized) */
+    .vc-editor { margin-top: 28px; margin-bottom: 8px; padding-top: 16px; border-top: 1px dashed var(--line); }
     .vc-ed-toggle {
-      font-size: 13px; padding: 10px 16px; border-radius: 6px; border: 1px solid var(--accent);
-      background: var(--accent-soft); color: var(--accent); cursor: pointer; font-weight: 600;
+      font-size: 11px; padding: 0; border: 0; background: transparent;
+      color: var(--muted); cursor: pointer; font-weight: 400; text-decoration: underline;
+      text-underline-offset: 2px;
     }
-    .vc-ed-toggle:hover { background: var(--accent); color: #fff; }
+    .vc-ed-toggle:hover { color: var(--accent); background: transparent; }
+    .vc-ed-admin-note { font-size: 10px; color: #9aa5b1; margin: 0 0 6px; }
     .vc-ed-panel {
       margin-top: 12px; padding: 0; border: 1px solid var(--line); border-radius: 10px;
       background: #f7fafc; max-height: min(70vh, 640px); overflow: auto;
@@ -885,12 +887,12 @@
     main.innerHTML = `
       <div class="breadcrumb">Layer <strong>${Object.keys(LAYERS).indexOf(currentLayer) + 1}</strong> of 6</div>
       <div class="layer-head"><h2>${esc(L.title)}</h2><p>${esc(L.desc)}</p></div>
-      <div id="vc-editor-slot"></div>
       <div class="toolbar">
         <label><input type="checkbox" id="show-ref" /> Show reference slide image</label>
       </div>
       ${body}
       <img class="ref-img" id="ref-img" src="${esc(L.img)}" alt="Reference slide" />
+      <div id="vc-editor-slot"></div>
     `;
     if (currentLayer === 'valuechain') {
       const slot = document.getElementById('vc-editor-slot');
@@ -905,7 +907,7 @@
           onStatus: () => updateVcStatus(),
         });
       } else if (slot) {
-        slot.innerHTML = '<p class="vc-ed-hint">Editor requires vc-data.js (serve this folder via HTTP or GitHub Pages). Grid data is loaded from the bundled copy.</p>';
+        slot.innerHTML = '';
       }
       updateVcStatus();
     }

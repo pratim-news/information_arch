@@ -231,7 +231,8 @@
 
       container.innerHTML = `
         <div class="vc-editor ${editorOpen ? 'open' : ''}">
-          <button type="button" class="vc-ed-toggle" id="vc-ed-toggle" aria-expanded="${editorOpen ? 'true' : 'false'}">${editorOpen ? 'Hide value chain editor' : 'Edit value chain'}</button>
+          <p class="vc-ed-admin-note">Admin</p>
+          <button type="button" class="vc-ed-toggle" id="vc-ed-toggle" aria-expanded="${editorOpen ? 'true' : 'false'}">${editorOpen ? 'Hide data editor' : 'Edit value chain data'}</button>
           <div class="vc-ed-panel" id="vc-ed-panel" ${editorOpen ? '' : 'hidden'}>
             <div class="vc-ed-toolbar">
               <span class="vc-ed-status" id="vc-ed-status"></span>
