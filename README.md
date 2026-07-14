@@ -1,26 +1,25 @@
 # Consumer 2.0 interactive data model
 
-Public deploy of the FSS Consumer 2.0 / Information Architecture interactive explorer.
+Static site for the FSS Consumer 2.0 / Information Architecture explorer.
 
-## Live pages
+## GitHub Pages
 
-After GitHub Pages is enabled on this repo (Settings -> Pages -> Deploy from branch `main` / root):
+Enable: **Settings -> Pages -> Deploy from a branch -> `main` / `/ (root)`**
 
-- App: `fss-consumer-data-model-interactive.html`
-- Portable (single file): `fss-consumer-data-model-interactive-portable.html`
+Site URL (once Pages is on):
 
-Root `index.html` redirects to the interactive app.
+- https://pratim-news.github.io/information_arch/
+- https://pratim-news.github.io/information_arch/fss-consumer-data-model-interactive.html
+- Portable single file: https://pratim-news.github.io/information_arch/fss-consumer-data-model-interactive-portable.html
 
-## Required files for the editor
+## Files served
 
-- `vc-data.js`
-- `data/value-chain.json`
-- `fss-consumer-data-model-interactive/*.png` (reference slides)
+| Path | Role |
+|------|------|
+| `index.html` | Static app (same as interactive HTML) |
+| `vc-data.js` | In-page value-chain editor |
+| `data/value-chain.json` | Published value-chain data |
+| `fss-consumer-data-model-interactive/*.png` | Reference slides |
+| `fss-consumer-data-model-interactive-portable.html` | Offline single-file copy |
 
-## Publish value-chain edits
-
-1. Open the app on GitHub Pages
-2. Edit value chain -> Export JSON
-3. Replace `data/value-chain.json`
-4. Run `node scripts/embed-value-chain.mjs`
-5. Commit and push
+No build step. No server runtime. Open over HTTPS via GitHub Pages (or any static host).
