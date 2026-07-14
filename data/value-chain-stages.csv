@@ -1,0 +1,8 @@
+stage_id,label,journey
+attract,ATTRACT,Prospect to Registered User
+acquire,ACQUIRE,Registered User to Subscriber
+subscribe,SUBSCRIBE,Order to Subscription
+fulfill,FULFILL,Order to Fulfillment
+bill,BILL,Charge to Invoice / Payment to Revenue
+retain,RETAIN,Subscription to Renewal / Enquiry to Resolution / Recognition to Reward
+leave,LEAVE,Subscription to Termination

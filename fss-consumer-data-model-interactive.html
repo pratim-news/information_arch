@@ -88,8 +88,6 @@
     .vc-cell .vc-block:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
     .standalone-bar { margin-top: 14px; padding: 12px; background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; }
     .standalone-bar h4 { margin: 0 0 8px; font-size: 12px; color: var(--muted); text-transform: uppercase; }
-    .nav a.flow-link { display: block; margin-top: 12px; padding: 10px; background: rgba(255,255,255,.1); border-radius: 6px; color: #fff; text-decoration: none; font-size: 13px; text-align: center; }
-    .nav a.flow-link:hover { background: rgba(255,255,255,.18); }
     .vc-cell.empty { background: #f0f2f5; cursor: default; }
     .vc-cell.span-all { grid-column: 2 / -1; }
 
@@ -132,6 +130,89 @@
       .detail { position: fixed; right: 0; top: 0; width: min(100%, 360px); z-index: 10; box-shadow: -4px 0 20px rgba(0,0,0,.12); transform: translateX(100%); transition: transform .2s; }
       .detail.open { transform: translateX(0); }
     }
+
+    /* Value chain editor */
+    .vc-editor { margin-bottom: 16px; }
+    .vc-ed-toggle {
+      font-size: 13px; padding: 10px 16px; border-radius: 6px; border: 1px solid var(--accent);
+      background: var(--accent-soft); color: var(--accent); cursor: pointer; font-weight: 600;
+    }
+    .vc-ed-toggle:hover { background: var(--accent); color: #fff; }
+    .vc-ed-panel {
+      margin-top: 12px; padding: 0; border: 1px solid var(--line); border-radius: 10px;
+      background: #f7fafc; max-height: min(70vh, 640px); overflow: auto;
+      display: flex; flex-direction: column;
+    }
+    /* Author display:flex must not override the HTML hidden attribute */
+    .vc-ed-panel[hidden] { display: none !important; }
+    .vc-ed-toolbar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 12px 14px; background: #fff; border-bottom: 1px solid var(--line);
+      position: sticky; top: 0; z-index: 2;
+    }
+    .vc-ed-toolbar button { font-size: 12px; padding: 7px 12px; border-radius: 5px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+    .vc-ed-toolbar button.vc-ed-primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+    .vc-ed-toolbar button.vc-ed-danger { color: #8b1e1e; border-color: #e0b4b4; }
+    .vc-ed-status { font-size: 12px; color: var(--muted); flex: 1 1 180px; }
+    .vc-ed-steps {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+      padding: 10px 14px; background: #eef4fb; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--ink);
+    }
+    .vc-ed-steps span { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; }
+    .vc-ed-steps b { color: var(--accent); }
+    .vc-ed-body { padding: 14px; }
+    .vc-ed-hint { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+    .vc-ed-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 8px 0; }
+    .vc-ed-table th, .vc-ed-table td { border: 1px solid var(--line); padding: 6px; text-align: left; }
+    .vc-ed-table th { background: #e8eef5; }
+    .vc-ed-table input, .vc-ed-table select { width: 100%; font: inherit; font-size: 12px; padding: 4px; }
+    .vc-ed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin: 8px 0; }
+    .vc-ed-grid label { font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+    .vc-ed-grid input, .vc-ed-grid select { font: inherit; padding: 5px; }
+    .vc-ed-rowbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .vc-ed-add { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; font-size: 12px; }
+    .vc-ed-add input { padding: 5px; font: inherit; min-width: 120px; }
+    details summary { cursor: pointer; font-weight: 600; color: var(--accent); margin: 10px 0 6px; }
+
+    .vc-ed-layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 14px; min-height: 320px; }
+    .vc-ed-side { border: 1px solid var(--line); border-radius: 8px; background: #fff; display: flex; flex-direction: column; max-height: 480px; }
+    .vc-ed-side-head { padding: 10px 12px; font-weight: 700; font-size: 12px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
+    .vc-ed-rowlist { overflow: auto; flex: 1; padding: 6px; }
+    .vc-ed-rowbtn { display: block; width: 100%; text-align: left; border: 0; background: transparent; padding: 9px 10px; border-radius: 6px; cursor: pointer; margin-bottom: 2px; }
+    .vc-ed-rowbtn strong { display: block; font-size: 13px; color: var(--ink); }
+    .vc-ed-rowbtn span { font-size: 11px; color: var(--muted); }
+    .vc-ed-rowbtn:hover { background: var(--accent-soft); }
+    .vc-ed-rowbtn.on { background: var(--accent); }
+    .vc-ed-rowbtn.on strong, .vc-ed-rowbtn.on span { color: #fff; }
+    .vc-ed-side-actions { display: flex; gap: 6px; padding: 8px; border-top: 1px solid var(--line); }
+    .vc-ed-side-actions button { flex: 1; font-size: 12px; padding: 7px; cursor: pointer; }
+    .vc-ed-main { min-width: 0; }
+    .vc-ed-rowmeta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .vc-ed-rowmeta label, .vc-ed-band label, .vc-ed-block label { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--muted); }
+    .vc-ed-rowmeta input, .vc-ed-rowmeta select, .vc-ed-band input, .vc-ed-band select, .vc-ed-block input { font: inherit; padding: 7px; border: 1px solid var(--line); border-radius: 5px; background: #fff; }
+    .vc-ed-h4 { margin: 14px 0 8px; font-size: 13px; color: var(--accent); }
+    .vc-ed-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-bottom: 12px; }
+    .vc-ed-chip { border: 1px solid var(--line); background: #f0f2f5; border-radius: 8px; padding: 10px 6px; cursor: pointer; text-align: center; min-height: 64px; }
+    .vc-ed-chip em { display: block; font-style: normal; font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+    .vc-ed-chip span { display: block; font-size: 11px; margin-top: 6px; color: var(--ink); word-break: break-word; line-height: 1.25; }
+    .vc-ed-chip.filled { background: #e8f0f8; border-color: #9bb8d4; }
+    .vc-ed-chip.span { background: #e8f6ef; border-color: #8fc5a8; }
+    .vc-ed-chip.on { outline: 2px solid var(--accent); background: #dceaf8; }
+    .vc-ed-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--muted); margin: 0 0 10px; }
+    .vc-ed-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--line); vertical-align: -2px; margin-right: 4px; }
+    .vc-ed-card { border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin-bottom: 10px; background: #fff; }
+    .vc-ed-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; gap: 8px; }
+    .vc-ed-band { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+    .vc-ed-block { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; align-items: end; margin-bottom: 8px; }
+    .vc-ed-actions-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .vc-ed-actions-row button { font-size: 12px; padding: 7px 12px; cursor: pointer; border-radius: 5px; border: 1px solid var(--line); background: #fff; }
+    @media (max-width: 900px) {
+      .vc-ed-layout { grid-template-columns: 1fr; }
+      .vc-ed-rowmeta { grid-template-columns: 1fr 1fr; }
+      .vc-ed-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .vc-ed-block { grid-template-columns: 1fr; }
+      .vc-ed-steps { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -145,8 +226,6 @@
     <button type="button" data-layer="platform"><span class="layer-num">4</span>Platform overlay</button>
     <button type="button" data-layer="datamaster"><span class="layer-num">5</span>Data Master SoR/MC</button>
     <button type="button" data-layer="migration"><span class="layer-num">6</span>Migration journey</button>
-    <a class="flow-link" href="fss-e2e-baseeci-interactive.html">BaseECI E2E hypothesis</a>
-    <a class="flow-link" href="fss-sky-news-migration-flow.html" target="_blank">Animated Sky News flow</a>
   </nav>
 
   <main class="main" id="main"></main>
@@ -157,74 +236,316 @@
   </aside>
 </div>
 
+<script type="application/json" id="vc-published-data">
+{
+  "version": 1,
+  "updated": "2026-07-14",
+  "stages": [
+    { "id": "attract", "label": "ATTRACT", "journey": "Prospect to Registered User" },
+    { "id": "acquire", "label": "ACQUIRE", "journey": "Registered User to Subscriber" },
+    { "id": "subscribe", "label": "SUBSCRIBE", "journey": "Order to Subscription" },
+    { "id": "fulfill", "label": "FULFILL", "journey": "Order to Fulfillment" },
+    { "id": "bill", "label": "BILL", "journey": "Charge to Invoice / Payment to Revenue" },
+    { "id": "retain", "label": "RETAIN", "journey": "Subscription to Renewal / Enquiry to Resolution / Recognition to Reward" },
+    { "id": "leave", "label": "LEAVE", "journey": "Subscription to Termination" }
+  ],
+  "shopfrontTemplate": {
+    "cells": {
+      "attract": { "cap": "B2C Profile Management", "obj": "Registered User", "entity": "registeredUser" },
+      "acquire": { "cap": "B2C Profile Management", "obj": "Subscriber", "entity": "subscriber" },
+      "subscribe": { "cap": "Order Management", "obj": "Order", "entity": "order" }
+    },
+    "spans": [
+      {
+        "from": "bill",
+        "to": "retain",
+        "blocks": [{ "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }]
+      }
+    ]
+  },
+  "rows": [
+    { "id": "shopfront", "label": "Shopfront", "sub": "WordPress", "useShopfrontTemplate": true },
+    { "id": "selfcare", "label": "Self Care", "sub": "Salesforce & Genesys", "useShopfrontTemplate": true },
+    { "id": "assisted", "label": "Assisted Care", "sub": "Salesforce & Genesys", "useShopfrontTemplate": true },
+    {
+      "id": "paywall",
+      "label": "Paywall",
+      "sub": "Zephr",
+      "spans": [
+        {
+          "from": "acquire",
+          "to": "leave",
+          "blocks": [{ "cap": "Subscription Entitlements", "obj": "Entitlement", "entity": "entitlement" }]
+        }
+      ]
+    },
+    {
+      "id": "experiment",
+      "label": "Experimentation",
+      "sub": "Optimizely",
+      "spans": [
+        {
+          "from": "attract",
+          "to": "acquire",
+          "blocks": [{ "cap": "Experimentation", "obj": "Experiment", "entity": "experiment" }]
+        }
+      ],
+      "cells": {
+        "retain": [{ "cap": "Experimentation", "obj": "Experiment", "entity": "experiment" }]
+      }
+    },
+    {
+      "id": "loyalty",
+      "label": "Loyalty",
+      "sub": "Clock Rewards",
+      "cells": {
+        "retain": [{ "cap": "Loyalty Management", "obj": "Reward", "entity": "reward" }]
+      }
+    },
+    {
+      "id": "marketing",
+      "label": "Marketing Automation",
+      "sub": "Salesforce",
+      "spans": [
+        {
+          "from": "subscribe",
+          "to": "retain",
+          "blocks": [{ "cap": "Campaign Management", "obj": "Campaign, Target Audience, Marketing Comm", "entity": "campaign" }]
+        }
+      ]
+    },
+    {
+      "id": "identity",
+      "label": "Identity",
+      "sub": "Okta | Auth0",
+      "spans": [
+        {
+          "from": "attract",
+          "to": "retain",
+          "blocks": [{ "cap": "Identity Management", "obj": "External User, Internal User", "entity": "externalUser" }]
+        }
+      ]
+    },
+    {
+      "id": "crm",
+      "label": "CRM",
+      "sub": "Salesforce",
+      "cells": {
+        "attract": [{ "cap": "B2C Profile Mgmt", "obj": "Registered User", "entity": "registeredUser" }],
+        "acquire": [{ "cap": "Consent & Pref Mgmt", "obj": "Consent & Preferences", "entity": "consent" }],
+        "subscribe": [{ "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }],
+        "bill": [{ "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }],
+        "retain": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }],
+        "leave": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }]
+      }
+    },
+    {
+      "id": "fsp",
+      "label": "Subscription & Billing",
+      "sub": "Future Subscription Platform",
+      "cells": {
+        "attract": [{ "cap": "Product Cat Mgmt", "obj": "Product", "entity": "product" }],
+        "acquire": [{ "cap": "Offer & Promotion Mgmt", "obj": "Promotion, Offer", "entity": "promotion" }],
+        "subscribe": [{ "cap": "Subscription Management", "obj": "Subscription", "entity": "subscription" }]
+      }
+    },
+    {
+      "id": "stripe",
+      "label": "Payment Gateway",
+      "sub": "Stripe",
+      "spans": [
+        {
+          "from": "bill",
+          "to": "retain",
+          "blocks": [{ "cap": "Payments", "obj": "Payment", "entity": "payment" }]
+        }
+      ]
+    },
+    {
+      "id": "cdp",
+      "label": "CDP",
+      "sub": "ActionIQ",
+      "spans": [
+        {
+          "from": "attract",
+          "to": "subscribe",
+          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
+        },
+        {
+          "from": "bill",
+          "to": "retain",
+          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
+        }
+      ]
+    },
+    {
+      "id": "naviga",
+      "label": "Print Delivery",
+      "sub": "Naviga",
+      "cells": {
+        "fulfill": [{ "cap": "Print Service Fulfilment", "obj": "Subscription", "entity": "subscription" }]
+      }
+    },
+    {
+      "id": "bi",
+      "label": "Business Intelligence",
+      "sub": "Google BigQuery & Looker",
+      "cells": {
+        "attract": [{ "cap": "Analytics & Insights", "obj": "", "entity": null }],
+        "subscribe": [{ "cap": "Analytics & Insights", "obj": "LTV", "entity": "ltv" }],
+        "fulfill": [{ "cap": "Analytics & Insights", "obj": "Customer Scores", "entity": "customerScores" }],
+        "bill": [{ "cap": "Analytics & Insights", "obj": "Customer Segment", "entity": "customerSegment" }],
+        "retain": [{ "cap": "Analytics & Insights", "obj": "Engagement", "entity": "engagementMetric" }]
+      }
+    }
+  ]
+}
+</script>
+<script src="vc-data.js"></script>
 <script>
 (function () {
-  const STAGES = [
-    { id: 'attract', label: 'ATTRACT', journey: 'Prospect to Registered User' },
-    { id: 'acquire', label: 'ACQUIRE', journey: 'Registered User to Subscriber' },
-    { id: 'subscribe', label: 'SUBSCRIBE', journey: 'Order to Subscription' },
-    { id: 'fulfill', label: 'FULFILL', journey: 'Order to Fulfillment' },
-    { id: 'bill', label: 'BILL', journey: 'Charge to Invoice / Payment to Revenue' },
-    { id: 'retain', label: 'RETAIN', journey: 'Renewal / Enquiry / Reward' },
-    { id: 'leave', label: 'LEAVE', journey: 'Subscription to Termination' }
-  ];
+  let STAGES = [];
+  let SHOPFRONT_STAGES = {};
+  let VC_ROWS = [];
+  let vcDocument = null;
+  let vcSourceLabel = '';
+  let vcEditorApi = null;
+
+  function rowStages(row) {
+    return row.stages === 'SHOPFRONT_STAGES' ? SHOPFRONT_STAGES : row.stages;
+  }
+
+  function applyValueChainDocument(doc) {
+    vcDocument = typeof FSS_VC !== 'undefined' ? FSS_VC.deepClone(doc) : JSON.parse(JSON.stringify(doc));
+    if (typeof FSS_VC !== 'undefined') {
+      const compiled = FSS_VC.compile(vcDocument);
+      STAGES = compiled.STAGES;
+      SHOPFRONT_STAGES = compiled.SHOPFRONT_STAGES;
+      VC_ROWS = compiled.VC_ROWS;
+      return;
+    }
+    function block(b) {
+      return { cap: b.cap || '', obj: b.obj || '', e: b.entity == null || b.entity === '' ? null : b.entity };
+    }
+    function range(from, to) {
+      const ids = (doc.stages || []).map((s) => s.id);
+      const a = ids.indexOf(from);
+      const b = ids.indexOf(to);
+      return ids.slice(Math.min(a, b), Math.max(a, b) + 1);
+    }
+    function normSpans(obj) {
+      if (!obj) return [];
+      if (Array.isArray(obj.spans)) return obj.spans;
+      if (obj.span) return [obj.span];
+      return [];
+    }
+    function compileSpans(src) {
+      return normSpans(src).map((sp) => {
+        const b = (sp.blocks && sp.blocks[0]) || {};
+        return { spanStages: range(sp.from, sp.to), cell: block(b), from: sp.from, to: sp.to };
+      }).filter((s) => s.spanStages.length);
+    }
+    function tplStages(tpl) {
+      const stages = {};
+      const cells = tpl && tpl.cells ? tpl.cells : tpl || {};
+      Object.keys(cells).forEach((k) => {
+        if (k === 'cells' || k === 'span' || k === 'spans') return;
+        if (cells[k] && (cells[k].cap != null || cells[k].obj != null)) stages[k] = block(cells[k]);
+      });
+      return stages;
+    }
+    STAGES = (doc.stages || []).map((s) => ({ id: s.id, label: s.label, journey: s.journey }));
+    const tpl = doc.shopfrontTemplate || {};
+    SHOPFRONT_STAGES = tplStages(tpl);
+    VC_ROWS = (doc.rows || []).map((row) => {
+      const base = { id: row.id, label: row.label, sub: row.sub || '' };
+      if (row.useShopfrontTemplate) {
+        return { ...base, stages: tplStages(tpl), spans: compileSpans(tpl) };
+      }
+      const stages = {};
+      Object.keys(row.cells || {}).forEach((stageId) => {
+        const blocks = row.cells[stageId];
+        if (!blocks || !blocks.length) return;
+        stages[stageId] = blocks.length === 1 ? block(blocks[0]) : { multi: blocks.map(block) };
+      });
+      return { ...base, stages, spans: compileSpans(row) };
+    });
+  }
+
+  function updateVcStatus(extra) {
+    const el = document.getElementById('vc-ed-status');
+    if (!el) return;
+    let msg = vcSourceLabel || 'Loaded';
+    if (typeof FSS_VC !== 'undefined' && FSS_VC.loadDraft()) {
+      msg += ' | Draft available (?draft=1 to load)';
+    }
+    if (extra) msg = extra;
+    el.textContent = msg;
+  }
 
   const ENTITIES = {
-    registeredUser: { name: 'Registered User', ids: ['registeredUser'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF CRM / Shopfront', object: true },
-    subscriber: { name: 'Subscriber', ids: ['subscriber'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF CRM', object: true },
+    registeredUser: { name: 'Registered User', ids: ['registeredUser', 'party'], also: ['party'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF CRM / Shopfront', object: true },
+    subscriber: { name: 'Subscriber', ids: ['subscriber', 'party'], also: ['party'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF CRM', object: true },
     order: { name: 'Order', ids: ['order'], capability: 'Order Management', asset: 'Subscription Account Management', platform: 'Zuora', object: true },
-    subscription: { name: 'Subscription', ids: ['subscription'], capability: 'Subscription Management', asset: 'Subscription Account Management', platform: 'Zuora', object: true },
+    subscription: { name: 'Subscription', ids: ['subscription', 'account', 'customerAsset'], also: ['account'], capability: 'Subscription Management', asset: 'Subscription Account Management', platform: 'Zuora', object: true },
     entitlement: { name: 'Entitlement', ids: ['entitlement'], capability: 'Subscription Entitlements', asset: 'Entitlement Enforcement', platform: 'Zephr', object: true },
-    invoice: { name: 'Invoice', ids: ['invoice'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
-    paymentReceipt: { name: 'Payment/Receipt', ids: ['paymentReceipt'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora / Stripe', object: true },
-    payment: { name: 'Payment', ids: ['payment'], capability: 'Payments', asset: 'Billing Management', platform: 'Stripe', object: true },
-    experiment: { name: 'Experiment', ids: ['experiment'], capability: 'Experimentation', asset: 'Marketing Management', platform: 'Optimizely', object: true },
-    reward: { name: 'Reward', ids: ['reward'], capability: 'Loyalty Management', asset: 'Loyalty', platform: 'Crowdtwist', object: true },
-    campaign: { name: 'Campaign', ids: ['campaign'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
-    targetAudience: { name: 'Target Audience', ids: ['targetAudience'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
-    marketingComm: { name: 'Marketing Comm', ids: ['marketingComm'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
+    invoice: { name: 'Invoice', ids: ['invoice', 'billing'], also: ['billing'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
+    paymentReceipt: { name: 'Payment/Receipt', ids: ['paymentReceipt', 'billing', 'payment'], also: ['billing', 'payment'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora / Stripe', object: true },
+    payment: { name: 'Payment', ids: ['payment'], capability: 'Payments / Revenue Accounting', asset: 'Revenue Accounting', platform: 'Zuora / Stripe', object: true },
+    experiment: { name: 'Experiment', ids: ['experiment', 'marketing'], also: ['marketing'], capability: 'Experimentation', asset: 'Marketing Management', platform: 'Optimizely', object: true },
+    reward: { name: 'Reward', ids: ['reward', 'loyaltyReward'], also: ['loyaltyReward'], capability: 'Loyalty Management', asset: 'Loyalty', platform: 'Clock Rewards', object: true },
+    campaign: { name: 'Campaign', ids: ['campaign', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
+    targetAudience: { name: 'Target Audience', ids: ['targetAudience', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
+    marketingComm: { name: 'Marketing Comm', ids: ['marketingComm', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
     externalUser: { name: 'External User', ids: ['externalUser'], capability: 'Identity Management', asset: 'Customer Management', platform: 'Auth0', object: true },
     product: { name: 'Product', ids: ['product'], capability: 'Product Cat Mgmt', asset: 'Product & Offer Management', platform: 'Zuora', object: true },
-    promotion: { name: 'Promotion', ids: ['promotion'], capability: 'Offer & Promotion Mgmt', asset: 'Product & Offer Management', platform: 'SF CRM', object: true },
-    offer: { name: 'Offer', ids: ['offer'], capability: 'Offer & Promotion Mgmt / NBA', asset: 'Product & Offer Management', platform: 'ActionIQ', object: true },
-    action: { name: 'Action', ids: ['action'], capability: 'Next Best Action', asset: 'Engagement Management', platform: 'ActionIQ', object: true },
-    consent: { name: 'Consent & Preferences', ids: ['consent'], capability: 'Consent & Pref Mgmt', asset: 'Consent & Preference Management', platform: 'DCPM (TBC)', object: false },
-    party: { name: 'Party', ids: ['party'], capability: 'B2C Profile Mgmt', asset: 'Customer Management', platform: 'SF CRM', object: false },
-    contact: { name: 'Contact', ids: ['contact'], capability: 'Customer Management', asset: 'Customer Management', platform: 'SF CRM', object: false },
-    account: { name: 'Account', ids: ['account'], capability: 'Subscription Management', asset: 'Subscription Account Management', platform: 'Zuora', object: false },
-    customerAsset: { name: 'Customer Asset', ids: ['customerAsset'], capability: 'Subscription Management', asset: 'Subscription Account Management', platform: 'Zuora', object: false },
-    pricing: { name: 'Pricing', ids: ['pricing'], capability: 'Product & Offer Management', asset: 'Product & Offer Management', platform: 'Zuora', object: false },
-    inventory: { name: 'Inventory', ids: ['inventory'], capability: 'Product & Offer Management', asset: 'Product & Offer Management', platform: 'Zuora', object: false },
-    billing: { name: 'Billing', ids: ['billing'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: false },
-    support: { name: 'Support', ids: ['support'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: false },
-    revenue: { name: 'Revenue', ids: ['revenue'], capability: 'Revenue Accounting', asset: 'Revenue Accounting', platform: 'Zuora', object: false },
-    engagement: { name: 'Engagement', ids: ['engagement'], capability: 'Engagement Management', asset: 'Engagement Management', platform: 'ActionIQ', object: false },
-    marketing: { name: 'Marketing', ids: ['marketing'], capability: 'Marketing Management', asset: 'Marketing Management', platform: 'SFMC', object: false },
-    interaction: { name: 'Interaction', ids: ['interaction'], capability: 'Marketing Management', asset: 'Marketing Management', platform: 'SF CRM', object: false },
-    distribution: { name: 'Distribution', ids: ['distribution'], capability: 'Print Service Fulfilment', asset: 'Distribution', platform: 'Naviga / Digital', object: false },
-    loyaltyReward: { name: 'Loyalty & Reward', ids: ['loyaltyReward'], capability: 'Loyalty Management', asset: 'Loyalty', platform: 'Crowdtwist', object: false },
+    promotion: { name: 'Promotion', ids: ['promotion', 'product', 'pricing'], also: ['product', 'pricing'], capability: 'Offer & Promotion Mgmt', asset: 'Product & Offer Management', platform: 'Future Subscription Platform', object: true },
+    offer: { name: 'Offer', ids: ['offer', 'product', 'engagement'], also: ['product', 'engagement'], capability: 'Offer & Promotion Mgmt / NBA', asset: 'Product & Offer Management', platform: 'ActionIQ / FSP', object: true },
+    action: { name: 'Action', ids: ['action', 'engagement'], also: ['engagement'], capability: 'Next Best Action', asset: 'Engagement Management', platform: 'ActionIQ', object: true },
+    consent: { name: 'Consent & Preferences', ids: ['consent'], capability: 'Consent & Pref Mgmt', asset: 'Consent & Preference Management', platform: 'DCPM (TBC) / SF CRM', object: true },
+    party: { name: 'Party', ids: ['party'], capability: 'Customer Management', asset: 'Customer Management', platform: 'SF CRM', object: true },
+    contact: { name: 'Contact', ids: ['contact'], capability: 'Customer Management', asset: 'Customer Management', platform: 'SF CRM', object: true },
+    account: { name: 'Account', ids: ['account'], capability: 'Subscription Account Management', asset: 'Subscription Account Management', platform: 'Zuora', object: true },
+    customerAsset: { name: 'Customer Asset', ids: ['customerAsset'], capability: 'Subscription Account Management', asset: 'Subscription Account Management', platform: 'Zuora', object: true },
+    pricing: { name: 'Pricing', ids: ['pricing'], capability: 'Product & Offer Management', asset: 'Product & Offer Management', platform: 'Zuora', object: true },
+    inventory: { name: 'Inventory', ids: ['inventory'], capability: 'Product & Offer Management', asset: 'Product & Offer Management', platform: 'Zuora', object: true },
+    billing: { name: 'Billing', ids: ['billing'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
+    support: { name: 'Support', ids: ['support'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
+    revenue: { name: 'Revenue', ids: ['revenue'], capability: 'Revenue Accounting', asset: 'Revenue Accounting', platform: 'Zuora', object: true },
+    engagement: { name: 'Engagement', ids: ['engagement'], capability: 'Engagement Management', asset: 'Engagement Management', platform: 'ActionIQ', object: true },
+    marketing: { name: 'Marketing', ids: ['marketing'], capability: 'Marketing Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
+    interaction: { name: 'Interaction', ids: ['interaction'], capability: 'Marketing Management', asset: 'Marketing Management', platform: 'SF CRM', object: true },
+    distribution: { name: 'Distribution', ids: ['distribution'], capability: 'Distribution', asset: 'Distribution', platform: 'Naviga / Digital', object: true },
+    loyaltyReward: { name: 'Loyalty & Reward', ids: ['loyaltyReward'], capability: 'Loyalty', asset: 'Loyalty', platform: 'Clock Rewards', object: true },
     ltv: { name: 'LTV', ids: ['ltv'], capability: 'Analytics & Insights', asset: 'Business Intelligence', platform: 'BigQuery / Looker', object: true },
     customerScores: { name: 'Customer Scores', ids: ['customerScores'], capability: 'Analytics & Insights', asset: 'Business Intelligence', platform: 'BigQuery / Looker', object: true },
     customerSegment: { name: 'Customer Segment', ids: ['customerSegment'], capability: 'Analytics & Insights', asset: 'Business Intelligence', platform: 'BigQuery / Looker', object: true },
-    engagementMetric: { name: 'Engagement', ids: ['engagementMetric'], capability: 'Analytics & Insights', asset: 'Business Intelligence', platform: 'BigQuery / Looker', object: true },
-    voucher: { name: 'Voucher', ids: ['voucher'], capability: 'Voucher Management', asset: 'Product & Offer Management', platform: 'Zuora', object: false },
-    ratePlan: { name: 'Rate Plan', ids: ['ratePlan'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora / Zephr', object: false },
-    contract: { name: 'Contract', ids: ['contract'], capability: 'Engagement Management', asset: 'Engagement Management', platform: 'Zuora', object: false },
-    expense: { name: 'Expense', ids: ['expense'], capability: 'Expenses Accounting', asset: 'Expenses Accounting', platform: 'JDE', object: false },
-    procurement: { name: 'Procurement', ids: ['procurement'], capability: 'Procurement', asset: 'Procurement', platform: 'JDE', object: false }
+    engagementMetric: { name: 'Engagement (metric)', ids: ['engagementMetric', 'engagement'], also: ['engagement'], capability: 'Analytics & Insights', asset: 'Business Intelligence', platform: 'BigQuery / Looker', object: true },
+    voucher: { name: 'Voucher', ids: ['voucher'], capability: 'Product & Offer Management', asset: 'Product & Offer Management', platform: 'Zuora', object: true },
+    ratePlan: { name: 'Rate Plan', ids: ['ratePlan'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
+    contract: { name: 'Contract', ids: ['contract'], capability: 'Engagement / Subscription', asset: 'Engagement Management', platform: 'Zuora', object: true },
+    expense: { name: 'Expense', ids: ['expense'], capability: 'Expenses Accounting', asset: 'Expenses Accounting', platform: 'JDE', object: true },
+    procurement: { name: 'Procurement', ids: ['procurement'], capability: 'Procurement', asset: 'Procurement', platform: 'JDE', object: true }
   };
 
-  const STANDALONE_ENTITIES = ['contact', 'interaction', 'voucher', 'ratePlan', 'payment', 'contract'];
+  // Bridge entities sit outside red outlines on the overlay slides
+  const BRIDGE_BY_LAYER = {
+    capability: ['contact', 'interaction', 'voucher', 'ratePlan', 'contract'],
+    asset: ['contact', 'interaction', 'voucher', 'ratePlan', 'contract', 'inventory'],
+    platform: ['contact', 'interaction', 'voucher', 'ratePlan', 'contract', 'order', 'inventory', 'payment']
+  };
+  const STANDALONE_ENTITIES = BRIDGE_BY_LAYER.capability;
 
+  // Groups match capability / information-asset / platform overlay slides (entities inside red boxes only)
   const CAPABILITY_GROUPS = [
     { id: 'consent', title: 'Consent & Preference Management', entities: ['consent'] },
     { id: 'customer', title: 'Customer Management', entities: ['party'] },
     { id: 'product', title: 'Product & Offer Management', entities: ['pricing', 'product', 'inventory'] },
     { id: 'marketing', title: 'Marketing Management', entities: ['marketing'] },
-    { id: 'engagement', title: 'Engagement Management', entities: ['engagement', 'contract'] },
+    { id: 'engagement', title: 'Engagement Management', entities: ['engagement'] },
     { id: 'subscription', title: 'Subscription Account Management', entities: ['account', 'customerAsset', 'order'] },
     { id: 'billing', title: 'Billing Management', entities: ['billing', 'support'] },
-    { id: 'revenue', title: 'Revenue Accounting', entities: ['revenue'] },
+    { id: 'revenue', title: 'Revenue Accounting', entities: ['payment', 'revenue'] },
     { id: 'entitlement', title: 'Entitlement Enforcement', entities: ['entitlement'] },
     { id: 'distribution', title: 'Distribution', entities: ['distribution'] },
     { id: 'expense', title: 'Expenses Accounting', entities: ['expense'] },
@@ -234,13 +555,13 @@
 
   const ASSET_GROUPS = [
     { id: 'consent', title: 'Consent & Preference Management', entities: ['consent'] },
-    { id: 'customer', title: 'Customer Management', entities: ['party', 'contact'] },
-    { id: 'product', title: 'Product & Offer Management', entities: ['pricing', 'product', 'inventory', 'voucher'] },
-    { id: 'marketing', title: 'Marketing Management', entities: ['marketing', 'interaction'] },
-    { id: 'engagement', title: 'Engagement Management', entities: ['engagement', 'contract'] },
+    { id: 'customer', title: 'Customer Management', entities: ['party'] },
+    { id: 'product', title: 'Product & Offer Management', entities: ['pricing', 'product'] },
+    { id: 'marketing', title: 'Marketing Management', entities: ['marketing'] },
+    { id: 'engagement', title: 'Engagement Management', entities: ['engagement'] },
     { id: 'subscription', title: 'Subscription Account Management', entities: ['account', 'customerAsset', 'order'] },
-    { id: 'billing', title: 'Billing Management', entities: ['billing', 'payment', 'support', 'ratePlan'] },
-    { id: 'revenue', title: 'Revenue Accounting', entities: ['revenue'] },
+    { id: 'billing', title: 'Billing Management', entities: ['billing', 'support'] },
+    { id: 'revenue', title: 'Revenue Accounting', entities: ['payment', 'revenue'] },
     { id: 'entitlement', title: 'Entitlement Enforcement', entities: ['entitlement'] },
     { id: 'distribution', title: 'Distribution', entities: ['distribution'] },
     { id: 'expense', title: 'Expenses Accounting', entities: ['expense'] },
@@ -249,87 +570,18 @@
   ];
 
   const PLATFORM_GROUPS = [
-    { id: 'dcpm', title: 'DCPM (TBC)', entities: ['consent'] },
-    { id: 'sfcrm', title: 'SF CRM', entities: ['party', 'contact', 'interaction'] },
-    { id: 'zuora-prod', title: 'Zuora - Product & Offer', entities: ['pricing', 'product', 'voucher'] },
-    { id: 'zuora-sub', title: 'Zuora - Subscription Account', entities: ['account', 'customerAsset', 'order', 'contract'] },
-    { id: 'zuora-bill', title: 'Zuora - Billing', entities: ['billing', 'payment', 'support'] },
-    { id: 'zuora-rev', title: 'Zuora - Revenue', entities: ['revenue'] },
-    { id: 'actioniq', title: 'LCDP - ActionIQ', entities: ['engagement'] },
-    { id: 'sfmc', title: 'SFMC', entities: ['marketing'] },
-    { id: 'zephr', title: 'Zephr', entities: ['entitlement', 'ratePlan'] },
-    { id: 'naviga', title: 'Naviga / CAPI / Brightcove / Omny', entities: ['distribution'] },
-    { id: 'jde', title: 'JDE', entities: ['expense', 'procurement'] },
-    { id: 'loyalty', title: 'Clock Rewards', entities: ['loyaltyReward'] }
-  ];
-
-  const SHOPFRONT_STAGES = {
-    attract: { cap: 'B2C Profile Management', obj: 'Registered User', e: 'registeredUser' },
-    acquire: { cap: 'B2C Profile Management', obj: 'Subscriber', e: 'subscriber' },
-    subscribe: { cap: 'Order Management', obj: 'Order', e: 'order' },
-    bill: { cap: 'Billing Management', obj: 'Invoice, Payment/Receipt', e: 'invoice' }
-  };
-
-  const VC_ROWS = [
-    { id: 'shopfront', label: 'Shopfront', sub: 'WordPress', stages: SHOPFRONT_STAGES },
-    { id: 'selfcare', label: 'Self Care', sub: 'Salesforce & Genesys', stages: SHOPFRONT_STAGES },
-    { id: 'assisted', label: 'Assisted Care', sub: 'Salesforce & Genesys', stages: SHOPFRONT_STAGES },
-    { id: 'paywall', label: 'Paywall', sub: 'Zephr', spanStages: ['attract','acquire','subscribe','fulfill','bill','retain','leave'],
-      cell: { cap: 'Subscription Entitlements', obj: 'Entitlement', e: 'entitlement' }},
-    { id: 'experiment', label: 'Experimentation', sub: 'Optimizely', stages: {
-      attract: { cap: 'Experimentation', obj: 'Experiment', e: 'experiment' },
-      retain: { cap: 'Experimentation', obj: 'Experiment', e: 'experiment' }
-    }},
-    { id: 'loyalty', label: 'Loyalty', sub: 'Crowdtwist', stages: {
-      retain: { cap: 'Loyalty Management', obj: 'Reward', e: 'reward' }
-    }},
-    { id: 'marketing', label: 'Marketing Automation', sub: 'Salesforce', stages: {
-      subscribe: { cap: 'Campaign Management', obj: 'Campaign, Target Audience, Marketing Comm', e: 'campaign' },
-      retain: { cap: 'Campaign Management', obj: 'Campaign, Target Audience, Marketing Comm', e: 'campaign' }
-    }},
-    { id: 'identity', label: 'Identity', sub: 'Okta | Auth0', spanStages: ['attract','acquire','subscribe','fulfill','bill','retain','leave'],
-      cell: { cap: 'Identity Management', obj: 'External User, Internal User', e: 'externalUser' }},
-    { id: 'crm', label: 'CRM', sub: 'Salesforce', stages: {
-      attract: { multi: [
-        { cap: 'B2C Profile Mgmt', obj: 'Registered User', e: 'registeredUser' },
-        { cap: 'Consent & Pref Mgmt', obj: 'Consent & Preferences', e: 'consent' },
-        { cap: 'Product Cat Mgmt', obj: 'Product', e: 'product' }
-      ]},
-      acquire: { multi: [
-        { cap: 'B2C Profile Mgmt', obj: 'Subscriber', e: 'subscriber' },
-        { cap: 'Offer & Promotion Mgmt', obj: 'Promotion, Offer', e: 'promotion' }
-      ]},
-      bill: { cap: 'Billing Management', obj: 'Invoice, Payment/Receipt', e: 'invoice' },
-      retain: { cap: 'Renewal & Termination', obj: 'Subscription', e: 'subscription' },
-      leave: { cap: 'Renewal & Termination', obj: 'Subscription', e: 'subscription' }
-    }},
-    { id: 'fsp', label: 'Subscription & Billing', sub: 'Future Subscription Platform', stages: {
-      attract: { multi: [
-        { cap: 'Product Cat Mgmt', obj: 'Product', e: 'product' },
-        { cap: 'Offer & Promotion Mgmt', obj: 'Promotion, Offer', e: 'offer' }
-      ]},
-      subscribe: { cap: 'Subscription Management', obj: 'Subscription', e: 'subscription' },
-      retain: { cap: 'Subscription Management', obj: 'Subscription', e: 'subscription' },
-      leave: { cap: 'Subscription Management', obj: 'Subscription', e: 'subscription' }
-    }},
-    { id: 'stripe', label: 'Payment Gateway', sub: 'Stripe', spanStages: ['subscribe','bill'],
-      cell: { cap: 'Payments', obj: 'Payment', e: 'payment' }},
-    { id: 'cdp', label: 'CDP', sub: 'ActionIQ', stages: {
-      attract: { cap: 'Next Best Action / Offer / Personalisation', obj: 'Offer, Action', e: 'offer' },
-      acquire: { cap: 'Next Best Action / Offer / Personalisation', obj: 'Offer, Action', e: 'offer' },
-      bill: { cap: 'Next Best Action / Offer / Personalisation', obj: 'Offer, Action', e: 'offer' },
-      retain: { cap: 'Next Best Action / Offer / Personalisation', obj: 'Offer, Action', e: 'offer' }
-    }},
-    { id: 'naviga', label: 'Print Delivery', sub: 'Naviga', stages: {
-      fulfill: { cap: 'Print Service Fulfilment', obj: 'Subscription', e: 'subscription' }
-    }},
-    { id: 'bi', label: 'Business Intelligence', sub: 'BigQuery & Looker', stages: {
-      attract: { cap: 'Analytics & Insights', obj: '(segment)', e: null },
-      subscribe: { cap: 'Analytics & Insights', obj: 'LTV', e: 'ltv' },
-      fulfill: { cap: 'Analytics & Insights', obj: 'Customer Scores', e: 'customerScores' },
-      bill: { cap: 'Analytics & Insights', obj: 'Customer Segment', e: 'customerSegment' },
-      retain: { cap: 'Analytics & Insights', obj: 'Engagement', e: 'engagementMetric' }
-    }}
+    { id: 'dcpm', title: 'DCPM - TBC (Consent & Preference Management)', entities: ['consent'] },
+    { id: 'sfcrm', title: 'SF CRM (Customer Management)', entities: ['party'] },
+    { id: 'zuora-prod', title: 'Zuora (Product & Offer Management)', entities: ['pricing', 'product'] },
+    { id: 'zuora-sub', title: 'Zuora (Subscription Account Management)', entities: ['account', 'customerAsset'] },
+    { id: 'zuora-bill', title: 'Zuora (Billing Management)', entities: ['billing', 'support'] },
+    { id: 'zuora-rev', title: 'Zuora (Revenue Accounting)', entities: ['revenue'] },
+    { id: 'actioniq', title: 'LCDP - ActionIQ (Engagement Management)', entities: ['engagement'] },
+    { id: 'sfmc', title: 'SFMC (Marketing Management)', entities: ['marketing'] },
+    { id: 'zephr', title: 'Zephr (Entitlement Enforcement)', entities: ['entitlement'] },
+    { id: 'naviga', title: 'Naviga / CAPI / Brightcove / Omny (Distribution)', entities: ['distribution'] },
+    { id: 'jde', title: 'JDE (Expenses / Procurement)', entities: ['expense', 'procurement'] },
+    { id: 'loyalty', title: 'Clock Rewards (Loyalty)', entities: ['loyaltyReward'] }
   ];
 
   const SOR_REG = {
@@ -343,8 +595,8 @@
     billingAcc: { label: 'Billing Acc. (pay method)', entity: 'billing', cells: { sfcrm: 'X', auth0: 'X', zephr: 'X', zuora: 'SoR', ods: 'MC', sfmcA: 'Link CRM ID*', sfmce: 'X', naviga: '-' }},
     product: { label: 'Product (pricing, content, entitlement)', entity: 'product', cells: { sfcrm: 'MC (B2B)', auth0: 'X', zephr: 'MC', zuora: 'SoR (Pricing+Digi)', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: 'SoR (Print)' }},
     subscription: { label: 'Subscription', entity: 'subscription', cells: { sfcrm: 'MC', auth0: 'X', zephr: 'MC/Ref+Entitlements', zuora: 'SoR', ods: 'MC', sfmcA: '*', sfmce: 'X', naviga: '-' }},
-    deliveryAddr: { label: 'Delivery Address', entity: 'account', cells: { sfcrm: 'SoR (Address)', auth0: 'X', zephr: 'X', zuora: 'MC', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: '-' }},
-    billingAddr: { label: 'Billing Address', entity: 'account', cells: { sfcrm: 'SoR (Address)', auth0: 'X', zephr: 'X', zuora: 'MC', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: 'MC' }}
+    deliveryAddr: { label: 'Delivery Address', entity: 'account', cells: { sfcrm: 'SoR (Address)', auth0: 'X', zephr: 'X', zuora: 'MC', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: 'MC' }},
+    billingAddr: { label: 'Billing Address', entity: 'account', cells: { sfcrm: 'SoR (Address)', auth0: 'X', zephr: 'X', zuora: 'MC', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: '-' }}
   };
 
   const SOR_COLS = ['sfcrm', 'auth0', 'zephr', 'zuora', 'ods', 'sfmcA', 'sfmce', 'naviga'];
@@ -354,7 +606,7 @@
     { label: 'Cust Acc', entity: 'party', cells: { think: '12345678', auth0: 'JWT + Cust ID', sfcrm: 'Cust ID 12345678', zuora: 'Ext ID 12345678', zephrL: 'X', zephrN: '12345678', ods: '12345678 Migrate flag?', sfmcA: 'X', sfmce: 'update subs key', naviga: 'X', nq: '12345678 Migrated flag' }},
     { label: 'Bill Acc', entity: 'billing', cells: { think: 'X', auth0: 'X', sfcrm: 'MC', zuora: 'A00001', zephrL: 'X', zephrN: '?', ods: 'A00001', sfmcA: 'X', sfmce: 'X', naviga: 'X', nq: 'A00001' }},
     { label: 'Subscription', entity: 'subscription', cells: { think: '45678111', auth0: 'X', sfcrm: 'MC (Sync)', zuora: 'Subs Id 45678111 (!)', zephrL: 'X', zephrN: '?', ods: '45678111 Zuora Subs Id', sfmcA: 'Ref To CRM', sfmce: 'X', naviga: 'X', nq: '45678111 History?' }},
-    { label: 'Entitlements', entity: 'entitlement', cells: { think: '-', auth0: 'X', sfcrm: 'X', zuora: 'Config source', zephrL: 'X', zephrN: 'ZEMS runtime', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: 'X', nq: '-' }},
+    { label: 'Meter Entitlements', entity: 'entitlement', cells: { think: '-', auth0: 'X', sfcrm: 'X', zuora: '-', zephrL: '-', zephrN: '-', ods: '-', sfmcA: 'X', sfmce: 'X', naviga: 'X', nq: '-' }},
     { label: 'Payment Method', entity: 'payment', cells: { think: 'Token XYZ', zuora: 'Token XYZ', note: '* Need to consider failed payments' }},
     { label: 'Refund', entity: 'billing', cells: { think: '-', zuora: '-' }},
     { label: 'Payment TX', entity: 'billing', cells: { zuora: 'drive catchup bill run' }},
@@ -398,9 +650,8 @@
   function cellHtml(c, row, stageId) {
     if (!c) return '';
     if (c.multi) {
-      return c.multi.map(b => `<div class="vc-block"><div class="cap">${esc(b.cap)}</div><div class="obj">${esc(b.obj)}</div></div>`).join('');
+      return c.multi.map(b => `<div class="vc-block"><div class="cap">${esc(b.cap)}</div>${b.obj ? `<div class="obj">${esc(b.obj)}</div>` : ''}</div>`).join('');
     }
-    const e = c.e || '';
     return `<div class="cap">${esc(c.cap)}</div>${c.obj ? `<div class="obj">${esc(c.obj)}</div>` : ''}`;
   }
 
@@ -412,29 +663,48 @@
     });
     VC_ROWS.forEach(row => {
       html += `<div class="plat-hdr">${esc(row.label)}<small>${esc(row.sub)}</small></div>`;
-      if (row.spanStages) {
-        const c = row.cell;
-        const start = stageCol(row.spanStages[0]);
-        const end = stageCol(row.spanStages[row.spanStages.length - 1]) + 1;
-        html += `<div class="vc-cell" style="grid-column:${start}/${end}" data-e="${esc(c.e || '')}" data-stage="${row.spanStages[0]}" data-plat="${esc(row.id)}">${cellHtml(c, row)}</div>`;
-      } else {
-        STAGES.forEach(st => {
-          const c = row.stages[st.id];
-          if (!c) html += '<div class="vc-cell empty"></div>';
-          else {
-            const eid = c.e || (c.multi && c.multi[0].e) || '';
-            html += `<div class="vc-cell" data-e="${esc(eid)}" data-stage="${st.id}" data-plat="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
-          }
-        });
-      }
+      const rs = rowStages(row) || {};
+      // Support multi-band rows: spans[], plus legacy spanStages+cell
+      const spans = (row.spans && row.spans.length)
+        ? row.spans
+        : (row.spanStages && row.spanStages.length ? [{ spanStages: row.spanStages, cell: row.cell }] : []);
+      const covered = new Set();
+      spans.forEach((sp) => (sp.spanStages || []).forEach((id) => covered.add(id)));
+      STAGES.forEach(st => {
+        const startSpan = spans.find((sp) => sp.spanStages && sp.spanStages[0] === st.id);
+        if (startSpan) {
+          const c = startSpan.cell || {};
+          const start = stageCol(startSpan.spanStages[0]);
+          const end = stageCol(startSpan.spanStages[startSpan.spanStages.length - 1]) + 1;
+          html += `<div class="vc-cell" style="grid-column:${start}/${end}" data-e="${esc(c.e || '')}" data-stage="${esc(st.id)}" data-plat="${esc(row.id)}">${cellHtml(c, row)}</div>`;
+          return;
+        }
+        if (covered.has(st.id)) return;
+        const c = rs[st.id];
+        if (!c) html += '<div class="vc-cell empty"></div>';
+        else {
+          const eid = c.e || (c.multi && c.multi[0].e) || '';
+          html += `<div class="vc-cell" data-e="${esc(eid)}" data-stage="${st.id}" data-plat="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
+        }
+      });
     });
     html += '</div></div>';
     return html;
   }
 
-  function renderStandaloneBar() {
-    let html = '<div class="standalone-bar"><h4>Bridge entities (between capabilities on slide)</h4>';
-    STANDALONE_ENTITIES.forEach(eid => {
+  function relatedIds(entityId) {
+    if (!entityId) return [];
+    const e = ENTITIES[entityId];
+    const out = new Set([entityId]);
+    if (e && Array.isArray(e.ids)) e.ids.forEach((id) => out.add(id));
+    if (e && Array.isArray(e.also)) e.also.forEach((id) => out.add(id));
+    return [...out];
+  }
+
+  function renderStandaloneBar(mode) {
+    const list = BRIDGE_BY_LAYER[mode] || STANDALONE_ENTITIES;
+    let html = '<div class="standalone-bar"><h4>Bridge entities (outside red outlines on slide)</h4>';
+    list.forEach(eid => {
       const e = ENTITIES[eid];
       if (e) html += `<span class="entity-chip" data-e="${eid}">${esc(e.name)}</span>`;
     });
@@ -454,7 +724,7 @@
       html += '</div>';
     });
     html += '</div>';
-    if (mode === 'capability') html += renderStandaloneBar();
+    html += renderStandaloneBar(mode);
     return html;
   }
 
@@ -468,7 +738,7 @@
       });
       html += '</div>';
     });
-    return html + '</div>' + renderStandaloneBar();
+    return html + '</div>' + renderStandaloneBar('asset');
   }
 
   function renderSoRTable(section, data, cols) {
@@ -533,12 +803,30 @@
     main.innerHTML = `
       <div class="breadcrumb">Layer <strong>${Object.keys(LAYERS).indexOf(currentLayer) + 1}</strong> of 6</div>
       <div class="layer-head"><h2>${esc(L.title)}</h2><p>${esc(L.desc)}</p></div>
+      <div id="vc-editor-slot"></div>
       <div class="toolbar">
         <label><input type="checkbox" id="show-ref" /> Show reference slide image</label>
       </div>
       ${body}
       <img class="ref-img" id="ref-img" src="${esc(L.img)}" alt="Reference slide" />
     `;
+    if (currentLayer === 'valuechain') {
+      const slot = document.getElementById('vc-editor-slot');
+      if (slot && typeof FSS_VC !== 'undefined') {
+        vcEditorApi = FSS_VC.mountEditor(slot, {
+          getData: () => vcDocument,
+          setData: (d) => { vcDocument = d; },
+          onApply: (d) => {
+            applyValueChainDocument(d);
+            renderLayer();
+          },
+          onStatus: () => updateVcStatus(),
+        });
+      } else if (slot) {
+        slot.innerHTML = '<p class="vc-ed-hint">Editor requires vc-data.js (serve this folder via HTTP or GitHub Pages). Grid data is loaded from the bundled copy.</p>';
+      }
+      updateVcStatus();
+    }
     document.getElementById('show-ref').addEventListener('change', function () {
       document.getElementById('ref-img').classList.toggle('show', this.checked);
     });
@@ -576,16 +864,19 @@
     }
 
     if (e) {
+      const related = relatedIds(payload.entityId).filter((id) => id !== payload.entityId && ENTITIES[id]);
       html += `<dl>
         <dt>Business capability</dt><dd>${esc(e.capability)}</dd>
         <dt>Information asset</dt><dd>${esc(e.asset)}</dd>
         <dt>Platform (overlay)</dt><dd>${esc(e.platform)}</dd>
+        ${related.length ? `<dt>Also highlights</dt><dd>${esc(related.map((id) => ENTITIES[id].name).join(', '))}</dd>` : ''}
       </dl>`;
     }
 
     html += `<div class="actions">
       <button type="button" data-goto="valuechain">Value chain</button>
       <button type="button" data-goto="capability">Capabilities</button>
+      <button type="button" data-goto="asset">Information assets</button>
       <button type="button" data-goto="platform">Platforms</button>
       <button type="button" data-goto="datamaster">SoR / MC</button>
       <button type="button" data-goto="migration">Migration</button>
@@ -593,17 +884,28 @@
 
     detailBody.innerHTML = html;
     detailBody.querySelectorAll('[data-goto]').forEach(btn => {
-      btn.addEventListener('click', () => switchLayer(btn.dataset.goto));
+      btn.addEventListener('click', () => {
+        const keep = selection;
+        switchLayer(btn.dataset.goto);
+        if (keep && keep.entityId) {
+          selection = keep;
+          highlightSelection();
+        }
+      });
     });
     highlightSelection();
   }
 
   function highlightSelection() {
     document.querySelectorAll('.sel').forEach(el => el.classList.remove('sel'));
-    if (!selection) return;
-    if (selection.entityId) {
-      document.querySelectorAll(`[data-e="${selection.entityId}"]`).forEach(el => el.classList.add('sel'));
-    }
+    if (!selection || !selection.entityId) return;
+    const ids = relatedIds(selection.entityId);
+    ids.forEach((id) => {
+      document.querySelectorAll(`[data-e="${id}"]`).forEach(el => el.classList.add('sel'));
+    });
+    document.querySelectorAll('.cap-group').forEach((grp) => {
+      if (ids.some((id) => grp.querySelector(`[data-e="${id}"]`))) grp.classList.add('sel');
+    });
   }
 
   function bindClicks() {
@@ -612,12 +914,25 @@
         const eid = cell.dataset.e;
         const row = VC_ROWS.find(r => r.id === cell.dataset.plat);
         const st = cell.dataset.stage;
-        const stageData = row && row.stages[st];
+        let stageData;
+        if (row) {
+          const spans = (row.spans && row.spans.length)
+            ? row.spans
+            : (row.spanStages ? [{ spanStages: row.spanStages, cell: row.cell }] : []);
+          const hit = spans.find((sp) => (sp.spanStages || []).includes(st));
+          if (hit) stageData = hit.cell;
+          else {
+            const rs = rowStages(row);
+            stageData = rs && rs[st];
+          }
+        }
+        const entityId = eid || (stageData && (stageData.e || (stageData.multi && stageData.multi[0].e)));
         showDetail({
-          type: 'vc', entityId: eid || (stageData && stageData.e),
-          title: stageData && stageData.obj,
+          type: 'vc', entityId: entityId || null,
+          title: stageData && (stageData.obj || (stageData.multi && stageData.multi.map(m => m.obj).join(', '))),
           stage: st, platformLabel: row ? row.label + ' (' + row.sub + ')' : '',
-          capability: stageData && stageData.cap, object: stageData && stageData.obj
+          capability: stageData && (stageData.cap || (stageData.multi && stageData.multi.map(m => m.cap).join(' / '))),
+          object: stageData && (stageData.obj || (stageData.multi && stageData.multi.map(m => m.obj).join(', ')))
         });
       });
     });
@@ -657,15 +972,45 @@
     btn.addEventListener('click', () => switchLayer(btn.dataset.layer));
   });
 
-  const urlParams = new URLSearchParams(location.search);
-  if (urlParams.get('layer') && LAYERS[urlParams.get('layer')]) {
-    currentLayer = urlParams.get('layer');
-    document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.layer === currentLayer));
+  async function bootstrap() {
+    function escMsg(s) {
+      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    if (typeof FSS_VC === 'undefined') {
+      // Fallback: compile embedded JSON without vc-data.js (file:// / offline)
+      const el = document.getElementById('vc-published-data');
+      try {
+        const data = JSON.parse(el.textContent);
+        applyValueChainDocument(data);
+        vcSourceLabel = 'Bundled copy in page (vc-data.js not loaded)';
+      } catch (e) {
+        main.innerHTML = '<p style="color:#8b1e1e;padding:24px">Could not load value chain data.</p>';
+        return;
+      }
+    } else {
+      try {
+        const resolved = await FSS_VC.resolveInitialData();
+        vcSourceLabel = resolved.label;
+        applyValueChainDocument(resolved.data);
+      } catch (e) {
+        main.innerHTML = '<p style="color:#8b1e1e;padding:24px">' + escMsg(e.message) + '</p>';
+        return;
+      }
+    }
+
+    const urlParams = new URLSearchParams(location.search);
+    if (urlParams.get('layer') && LAYERS[urlParams.get('layer')]) {
+      currentLayer = urlParams.get('layer');
+      document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.layer === currentLayer));
+    }
+    renderLayer();
+    if (urlParams.get('e') && ENTITIES[urlParams.get('e')]) {
+      showDetail({ type: 'entity', entityId: urlParams.get('e'), title: ENTITIES[urlParams.get('e')].name });
+    }
   }
-  renderLayer();
-  if (urlParams.get('e') && ENTITIES[urlParams.get('e')]) {
-    showDetail({ type: 'entity', entityId: urlParams.get('e'), title: ENTITIES[urlParams.get('e')].name });
-  }
+
+  bootstrap();
 })();
 </script>
 </body>

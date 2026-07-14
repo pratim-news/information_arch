@@ -1,0 +1,29 @@
+row_id,cell_type,stage_from,stage_to,block_order,capability,objects,entity_id
+shopfront,single,attract,,1,B2C Profile Management,Registered User,registeredUser
+shopfront,single,acquire,,1,B2C Profile Management,Subscriber,subscriber
+shopfront,single,subscribe,,1,Order Management,Order,order
+shopfront,span,bill,retain,1,Billing Management,"Invoice, Payment/Receipt",invoice
+paywall,span,acquire,leave,1,Subscription Entitlements,Entitlement,entitlement
+experiment,span,attract,acquire,1,Experimentation,Experiment,experiment
+experiment,single,retain,,1,Experimentation,Experiment,experiment
+loyalty,single,retain,,1,Loyalty Management,Reward,reward
+marketing,span,subscribe,retain,1,Campaign Management,"Campaign, Target Audience, Marketing Comm",campaign
+identity,span,attract,retain,1,Identity Management,"External User, Internal User",externalUser
+crm,single,attract,,1,B2C Profile Mgmt,Registered User,registeredUser
+crm,single,acquire,,1,Consent & Pref Mgmt,Consent & Preferences,consent
+crm,single,subscribe,,1,B2C Profile Mgmt,Subscriber,subscriber
+crm,single,bill,,1,Billing Management,"Invoice, Payment/Receipt",invoice
+crm,single,retain,,1,Renewal & Termination,Subscription,subscription
+crm,single,leave,,1,Renewal & Termination,Subscription,subscription
+fsp,single,attract,,1,Product Cat Mgmt,Product,product
+fsp,single,acquire,,1,Offer & Promotion Mgmt,"Promotion, Offer",promotion
+fsp,single,subscribe,,1,Subscription Management,Subscription,subscription
+stripe,span,bill,retain,1,Payments,Payment,payment
+cdp,span,attract,subscribe,1,Next Best Action / Offer / Personalisation,"Offer, Action",offer
+cdp,span,bill,retain,1,Next Best Action / Offer / Personalisation,"Offer, Action",offer
+naviga,single,fulfill,,1,Print Service Fulfilment,Subscription,subscription
+bi,single,attract,,1,Analytics & Insights,,
+bi,single,subscribe,,1,Analytics & Insights,LTV,ltv
+bi,single,fulfill,,1,Analytics & Insights,Customer Scores,customerScores
+bi,single,bill,,1,Analytics & Insights,Customer Segment,customerSegment
+bi,single,retain,,1,Analytics & Insights,Engagement,engagementMetric

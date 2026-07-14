@@ -1,0 +1,15 @@
+row_order,row_id,label,sub
+1,shopfront,Shopfront,WordPress
+2,selfcare,Self Care,Salesforce & Genesys
+3,assisted,Assisted Care,Salesforce & Genesys
+4,paywall,Paywall,Zephr
+5,experiment,Experimentation,Optimizely
+6,loyalty,Loyalty,Clock Rewards
+7,marketing,Marketing Automation,Salesforce
+8,identity,Identity,Okta | Auth0
+9,crm,CRM,Salesforce
+10,fsp,Subscription & Billing,Future Subscription Platform
+11,stripe,Payment Gateway,Stripe
+12,cdp,CDP,ActionIQ
+13,naviga,Print Delivery,Naviga
+14,bi,Business Intelligence,Google BigQuery & Looker
