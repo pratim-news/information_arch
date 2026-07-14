@@ -7,7 +7,7 @@ paywall,span,acquire,leave,1,Subscription Entitlements,Entitlement,entitlement
 experiment,span,attract,acquire,1,Experimentation,Experiment,experiment
 experiment,single,retain,,1,Experimentation,Experiment,experiment
 loyalty,single,retain,,1,Loyalty Management,Reward,reward
-marketing,span,subscribe,retain,1,Campaign Management,"Campaign, Target Audience, Marketing Comm",campaign
+marketing,span,attract,leave,1,Campaign Management,"Campaign, Target Audience, Marketing Comm",campaign
 identity,span,attract,retain,1,Identity Management,"External User, Internal User",externalUser
 crm,single,attract,,1,B2C Profile Mgmt,Registered User,registeredUser
 crm,single,acquire,,1,Consent & Pref Mgmt,Consent & Preferences,consent

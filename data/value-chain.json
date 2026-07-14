@@ -69,8 +69,8 @@
       "sub": "Salesforce",
       "spans": [
         {
-          "from": "subscribe",
-          "to": "retain",
+          "from": "attract",
+          "to": "leave",
           "blocks": [{ "cap": "Campaign Management", "obj": "Campaign, Target Audience, Marketing Comm", "entity": "campaign" }]
         }
       ]
