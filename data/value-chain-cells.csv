@@ -11,12 +11,13 @@ marketing,span,attract,leave,1,Campaign Management,"Campaign, Target Audience, M
 identity,span,attract,leave,1,Identity Management,"External User, Internal User",externalUser
 crm,single,attract,,1,B2C Profile Mgmt,Registered User,registeredUser
 crm,single,acquire,,1,Consent & Pref Mgmt,Consent & Preferences,consent
-crm,single,subscribe,,1,B2C Profile Mgmt,Subscriber,subscriber
+crm,single,acquire,,2,B2C Profile Mgmt,Subscriber,subscriber
 crm,single,bill,,1,Billing Management,"Invoice, Payment/Receipt",invoice
 crm,single,retain,,1,Renewal & Termination,Subscription,subscription
 crm,single,leave,,1,Renewal & Termination,Subscription,subscription
 fsp,single,attract,,1,Product Cat Mgmt,Product,product
 fsp,single,acquire,,1,Offer & Promotion Mgmt,"Promotion, Offer",promotion
+fsp,single,acquire,,2,B2C Profile Mgmt,Subscriber,subscriber
 fsp,single,subscribe,,1,Subscription Management,Subscription,subscription
 stripe,span,subscribe,leave,1,Payments,Payment,payment
 cdp,span,attract,subscribe,1,Next Best Action / Offer / Personalisation,"Offer, Action",offer

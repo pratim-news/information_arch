@@ -93,8 +93,10 @@
       "sub": "Salesforce",
       "cells": {
         "attract": [{ "cap": "B2C Profile Mgmt", "obj": "Registered User", "entity": "registeredUser" }],
-        "acquire": [{ "cap": "Consent & Pref Mgmt", "obj": "Consent & Preferences", "entity": "consent" }],
-        "subscribe": [{ "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }],
+        "acquire": [
+          { "cap": "Consent & Pref Mgmt", "obj": "Consent & Preferences", "entity": "consent" },
+          { "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }
+        ],
         "bill": [{ "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }],
         "retain": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }],
         "leave": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }]
@@ -106,7 +108,10 @@
       "sub": "Future Subscription Platform",
       "cells": {
         "attract": [{ "cap": "Product Cat Mgmt", "obj": "Product", "entity": "product" }],
-        "acquire": [{ "cap": "Offer & Promotion Mgmt", "obj": "Promotion, Offer", "entity": "promotion" }],
+        "acquire": [
+          { "cap": "Offer & Promotion Mgmt", "obj": "Promotion, Offer", "entity": "promotion" },
+          { "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }
+        ],
         "subscribe": [{ "cap": "Subscription Management", "obj": "Subscription", "entity": "subscription" }]
       }
     },
