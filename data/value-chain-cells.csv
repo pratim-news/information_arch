@@ -20,6 +20,6 @@ fsp,single,acquire,,1,Offer & Promotion Mgmt,"Promotion, Offer",promotion
 fsp,single,subscribe,,1,Subscription Management,Subscription,subscription
 stripe,span,bill,leave,1,Payments,Payment,payment
 cdp,span,attract,subscribe,1,Next Best Action / Offer / Personalisation,"Offer, Action",offer
-cdp,span,bill,leave,1,Next Best Action / Offer / Personalisation,"Offer, Action",offer
+cdp,span,bill,retain,1,Next Best Action / Offer / Personalisation,"Offer, Action",offer
 naviga,single,fulfill,,1,Print Service Fulfilment,Subscription,subscription
 bi,span,attract,leave,1,Analytics & Insights,"LTV, Customer Scores, Customer Segment, Engagement",ltv
