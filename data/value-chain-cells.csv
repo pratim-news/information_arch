@@ -18,7 +18,7 @@ crm,single,leave,,1,Renewal & Termination,Subscription,subscription
 fsp,single,attract,,1,Product Cat Mgmt,Product,product
 fsp,single,acquire,,1,Offer & Promotion Mgmt,"Promotion, Offer",promotion
 fsp,single,subscribe,,1,Subscription Management,Subscription,subscription
-stripe,span,bill,leave,1,Payments,Payment,payment
+stripe,span,subscribe,leave,1,Payments,Payment,payment
 cdp,span,attract,subscribe,1,Next Best Action / Offer / Personalisation,"Offer, Action",offer
 cdp,span,bill,retain,1,Next Best Action / Offer / Personalisation,"Offer, Action",offer
 naviga,single,fulfill,,1,Print Service Fulfilment,Subscription,subscription
