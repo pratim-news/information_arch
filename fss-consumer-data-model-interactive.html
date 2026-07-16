@@ -66,6 +66,34 @@
       cursor: pointer; font-weight: 400;
     }
     .admin-footer .admin-muted-control:hover { color: var(--accent); }
+    .admin-gate-locked { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .admin-unlock-btn {
+      font-size: 11px; padding: 0; border: 0; background: transparent;
+      color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+    }
+    .admin-unlock-btn:hover { color: var(--accent); }
+    .admin-pass-form {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    }
+    .admin-pass-form[hidden] { display: none !important; }
+    .admin-pass-form input[type="password"] {
+      font-size: 12px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 4px;
+      width: 140px; background: #fff;
+    }
+    .admin-pass-form button {
+      font-size: 11px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 4px;
+      background: #fff; cursor: pointer;
+    }
+    .admin-pass-err { font-size: 11px; color: #8b1e1e; margin: 0; }
+    .admin-pass-err[hidden] { display: none !important; }
+    .admin-tools { display: block; }
+    .admin-tools[hidden] { display: none !important; }
+    .admin-lock-btn {
+      font-size: 10px; padding: 0; border: 0; background: transparent;
+      color: #9aa5b1; cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+      margin-left: 10px;
+    }
+    .admin-lock-btn:hover { color: var(--accent); }
     .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow: auto; }
 
     /* Value chain grid - Journey (deep blue) over Value Chain (light blue); left = Function */
@@ -686,6 +714,86 @@
   let currentLayer = 'valuechain';
   let selection = null;
 
+  // Client-side gate only - obscures Admin controls; not strong security.
+  // Change ADMIN_PASSWORD to whatever the curator wants.
+  const ADMIN_PASSWORD = 'fss-admin';
+  const ADMIN_UNLOCK_KEY = 'fss-ia-admin-unlocked';
+
+  function isAdminUnlocked() {
+    try { return sessionStorage.getItem(ADMIN_UNLOCK_KEY) === '1'; } catch (e) { return false; }
+  }
+  function setAdminUnlocked(on) {
+    try {
+      if (on) sessionStorage.setItem(ADMIN_UNLOCK_KEY, '1');
+      else sessionStorage.removeItem(ADMIN_UNLOCK_KEY);
+    } catch (e) { /* ignore */ }
+  }
+
+  function bindAdminFooter(L) {
+    const unlocked = isAdminUnlocked();
+    const gate = document.getElementById('admin-gate');
+    const tools = document.getElementById('admin-tools');
+    if (!gate || !tools) return;
+
+    gate.hidden = unlocked;
+    tools.hidden = !unlocked;
+
+    if (!unlocked) {
+      const form = document.getElementById('admin-pass-form');
+      const err = document.getElementById('admin-pass-err');
+      document.getElementById('admin-unlock-btn')?.addEventListener('click', () => {
+        if (form) form.hidden = false;
+        document.getElementById('admin-pass-input')?.focus();
+      });
+      form?.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const val = (document.getElementById('admin-pass-input')?.value || '').trim();
+        if (val === ADMIN_PASSWORD) {
+          setAdminUnlocked(true);
+          if (err) err.hidden = true;
+          bindAdminFooter(L);
+          mountAdminTools(L);
+        } else {
+          if (err) err.hidden = false;
+        }
+      });
+      return;
+    }
+
+    mountAdminTools(L);
+    document.getElementById('admin-lock-btn')?.addEventListener('click', () => {
+      setAdminUnlocked(false);
+      renderLayer();
+    });
+  }
+
+  function mountAdminTools(L) {
+    const showRef = document.getElementById('show-ref');
+    const refImg = document.getElementById('ref-img');
+    if (showRef && refImg) {
+      showRef.addEventListener('change', function () {
+        refImg.classList.toggle('show', this.checked);
+      });
+    }
+    if (currentLayer === 'valuechain') {
+      const slot = document.getElementById('vc-editor-slot');
+      if (slot && typeof FSS_VC !== 'undefined') {
+        vcEditorApi = FSS_VC.mountEditor(slot, {
+          getData: () => vcDocument,
+          setData: (d) => { vcDocument = d; },
+          onApply: (d) => {
+            applyValueChainDocument(d);
+            renderLayer();
+          },
+          onStatus: () => updateVcStatus(),
+        });
+        updateVcStatus();
+      } else if (slot) {
+        slot.innerHTML = '';
+      }
+    }
+  }
+
   const main = document.getElementById('main');
   const detailEmpty = document.getElementById('detail-empty');
   const detailBody = document.getElementById('detail-body');
@@ -903,31 +1011,23 @@
       ${body}
       <div class="admin-footer">
         <p class="vc-ed-admin-note">Admin</p>
-        <label class="admin-muted-control"><input type="checkbox" id="show-ref" /> Show reference slide image</label>
-        <img class="ref-img" id="ref-img" src="${esc(L.img)}" alt="Reference slide" />
-        <div id="vc-editor-slot"></div>
+        <div id="admin-gate" class="admin-gate-locked">
+          <button type="button" class="admin-unlock-btn" id="admin-unlock-btn">Unlock</button>
+          <form id="admin-pass-form" class="admin-pass-form" hidden>
+            <input type="password" id="admin-pass-input" placeholder="Password" autocomplete="current-password" />
+            <button type="submit">Enter</button>
+          </form>
+          <p class="admin-pass-err" id="admin-pass-err" hidden>Incorrect password</p>
+        </div>
+        <div id="admin-tools" class="admin-tools" hidden>
+          <label class="admin-muted-control"><input type="checkbox" id="show-ref" /> Show reference slide image</label>
+          <button type="button" class="admin-lock-btn" id="admin-lock-btn">Lock</button>
+          <img class="ref-img" id="ref-img" src="${esc(L.img)}" alt="Reference slide" />
+          <div id="vc-editor-slot"></div>
+        </div>
       </div>
     `;
-    if (currentLayer === 'valuechain') {
-      const slot = document.getElementById('vc-editor-slot');
-      if (slot && typeof FSS_VC !== 'undefined') {
-        vcEditorApi = FSS_VC.mountEditor(slot, {
-          getData: () => vcDocument,
-          setData: (d) => { vcDocument = d; },
-          onApply: (d) => {
-            applyValueChainDocument(d);
-            renderLayer();
-          },
-          onStatus: () => updateVcStatus(),
-        });
-      } else if (slot) {
-        slot.innerHTML = '';
-      }
-      updateVcStatus();
-    }
-    document.getElementById('show-ref').addEventListener('change', function () {
-      document.getElementById('ref-img').classList.toggle('show', this.checked);
-    });
+    bindAdminFooter(L);
     bindClicks();
     highlightSelection();
   }
