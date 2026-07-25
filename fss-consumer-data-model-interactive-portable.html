@@ -1913,7 +1913,7 @@
           <span><i></i> Entity</span>
           <span>Crow-foot = many (*); bar = one (1)</span>
           <span>Dashed = secondary relationship</span>
-          <span>Green pill = verified SoR (Split lists each system)</span>
+          <span>Green pill = SoR (Split lists each system)</span>
           <span>${Object.keys(DATA_MODEL_2.entities).length} entities</span>
           <span id="erd-rel-count">${erdShowAllRels ? ERD_RELS.length + ' relationships (all)' : coreCount + ' of ' + ERD_RELS.length + ' relationships shown'}</span>
         </div>
@@ -2126,7 +2126,7 @@
                 Array.isArray(erd.appLink.roles) && erd.appLink.roles.length
                   ? `  -  ${esc(erd.appLink.roles.map((r) => r.sor + ' (' + r.role + ')').join(' | '))}`
                   : ''
-              }${erd.appLink.note ? `  -  ${esc(erd.appLink.note)}` : ''} <span class="draft-pill" style="margin-left:6px;background:#e8f6ef;border-color:#b8dfc8;color:#1f5c3f">VERIFIED</span>${
+              }${erd.appLink.note ? `  -  ${esc(erd.appLink.note)}` : ''}${
                 Array.isArray(erd.appLink.roles) && erd.appLink.roles.length
                   ? `<ul class="erd-rel-list" style="margin-top:8px">${erd.appLink.roles.map((r) => `<li>${esc(r.role)} -> SoR ${esc(r.sor)}</li>`).join('')}</ul>`
                   : ''
@@ -2139,7 +2139,7 @@
                   ? `<ul class="erd-rel-list" style="margin-top:8px">${erd.appLink.consumers.map((c) => `<li>Consumer  -  ${esc(c.system)}${c.role ? `: ${esc(c.role)}` : ''}</li>`).join('')}</ul>`
                   : ''
               }`
-            : 'Not verified yet  -  next step after you approve entity clusters.'
+            : 'SoR not set for this entity yet.'
         }</dd>
       </dl>`;
     } else if (payload.type === 'vc') {
