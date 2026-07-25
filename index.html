@@ -46,11 +46,6 @@
     .detail dl { margin: 12px 0 0; font-size: 13px; }
     .detail dt { font-weight: 600; color: var(--muted); font-size: 11px; text-transform: uppercase; margin-top: 10px; }
     .detail dd { margin: 4px 0 0; }
-    .detail .actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
-    .detail .actions button {
-      font-size: 12px; padding: 5px 10px; border-radius: 5px; border: 1px solid var(--line);
-      background: var(--accent-soft); cursor: pointer; color: var(--accent);
-    }
     .detail .trail-links { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
     .detail .trail-link {
       text-align: left; font-size: 12px; padding: 6px 9px; border-radius: 6px;
@@ -2273,10 +2268,6 @@
         <dt>Information asset</dt><dd>${esc(e.asset)}</dd>
         <dt>Platform (overlay)</dt><dd>${esc(e.platform)}</dd>
         ${related.length ? `<dt>Also highlights</dt><dd>${esc(related.map((id) => ENTITIES[id].name).join(', '))}</dd>` : ''}
-      </dl>`;
-    } else if (e && payload.type === 'erd') {
-      html += `<dl>
-        <dt>Linked overlay entity</dt><dd>${esc(e.capability)}  |  ${esc(e.platform)}</dd>
       </dl>`;
     }
 

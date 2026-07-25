@@ -9,7 +9,7 @@ Open `fss-consumer-data-model-interactive.html` in a browser.
 Layers:
 
 1. Value chain
-2. **Data Model 2.0 ERD** - interactive ERD: orthogonal routing, crow-foot cardinality, spine-by-default with "Show all relationships", screenshot view, optional arrange. Source PNG under Admin reference.
+2. **Data Model 2.0** - interactive model: orthogonal routing, crow-foot cardinality, spine-by-default with "Show all relationships", screenshot view, optional arrange. Source PNG under Admin reference.
 3. **Business Capabilities & Information Assets** - merged capability/asset overlay (identical EIA groupings); Admin can show both source PNGs
 4. Platform overlay (interactive groups override older PNG workshop labels)
 5. Data Master SoR/MC (matrix cells updated 2026-07-25)
@@ -17,7 +17,7 @@ Layers:
 
 Deep-link: `?layer=datamodel2` (legacy `?layer=asset` redirects to capabilities)
 
-**Cross-layer links:** selecting any entity/cell shows an "Appears across layers" trail in the detail panel with click-through links to its Value chain stages, Business Capability group, and Data Model 2.0 ERD entity. Jumping keeps the selection, highlights the target, and scrolls it into view.
+**Cross-layer links:** selecting any entity/cell shows an "Appears across layers" trail in the detail panel with click-through links to its Value chain stages, Business Capability group, and Data Model 2.0 entity. Jumping keeps the selection, highlights the target, and scrolls it into view.
 
 For the **in-page editor**, serve the folder over HTTP (GitHub Pages or a local static server). Opening via `file://` still shows the grid from the bundled JSON; the editor needs `vc-data.js`.
 
