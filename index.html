@@ -2157,12 +2157,12 @@
 
     const draftBadge = L.draft ? '<span class="draft-pill">DRAFT</span>' : '';
     const refLabel = currentLayer === 'datamodel2'
-      ? 'Show reference whiteboard image (source ERD)'
+      ? 'Show reference whiteboard image'
       : currentLayer === 'capability'
         ? 'Show reference slide images (capability + asset overlays)'
         : 'Show reference slide image';
     const refAlt = currentLayer === 'datamodel2'
-      ? 'Reference whiteboard: Data Model 2.0 source ERD'
+      ? 'Reference whiteboard: Data Model 2.0'
       : 'Reference slide';
     const refSources = Array.isArray(L.imgs) && L.imgs.length ? L.imgs : [L.img];
     const refImgsHtml = refSources.map((src, i) =>
