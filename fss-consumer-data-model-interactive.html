@@ -148,12 +148,20 @@
       cursor: pointer; transition: background .15s, box-shadow .15s;
     }
     .vc-cell:hover, .vc-cell.sel { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
+    .vc-cell.dim { opacity: .38; }
     .vc-cell .cap { color: var(--cap); font-weight: 600; font-size: 10px; line-height: 1.25; }
     .vc-cell .obj {
       color: var(--obj); font-size: 10px; margin-top: 3px; border: 1px solid #b8cfe0; border-radius: 10px;
       display: inline-block; padding: 1px 6px; background: #fff;
     }
     .vc-cell .objs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .vc-cell .vc-block.sel {
+      background: rgba(22, 75, 122, 0.12);
+      box-shadow: inset 0 0 0 1px var(--accent);
+      border-radius: 4px;
+      padding: 4px;
+      margin: -4px -4px 2px;
+    }
     /* Multi-journey Capability bands: center Capability + Business Objects */
     .vc-cell.vc-span {
       text-align: center;
@@ -1422,10 +1430,21 @@
     return `<div class="objs">${parts.map((p) => `<div class="obj">${esc(p)}</div>`).join('')}</div>`;
   }
 
+  // Entity ids referenced by a compiled VC cell (single or multi-block).
+  function cellEntityIds(c) {
+    if (!c) return [];
+    if (Array.isArray(c.multi) && c.multi.length) {
+      return c.multi.map((b) => b.e).filter(Boolean);
+    }
+    return c.e ? [c.e] : [];
+  }
+
   function cellHtml(c, row, stageId) {
     if (!c) return '';
     if (c.multi) {
-      return c.multi.map(b => `<div class="vc-block"><div class="cap">${esc(b.cap)}</div>${objHtml(b.obj)}</div>`).join('');
+      return c.multi.map((b) =>
+        `<div class="vc-block" data-e="${esc(b.e || '')}"><div class="cap">${esc(b.cap)}</div>${objHtml(b.obj)}</div>`
+      ).join('');
     }
     return `<div class="cap">${esc(c.cap)}</div>${objHtml(c.obj)}`;
   }
@@ -1470,10 +1489,11 @@
         const startSpan = spans.find((sp) => sp.spanStages && sp.spanStages[0] === st.id);
         if (startSpan) {
           const c = startSpan.cell || {};
+          const ents = cellEntityIds(c);
           const start = stageCol(startSpan.spanStages[0]);
           const end = stageCol(startSpan.spanStages[startSpan.spanStages.length - 1]) + 1;
           const spanCls = (startSpan.spanStages.length > 1) ? ' vc-span' : '';
-          html += `<div class="vc-cell${spanCls}" style="grid-row:${gridRow};grid-column:${start}/${end}" data-e="${esc(c.e || '')}" data-stage="${esc(st.id)}" data-func="${esc(row.id)}">${cellHtml(c, row)}</div>`;
+          html += `<div class="vc-cell${spanCls}" style="grid-row:${gridRow};grid-column:${start}/${end}" data-e="${esc(ents[0] || '')}" data-entities="${esc(ents.join(','))}" data-stage="${esc(st.id)}" data-func="${esc(row.id)}">${cellHtml(c, row)}</div>`;
           return;
         }
         if (covered.has(st.id)) return;
@@ -1481,8 +1501,8 @@
         const col = stageCol(st.id);
         if (!c) html += `<div class="vc-cell empty" style="grid-row:${gridRow};grid-column:${col}"></div>`;
         else {
-          const eid = c.e || (c.multi && c.multi[0].e) || '';
-          html += `<div class="vc-cell" style="grid-row:${gridRow};grid-column:${col}" data-e="${esc(eid)}" data-stage="${st.id}" data-func="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
+          const ents = cellEntityIds(c);
+          html += `<div class="vc-cell" style="grid-row:${gridRow};grid-column:${col}" data-e="${esc(ents[0] || '')}" data-entities="${esc(ents.join(','))}" data-stage="${st.id}" data-func="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
         }
       });
     });
@@ -1497,6 +1517,25 @@
     if (e && Array.isArray(e.ids)) e.ids.forEach((id) => out.add(id));
     if (e && Array.isArray(e.also)) e.also.forEach((id) => out.add(id));
     return [...out];
+  }
+
+  // True when two entity keys share any related-id (e.g. product <-> promotion/offer).
+  function entitiesRelated(a, b) {
+    if (!a || !b) return false;
+    if (a === b) return true;
+    const left = new Set(relatedIds(a));
+    return relatedIds(b).some((id) => left.has(id));
+  }
+
+  // Parse data-entities / data-e from a rendered VC cell.
+  function vcCellEntityList(el) {
+    const raw = (el && (el.dataset.entities || el.dataset.e)) || '';
+    return raw.split(',').map((s) => s.trim()).filter(Boolean);
+  }
+
+  function vcCellMatchesEntity(el, entityId) {
+    if (!entityId || !el) return false;
+    return vcCellEntityList(el).some((eid) => entitiesRelated(entityId, eid));
   }
 
   // ---- Cross-layer link index (value chain <-> capability <-> ERD) ----
@@ -1527,15 +1566,8 @@
   // Value-chain stages (labels) where an entity (or its related ids) appears in a cell.
   function vcStageLabelsForEntity(entityId) {
     if (!entityId) return [];
-    const rel = new Set(relatedIds(entityId));
     const stageIds = new Set();
-    // Bidirectional match: a VC cell's (composite) entity relates to our (possibly atomic) target
-    // if their related-id sets intersect, e.g. ERD "account" <-> VC "subscription".
-    const matches = (c) => {
-      if (!c) return false;
-      const es = c.e ? [c.e] : (Array.isArray(c.multi) ? c.multi.map((m) => m.e) : []);
-      return es.some((x) => relatedIds(x).some((r) => rel.has(r)));
-    };
+    const matches = (c) => cellEntityIds(c).some((x) => entitiesRelated(entityId, x));
     VC_ROWS.forEach((row) => {
       const spans = (row.spans && row.spans.length)
         ? row.spans
@@ -1556,6 +1588,7 @@
     let el = null;
     if (pendingFocus.erdId) el = main.querySelector(`.erd-node[data-erd="${pendingFocus.erdId}"]`);
     else if (pendingFocus.group) el = main.querySelector(`.cap-group[data-group="${pendingFocus.group}"]`);
+    else if (pendingFocus.vc) el = main.querySelector('.vc-cell.sel:not(.empty)');
     if (!el) el = main.querySelector('.erd-node.sel, .cap-group.sel, .vc-cell.sel, .sel');
     pendingFocus = null;
     if (el && typeof el.scrollIntoView === 'function') {
@@ -1579,6 +1612,7 @@
     pendingFocus = {
       erdId: layerId === 'datamodel2' ? (keep && keep.erdId) : null,
       group: layerId === 'capability' ? (opts.group || (keep && capGroupForEntity(keep.entityId) && capGroupForEntity(keep.entityId).id)) : null,
+      vc: layerId === 'valuechain',
     };
     switchLayer(layerId);
     if (keep) {
@@ -2329,6 +2363,33 @@
       if (currentLayer === 'datamodel2') return;
     }
     if (!selection.entityId) return;
+
+    // Value chain: highlight every cell/block that references this entity (or a related one).
+    if (currentLayer === 'valuechain') {
+      let any = false;
+      document.querySelectorAll('.vc-cell:not(.empty)').forEach((cell) => {
+        if (vcCellMatchesEntity(cell, selection.entityId)) {
+          cell.classList.add('sel');
+          any = true;
+        } else {
+          cell.classList.add('dim');
+        }
+      });
+      document.querySelectorAll('.vc-block[data-e]').forEach((block) => {
+        if (entitiesRelated(selection.entityId, block.dataset.e)) block.classList.add('sel');
+      });
+      if (!any) {
+        // Fallback: legacy data-e exact / relatedIds match
+        relatedIds(selection.entityId).forEach((id) => {
+          document.querySelectorAll(`.vc-cell[data-e="${id}"]`).forEach((el) => {
+            el.classList.add('sel');
+            el.classList.remove('dim');
+          });
+        });
+      }
+      return;
+    }
+
     const ids = relatedIds(selection.entityId);
     ids.forEach((id) => {
       document.querySelectorAll(`[data-e="${id}"]`).forEach(el => el.classList.add('sel'));
