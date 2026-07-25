@@ -863,9 +863,9 @@
     migration: { title: 'Migration Data Journey', desc: 'Sky News legacy subscriber example (D2). Labels aligned to SF Consumer FSS / ZEMS SoR (2026-07-25).', img: 'fss-consumer-data-model-interactive/06-migration-sky-news.png' }
   };
 
-  /** DRAFT Data Model 2.0 ERD catalogue (from whiteboard / target conceptual model). mapTo = existing ENTITIES key for cross-layer highlight. */
+  /** Data Model 2.0 ERD catalogue (from whiteboard / target conceptual model). mapTo = existing ENTITIES key for cross-layer highlight. */
   const DATA_MODEL_2 = {
-    status: 'DRAFT',
+    status: 'active',
     domains: [
       {
         id: 'customer',
@@ -2112,7 +2112,6 @@
 
     if (payload.type === 'erd' && erd) {
       html += `<dl>
-        <dt>Status</dt><dd><strong>DRAFT</strong>  -  Data Model 2.0 target conceptual entity</dd>
         <dt>Definition</dt><dd>${esc(erd.def)}</dd>
         <dt>Related entities (diagram)</dt><dd><ul class="erd-rel-list">${
           erdRelsFor(payload.erdId).map((r) => {
