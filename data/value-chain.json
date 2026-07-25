@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-14",
+  "updated": "2026-07-26",
   "stages": [
     { "id": "attract", "label": "ATTRACT", "valueChain": "Prospect to Registered User" },
     { "id": "acquire", "label": "ACQUIRE", "valueChain": "Registered User to Subscriber" },
@@ -36,7 +36,7 @@
         {
           "from": "attract",
           "to": "leave",
-          "blocks": [{ "cap": "Subscription Entitlements", "obj": "Entitlement", "entity": "entitlement" }]
+          "blocks": [{ "cap": "Paywall Decisioning & Enforcement", "obj": "Access Decisioning / Enforcement", "entity": null }]
         }
       ]
     },
@@ -66,7 +66,7 @@
     {
       "id": "marketing",
       "label": "Marketing Automation",
-      "sub": "Salesforce",
+      "sub": "Salesforce (SFMCA)",
       "spans": [
         {
           "from": "attract",
@@ -89,7 +89,7 @@
     },
     {
       "id": "crm",
-      "label": "CRM",
+      "label": "CRM Consumer FSS",
       "sub": "Salesforce",
       "cells": {
         "attract": [{ "cap": "B2C Profile Mgmt", "obj": "Registered User", "entity": "registeredUser" }],
@@ -97,7 +97,6 @@
           { "cap": "Consent & Pref Mgmt", "obj": "Consent & Preferences", "entity": "consent" },
           { "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }
         ],
-        "bill": [{ "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }],
         "retain": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }],
         "leave": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }]
       }
@@ -105,14 +104,25 @@
     {
       "id": "fsp",
       "label": "Subscription & Billing",
-      "sub": "Future Subscription Platform",
+      "sub": "Zuora",
       "cells": {
-        "attract": [{ "cap": "Product Cat Mgmt", "obj": "Product", "entity": "product" }],
+        "attract": [
+          { "cap": "Product Cat Mgmt", "obj": "Product", "entity": "product" },
+          { "cap": "Product Cat Mgmt", "obj": "Entitlement", "entity": "entitlement" }
+        ],
         "acquire": [
           { "cap": "Offer & Promotion Mgmt", "obj": "Promotion, Offer", "entity": "promotion" },
           { "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }
         ],
-        "subscribe": [{ "cap": "Subscription Management", "obj": "Subscription", "entity": "subscription" }]
+        "subscribe": [
+          { "cap": "Subscription Management", "obj": "Subscription", "entity": "subscription" },
+          { "cap": "Subscription Management", "obj": "Entitlement", "entity": "entitlement" },
+          { "cap": "Billing Account Management", "obj": "Billing Account", "entity": "account" }
+        ],
+        "bill": [
+          { "cap": "Billing Account Management", "obj": "Billing Account", "entity": "account" },
+          { "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }
+        ]
       }
     },
     {
@@ -123,7 +133,7 @@
         {
           "from": "subscribe",
           "to": "leave",
-          "blocks": [{ "cap": "Payments", "obj": "Payment", "entity": "payment" }]
+          "blocks": [{ "cap": "Payments", "obj": "Payment", "entity": null }]
         }
       ]
     },

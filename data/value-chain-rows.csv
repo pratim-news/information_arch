@@ -5,10 +5,10 @@ row_order,row_id,label,sub
 4,paywall,Paywall,Zephr
 5,experiment,Experimentation,Optimizely
 6,loyalty,Loyalty,Clock Rewards
-7,marketing,Marketing Automation,Salesforce
+7,marketing,Marketing Automation,Salesforce (SFMCA)
 8,identity,Identity,Okta | Auth0
-9,crm,CRM,Salesforce
-10,fsp,Subscription & Billing,Future Subscription Platform
+9,crm,CRM Consumer FSS,Salesforce
+10,fsp,Subscription & Billing,Zuora
 11,stripe,Payment Gateway,Stripe
 12,cdp,CDP,ActionIQ
 13,naviga,Print Delivery,Naviga

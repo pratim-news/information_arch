@@ -447,7 +447,7 @@
 <script type="application/json" id="vc-published-data">
 {
   "version": 1,
-  "updated": "2026-07-14",
+  "updated": "2026-07-26",
   "stages": [
     { "id": "attract", "label": "ATTRACT", "valueChain": "Prospect to Registered User" },
     { "id": "acquire", "label": "ACQUIRE", "valueChain": "Registered User to Subscriber" },
@@ -483,7 +483,7 @@
         {
           "from": "attract",
           "to": "leave",
-          "blocks": [{ "cap": "Subscription Entitlements", "obj": "Entitlement", "entity": "entitlement" }]
+          "blocks": [{ "cap": "Paywall Decisioning & Enforcement", "obj": "Access Decisioning / Enforcement", "entity": null }]
         }
       ]
     },
@@ -513,7 +513,7 @@
     {
       "id": "marketing",
       "label": "Marketing Automation",
-      "sub": "Salesforce",
+      "sub": "Salesforce (SFMCA)",
       "spans": [
         {
           "from": "attract",
@@ -536,7 +536,7 @@
     },
     {
       "id": "crm",
-      "label": "CRM",
+      "label": "CRM Consumer FSS",
       "sub": "Salesforce",
       "cells": {
         "attract": [{ "cap": "B2C Profile Mgmt", "obj": "Registered User", "entity": "registeredUser" }],
@@ -544,7 +544,6 @@
           { "cap": "Consent & Pref Mgmt", "obj": "Consent & Preferences", "entity": "consent" },
           { "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }
         ],
-        "bill": [{ "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }],
         "retain": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }],
         "leave": [{ "cap": "Renewal & Termination", "obj": "Subscription", "entity": "subscription" }]
       }
@@ -552,14 +551,25 @@
     {
       "id": "fsp",
       "label": "Subscription & Billing",
-      "sub": "Future Subscription Platform",
+      "sub": "Zuora",
       "cells": {
-        "attract": [{ "cap": "Product Cat Mgmt", "obj": "Product", "entity": "product" }],
+        "attract": [
+          { "cap": "Product Cat Mgmt", "obj": "Product", "entity": "product" },
+          { "cap": "Product Cat Mgmt", "obj": "Entitlement", "entity": "entitlement" }
+        ],
         "acquire": [
           { "cap": "Offer & Promotion Mgmt", "obj": "Promotion, Offer", "entity": "promotion" },
           { "cap": "B2C Profile Mgmt", "obj": "Subscriber", "entity": "subscriber" }
         ],
-        "subscribe": [{ "cap": "Subscription Management", "obj": "Subscription", "entity": "subscription" }]
+        "subscribe": [
+          { "cap": "Subscription Management", "obj": "Subscription", "entity": "subscription" },
+          { "cap": "Subscription Management", "obj": "Entitlement", "entity": "entitlement" },
+          { "cap": "Billing Account Management", "obj": "Billing Account", "entity": "account" }
+        ],
+        "bill": [
+          { "cap": "Billing Account Management", "obj": "Billing Account", "entity": "account" },
+          { "cap": "Billing Management", "obj": "Invoice, Payment/Receipt", "entity": "invoice" }
+        ]
       }
     },
     {
@@ -570,7 +580,7 @@
         {
           "from": "subscribe",
           "to": "leave",
-          "blocks": [{ "cap": "Payments", "obj": "Payment", "entity": "payment" }]
+          "blocks": [{ "cap": "Payments", "obj": "Payment", "entity": null }]
         }
       ]
     },
@@ -699,13 +709,13 @@
 
   const ENTITIES = {
     registeredUser: { name: 'Registered User', ids: ['registeredUser', 'party'], also: ['party'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF Consumer FSS', object: true },
-    subscriber: { name: 'Subscriber', ids: ['subscriber', 'party'], also: ['party'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF Consumer FSS', object: true },
+    subscriber: { name: 'Subscriber', ids: ['subscriber', 'customerAsset'], also: ['customerAsset'], capability: 'Subscription Account Management', asset: 'Subscription Account Management', platform: 'Zuora (Subscription)', object: true },
     order: { name: 'Order', ids: ['order'], capability: 'Order Management', asset: 'Order Management', platform: 'Salesforce + CPQ (Sales Order) | Zuora (Billing Order)', object: true },
     subscription: { name: 'Subscription', ids: ['subscription', 'account', 'customerAsset'], also: ['account'], capability: 'Subscription Management', asset: 'Subscription Account Management', platform: 'Zuora (Subscription)', object: true },
     entitlement: { name: 'Entitlement', ids: ['entitlement'], capability: 'Subscription Entitlements', asset: 'Entitlement Management', platform: 'Zuora (ZEMS)  -  SoR; Zephr  -  enforcement', object: true },
     invoice: { name: 'Invoice', ids: ['invoice', 'billing'], also: ['billing'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
     paymentReceipt: { name: 'Payment/Receipt', ids: ['paymentReceipt', 'billing', 'payment'], also: ['billing', 'payment'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora  -  SoR; Stripe  -  gateway', object: true },
-    payment: { name: 'Payment', ids: ['payment'], capability: 'Payments', asset: 'Payments', platform: 'Zuora  -  SoR; Stripe  -  gateway', object: true },
+    payment: { name: 'Payment Method', ids: ['payment'], capability: 'Payments', asset: 'Payments', platform: 'Zuora  -  SoR; Stripe  -  gateway', object: true },
     experiment: { name: 'Experiment', ids: ['experiment', 'marketing'], also: ['marketing'], capability: 'Experimentation', asset: 'Marketing Management', platform: 'Optimizely', object: true },
     reward: { name: 'Reward', ids: ['reward', 'loyaltyReward'], also: ['loyaltyReward'], capability: 'Loyalty Management', asset: 'Loyalty', platform: 'Clock Rewards', object: true },
     campaign: { name: 'Campaign', ids: ['campaign', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMCA', object: true },
@@ -784,7 +794,7 @@
     { id: 'zuora-voucher', title: 'Zuora (Voucher)', entities: ['voucher'] },
     { id: 'zuora-sub', title: 'Zuora (Subscription / Customer Asset)', entities: ['customerAsset'] },
     { id: 'zuora-bill', title: 'Zuora (Billing + Rate Plan)', entities: ['billing', 'ratePlan'] },
-    { id: 'zuora-pay', title: 'Zuora (Payment SoR) | Stripe (gateway)', entities: ['payment'] },
+    { id: 'zuora-pay', title: 'Zuora (Payment Method SoR) | Stripe (gateway)', entities: ['payment'] },
     { id: 'support-split', title: 'Support: SF Consumer FSS (case/care) | Zuora (billing disputes)', entities: ['support'] },
     { id: 'actioniq', title: 'ActionIQ (Engagement)', entities: ['engagement'] },
     { id: 'sfmca', title: 'SFMCA (Marketing Management)', entities: ['marketing'] },
@@ -1141,15 +1151,15 @@
         },
       },
       payment: {
-        name: 'Payment',
-        def: 'Payment of billed amounts (definition not supplied on source diagram).',
+        name: 'Payment Method',
+        def: 'Method or instrument used to pay billed amounts.',
         links: ['billing', 'generalLedger'],
         mapTo: 'payment',
         appLink: {
           status: 'verified',
           sor: 'Zuora',
-          verifiedOn: '2026-07-25',
-          note: 'Target system of record for Payment. Stripe is payment gateway only.',
+          verifiedOn: '2026-07-26',
+          note: 'Payment Method is mastered in Zuora. Stripe is the payment gateway (processing only, not SoR).',
         },
       },
       generalLedger: {
