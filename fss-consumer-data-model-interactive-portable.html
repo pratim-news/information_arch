@@ -434,7 +434,7 @@
     <h1>Consumer 2.0 Model</h1>
     <div class="sub">Click any cell or entity. Layers drill down logically.</div>
     <button type="button" data-layer="valuechain" class="active"><span class="layer-num">1</span>Value chain</button>
-    <button type="button" data-layer="datamodel2"><span class="layer-num">2</span>Data Model 2.0 ERD</button>
+    <button type="button" data-layer="datamodel2"><span class="layer-num">2</span>Data Model 2.0</button>
     <button type="button" data-layer="capability"><span class="layer-num">3</span>Business Capabilities &amp; Information Assets</button>
     <button type="button" data-layer="platform"><span class="layer-num">4</span>Platform overlay</button>
     <button type="button" data-layer="datamaster"><span class="layer-num">5</span>Data Master SoR/MC</button>
@@ -444,7 +444,7 @@
   <main class="main" id="main"></main>
 
   <aside class="detail" id="detail">
-    <div class="empty" id="detail-empty">Select a cell, ERD entity, capability entity, or SoR/MC cell to see definitions and cross-layer links.</div>
+    <div class="empty" id="detail-empty">Select a cell, Data Model 2.0 entity, capability entity, or SoR/MC cell to see definitions and cross-layer links.</div>
     <div id="detail-body" hidden></div>
   </aside>
 </div>
@@ -1560,6 +1560,8 @@
   }
 
   // Jump to another layer while keeping the current selection; resolve ERD node and focus target.
+  // Re-renders the detail panel on the destination so back-links (e.g. from Data Model 2.0
+  // back to value chain / capability) appear for the new layer.
   function crossJump(layerId, opts) {
     opts = opts || {};
     const keep = selection ? Object.assign({}, selection) : null;
@@ -1576,11 +1578,41 @@
     };
     switchLayer(layerId);
     if (keep) {
-      selection = keep;
-      if (currentLayer === 'datamodel2') redrawErdEdges();
-      else highlightSelection();
+      if (layerId === 'datamodel2' && keep.erdId) {
+        const node = DATA_MODEL_2.entities[keep.erdId];
+        showDetail({
+          type: 'erd',
+          erdId: keep.erdId,
+          entityId: keep.entityId || (node && node.mapTo) || keep.erdId,
+          title: (node && node.name) || keep.title,
+        });
+      } else {
+        showDetail(keep);
+      }
     }
     focusPending();
+  }
+
+  // Build the "Appears across layers" trail HTML for the current selection / layer.
+  function trailHtml(payload, erd) {
+    const trailEntity = payload.entityId || (erd && erd.mapTo) || null;
+    if (!trailEntity) return '';
+    const links = [];
+    const vcLabels = vcStageLabelsForEntity(trailEntity);
+    if (vcLabels.length && currentLayer !== 'valuechain') {
+      links.push(`<button type="button" class="trail-link" data-jump="valuechain">Value chain &middot; ${esc(vcLabels.slice(0, 4).join(', '))}${vcLabels.length > 4 ? '&hellip;' : ''}</button>`);
+    }
+    const grp = capGroupForEntity(trailEntity);
+    if (grp && currentLayer !== 'capability') {
+      links.push(`<button type="button" class="trail-link" data-jump="capability" data-jump-group="${esc(grp.id)}">Capability &middot; ${esc(grp.title)}</button>`);
+    }
+    const erdTarget = payload.erdId || erdIdForEntity(trailEntity);
+    if (erdTarget && currentLayer !== 'datamodel2') {
+      const node = DATA_MODEL_2.entities[erdTarget];
+      links.push(`<button type="button" class="trail-link" data-jump="datamodel2" data-jump-erd="${esc(erdTarget)}">Data Model 2.0 &middot; ${esc(node ? node.name : erdTarget)}</button>`);
+    }
+    if (!links.length) return '';
+    return `<dl><dt>Appears across layers</dt><dd class="trail-links">${links.join('')}</dd></dl>`;
   }
 
   function renderStandaloneBar(mode) {
@@ -2179,6 +2211,8 @@
     const e = payload.entityId ? ENTITIES[payload.entityId] : null;
     const erd = payload.erdId ? DATA_MODEL_2.entities[payload.erdId] : null;
     let html = `<h2>${esc(payload.title || (erd && erd.name) || (e && e.name) || 'Detail')}</h2>`;
+    // Trail up top so back-links from Data Model 2.0 (and other layers) are visible without scrolling past SoR.
+    html += trailHtml(payload, erd);
 
     if (payload.type === 'erd' && erd) {
       html += `<dl>
@@ -2245,28 +2279,6 @@
       html += `<dl>
         <dt>Linked overlay entity</dt><dd>${esc(e.capability)}  |  ${esc(e.platform)}</dd>
       </dl>`;
-    }
-
-    // Cross-layer trail: where this thing lives across value chain, capabilities and the ERD.
-    const trailEntity = payload.entityId || (erd && erd.mapTo) || null;
-    if (trailEntity) {
-      const links = [];
-      const vcLabels = vcStageLabelsForEntity(trailEntity);
-      if (vcLabels.length && currentLayer !== 'valuechain') {
-        links.push(`<button type="button" class="trail-link" data-jump="valuechain">Value chain &middot; ${esc(vcLabels.slice(0, 4).join(', '))}${vcLabels.length > 4 ? '&hellip;' : ''}</button>`);
-      }
-      const grp = capGroupForEntity(trailEntity);
-      if (grp && currentLayer !== 'capability') {
-        links.push(`<button type="button" class="trail-link" data-jump="capability" data-jump-group="${esc(grp.id)}">Capability &middot; ${esc(grp.title)}</button>`);
-      }
-      const erdTarget = payload.erdId || erdIdForEntity(trailEntity);
-      if (erdTarget && currentLayer !== 'datamodel2') {
-        const node = DATA_MODEL_2.entities[erdTarget];
-        links.push(`<button type="button" class="trail-link" data-jump="datamodel2" data-jump-erd="${esc(erdTarget)}">Data Model 2.0 &middot; ${esc(node ? node.name : erdTarget)}</button>`);
-      }
-      if (links.length) {
-        html += `<dl><dt>Appears across layers</dt><dd class="trail-links">${links.join('')}</dd></dl>`;
-      }
     }
 
     html += `<div class="actions">
