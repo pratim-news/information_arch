@@ -51,6 +51,13 @@
       font-size: 12px; padding: 5px 10px; border-radius: 5px; border: 1px solid var(--line);
       background: var(--accent-soft); cursor: pointer; color: var(--accent);
     }
+    .detail .trail-links { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
+    .detail .trail-link {
+      text-align: left; font-size: 12px; padding: 6px 9px; border-radius: 6px;
+      border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent);
+      cursor: pointer; line-height: 1.35;
+    }
+    .detail .trail-link:hover { filter: brightness(0.97); }
     .layer-head { margin-bottom: 16px; }
     .layer-head h2 { font-size: 22px; margin: 0 0 6px; }
     .layer-head p { margin: 0; color: var(--muted); max-width: 52em; }
@@ -1487,6 +1494,94 @@
     return [...out];
   }
 
+  // ---- Cross-layer link index (value chain <-> capability <-> ERD) ----
+  // Reverse map: ENTITIES key -> ERD node id (via mapTo). First match wins.
+  const ERD_BY_MAPTO = {};
+  Object.entries(DATA_MODEL_2.entities).forEach(([id, e]) => {
+    const key = e.mapTo || id;
+    if (!(key in ERD_BY_MAPTO)) ERD_BY_MAPTO[key] = id;
+  });
+
+  // Resolve an ERD node for an ENTITIES key: try the key directly, then its related ids.
+  function erdIdForEntity(entityId) {
+    if (!entityId) return null;
+    if (ERD_BY_MAPTO[entityId]) return ERD_BY_MAPTO[entityId];
+    for (const id of relatedIds(entityId)) if (ERD_BY_MAPTO[id]) return ERD_BY_MAPTO[id];
+    return null;
+  }
+
+  // Find the capability group an entity belongs to (exact membership first, then related ids).
+  function capGroupForEntity(entityId) {
+    if (!entityId) return null;
+    const exact = CAPABILITY_GROUPS.find((g) => g.entities.includes(entityId));
+    if (exact) return exact;
+    const rel = new Set(relatedIds(entityId));
+    return CAPABILITY_GROUPS.find((g) => g.entities.some((e) => rel.has(e))) || null;
+  }
+
+  // Value-chain stages (labels) where an entity (or its related ids) appears in a cell.
+  function vcStageLabelsForEntity(entityId) {
+    if (!entityId) return [];
+    const rel = new Set(relatedIds(entityId));
+    const stageIds = new Set();
+    // Bidirectional match: a VC cell's (composite) entity relates to our (possibly atomic) target
+    // if their related-id sets intersect, e.g. ERD "account" <-> VC "subscription".
+    const matches = (c) => {
+      if (!c) return false;
+      const es = c.e ? [c.e] : (Array.isArray(c.multi) ? c.multi.map((m) => m.e) : []);
+      return es.some((x) => relatedIds(x).some((r) => rel.has(r)));
+    };
+    VC_ROWS.forEach((row) => {
+      const spans = (row.spans && row.spans.length)
+        ? row.spans
+        : (row.spanStages && row.spanStages.length ? [{ spanStages: row.spanStages, cell: row.cell }] : []);
+      spans.forEach((sp) => {
+        if (matches(sp.cell)) (sp.spanStages || []).forEach((id) => stageIds.add(id));
+      });
+      const rs = rowStages(row) || {};
+      Object.keys(rs).forEach((sid) => { if (matches(rs[sid])) stageIds.add(sid); });
+    });
+    return STAGES.filter((s) => stageIds.has(s.id)).map((s) => s.label);
+  }
+
+  // Element to scroll into view after a cross-layer jump (set by crossJump, consumed after render).
+  let pendingFocus = null;
+  function focusPending() {
+    if (!pendingFocus) return;
+    let el = null;
+    if (pendingFocus.erdId) el = main.querySelector(`.erd-node[data-erd="${pendingFocus.erdId}"]`);
+    else if (pendingFocus.group) el = main.querySelector(`.cap-group[data-group="${pendingFocus.group}"]`);
+    if (!el) el = main.querySelector('.erd-node.sel, .cap-group.sel, .vc-cell.sel, .sel');
+    pendingFocus = null;
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    }
+  }
+
+  // Jump to another layer while keeping the current selection; resolve ERD node and focus target.
+  function crossJump(layerId, opts) {
+    opts = opts || {};
+    const keep = selection ? Object.assign({}, selection) : null;
+    if (keep) {
+      if (opts.erdId) keep.erdId = opts.erdId;
+      else if (layerId === 'datamodel2' && !keep.erdId && keep.entityId) {
+        const erdId = erdIdForEntity(keep.entityId);
+        if (erdId) keep.erdId = erdId;
+      }
+    }
+    pendingFocus = {
+      erdId: layerId === 'datamodel2' ? (keep && keep.erdId) : null,
+      group: layerId === 'capability' ? (opts.group || (keep && capGroupForEntity(keep.entityId) && capGroupForEntity(keep.entityId).id)) : null,
+    };
+    switchLayer(layerId);
+    if (keep) {
+      selection = keep;
+      if (currentLayer === 'datamodel2') redrawErdEdges();
+      else highlightSelection();
+    }
+    focusPending();
+  }
+
   function renderStandaloneBar(mode) {
     const list = BRIDGE_BY_LAYER[mode] || STANDALONE_ENTITIES;
     if (!list || !list.length) return '';
@@ -2151,6 +2246,28 @@
       </dl>`;
     }
 
+    // Cross-layer trail: where this thing lives across value chain, capabilities and the ERD.
+    const trailEntity = payload.entityId || (erd && erd.mapTo) || null;
+    if (trailEntity) {
+      const links = [];
+      const vcLabels = vcStageLabelsForEntity(trailEntity);
+      if (vcLabels.length && currentLayer !== 'valuechain') {
+        links.push(`<button type="button" class="trail-link" data-jump="valuechain">Value chain &middot; ${esc(vcLabels.slice(0, 4).join(', '))}${vcLabels.length > 4 ? '&hellip;' : ''}</button>`);
+      }
+      const grp = capGroupForEntity(trailEntity);
+      if (grp && currentLayer !== 'capability') {
+        links.push(`<button type="button" class="trail-link" data-jump="capability" data-jump-group="${esc(grp.id)}">Capability &middot; ${esc(grp.title)}</button>`);
+      }
+      const erdTarget = payload.erdId || erdIdForEntity(trailEntity);
+      if (erdTarget && currentLayer !== 'datamodel2') {
+        const node = DATA_MODEL_2.entities[erdTarget];
+        links.push(`<button type="button" class="trail-link" data-jump="datamodel2" data-jump-erd="${esc(erdTarget)}">Data Model 2.0 &middot; ${esc(node ? node.name : erdTarget)}</button>`);
+      }
+      if (links.length) {
+        html += `<dl><dt>Appears across layers</dt><dd class="trail-links">${links.join('')}</dd></dl>`;
+      }
+    }
+
     html += `<div class="actions">
       <button type="button" data-goto="valuechain">Value chain</button>
       <button type="button" data-goto="datamodel2">Data Model 2.0</button>
@@ -2161,14 +2278,14 @@
     </div>`;
 
     detailBody.innerHTML = html;
+    detailBody.querySelectorAll('[data-jump]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        crossJump(btn.dataset.jump, { erdId: btn.dataset.jumpErd, group: btn.dataset.jumpGroup });
+      });
+    });
     detailBody.querySelectorAll('[data-goto]').forEach(btn => {
       btn.addEventListener('click', () => {
-        const keep = selection;
-        switchLayer(btn.dataset.goto);
-        if (keep && keep.entityId) {
-          selection = keep;
-          highlightSelection();
-        }
+        crossJump(btn.dataset.goto);
       });
     });
     detailBody.querySelectorAll('[data-erd-goto]').forEach(btn => {
