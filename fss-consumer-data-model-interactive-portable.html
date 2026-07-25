@@ -2281,24 +2281,10 @@
       </dl>`;
     }
 
-    html += `<div class="actions">
-      <button type="button" data-goto="valuechain">Value chain</button>
-      <button type="button" data-goto="datamodel2">Data Model 2.0</button>
-      <button type="button" data-goto="capability">Capabilities &amp; assets</button>
-      <button type="button" data-goto="platform">Platforms</button>
-      <button type="button" data-goto="datamaster">SoR / MC</button>
-      <button type="button" data-goto="migration">Migration</button>
-    </div>`;
-
     detailBody.innerHTML = html;
     detailBody.querySelectorAll('[data-jump]').forEach(btn => {
       btn.addEventListener('click', () => {
         crossJump(btn.dataset.jump, { erdId: btn.dataset.jumpErd, group: btn.dataset.jumpGroup });
-      });
-    });
-    detailBody.querySelectorAll('[data-goto]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        crossJump(btn.dataset.goto);
       });
     });
     detailBody.querySelectorAll('[data-erd-goto]').forEach(btn => {
