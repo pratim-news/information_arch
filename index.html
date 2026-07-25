@@ -287,6 +287,130 @@
     .vc-ed-block { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; align-items: end; margin-bottom: 8px; }
     .vc-ed-actions-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
     .vc-ed-actions-row button { font-size: 12px; padding: 7px 12px; cursor: pointer; border-radius: 5px; border: 1px solid var(--line); background: #fff; }
+    .draft-pill {
+      display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .08em;
+      color: #7a4a16; background: #fff3df; border: 1px solid #e8d4a8;
+      padding: 2px 8px; border-radius: 4px; vertical-align: middle; margin-left: 8px;
+    }
+    .erd-wrap { display: grid; gap: 10px; }
+    .erd-hint { margin: 0; font-size: 13px; color: var(--muted); }
+    .erd-toolbar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .erd-toolbar button, .erd-shot-exit {
+      border: 1px solid var(--line); background: #fff; color: var(--ink);
+      border-radius: 6px; padding: 6px 10px; font: inherit; font-size: 12px; cursor: pointer;
+    }
+    .erd-toolbar button:hover, .erd-shot-exit:hover { border-color: var(--accent); color: var(--accent); }
+    .erd-toolbar button.on {
+      background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600;
+    }
+    .erd-shot-exit {
+      display: none; position: fixed; top: 10px; right: 10px; z-index: 100;
+      opacity: .3; font-size: 11px;
+    }
+    .erd-shot-exit:hover { opacity: 1; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+    body.erd-shot .erd-shot-exit { display: block; }
+    body.erd-shot .nav,
+    body.erd-shot .detail,
+    body.erd-shot .admin-footer,
+    body.erd-shot .breadcrumb,
+    body.erd-shot .layer-head p,
+    body.erd-shot .erd-chrome { display: none !important; }
+    body.erd-shot .app { grid-template-columns: 1fr; }
+    body.erd-shot .main { padding: 16px; }
+    body.erd-shot .layer-head h2 { margin: 0 0 10px; }
+    body.erd-shot .erd-scroll {
+      border: 0; box-shadow: none; border-radius: 0; background: #fff;
+      max-height: none; overflow: visible;
+    }
+    body.erd-shot .erd-canvas {
+      background-image: none; background: #fff; margin: 0 auto;
+    }
+    .erd-scroll {
+      overflow: auto; border: 1px solid var(--line); border-radius: 10px; background: #fafcfe;
+      box-shadow: inset 0 0 0 1px rgba(22, 75, 122, .04);
+      max-height: calc(100vh - 220px);
+    }
+    .erd-canvas {
+      position: relative; width: 1560px; height: 1060px; margin: 0 auto;
+      background-image:
+        linear-gradient(rgba(213, 221, 232, .45) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(213, 221, 232, .45) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .erd-canvas.arrange-on { outline: 2px dashed #9bb6d0; outline-offset: -2px; }
+    .erd-edges-svg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+    .erd-edge {
+      fill: none; stroke: #7a8798; stroke-width: 1.4; opacity: .9;
+      transition: stroke .15s, stroke-width .15s, opacity .15s;
+    }
+    .erd-edge.rel { stroke: var(--accent); stroke-width: 2.3; opacity: 1; }
+    .erd-edge.dim { opacity: .14; }
+    .erd-edge-g.secondary .erd-edge { stroke-dasharray: 5 4; stroke: #93a1b2; }
+    .erd-edge-g.secondary .erd-edge.rel { stroke: #3f74a4; }
+    .erd-card-label {
+      font-size: 10px; fill: #445566; font-weight: 700;
+      paint-order: stroke; stroke: #fafcfe; stroke-width: 3px;
+    }
+    .erd-card-label.rel { fill: var(--accent); }
+    .erd-card-label.dim { opacity: .2; }
+    .erd-node {
+      position: absolute; z-index: 2; width: 196px; min-height: 118px;
+      text-align: left; border: 1px solid #9aadc2; border-radius: 4px;
+      background: #e8eef6;
+      padding: 8px 10px 10px; cursor: pointer; font: inherit; color: inherit;
+      box-shadow: 0 1px 2px rgba(23, 32, 42, .05);
+      transition: border-color .15s, box-shadow .15s, background .15s, opacity .15s;
+      user-select: none;
+    }
+    .erd-node:hover {
+      border-color: var(--accent); box-shadow: 0 0 0 2px rgba(22, 75, 122, .14);
+    }
+    .erd-node.sel {
+      border-color: var(--accent); background: var(--accent-soft);
+      box-shadow: 0 0 0 2px rgba(22, 75, 122, .28);
+    }
+    .erd-node.rel { border-color: #5a8ab8; background: #f3f8fc; }
+    .erd-node.dim { opacity: .32; }
+    .erd-node.arrange { cursor: grab; }
+    .erd-node.dragging { cursor: grabbing; z-index: 6; opacity: .95; }
+    .erd-node .nm { font-weight: 700; color: #1a3a5c; font-size: 12.5px; line-height: 1.25; }
+    .erd-node .df {
+      font-size: 10.5px; color: #5d6d7e; margin-top: 4px; line-height: 1.3;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .erd-node .sor {
+      display: block; margin-top: 6px; font-size: 10px; font-weight: 600;
+      color: var(--sor); background: #e8f6ef; border: 1px solid #b8dfc8;
+      border-radius: 6px; padding: 3px 7px; max-width: 100%;
+      white-space: normal; overflow: visible; line-height: 1.25;
+      word-break: break-word; box-sizing: border-box;
+    }
+    .erd-node .sor.split {
+      padding: 3px 7px;
+    }
+    .erd-node .sor.split .sor-head { display: block; font-weight: 700; margin-bottom: 2px; }
+    .erd-node .sor.split .sor-part {
+      display: block; font-weight: 600; font-size: 9.5px; color: #1f5c3f;
+    }
+    .erd-legend {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      font-size: 11px; color: var(--muted);
+    }
+    .erd-legend span {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 3px 9px;
+    }
+    .erd-legend i {
+      width: 10px; height: 10px; border-radius: 2px; display: inline-block;
+      background: #e8eef6; border: 1px solid #9aadc2;
+    }
+    .erd-rel-list { margin: 0; padding-left: 18px; font-size: 13px; }
+    .erd-rel-list li { margin: 4px 0; }
     @media (max-width: 900px) {
       .vc-ed-layout { grid-template-columns: 1fr; }
       .vc-ed-rowmeta { grid-template-columns: 1fr 1fr; }
@@ -302,21 +426,22 @@
     <h1>Consumer 2.0 Model</h1>
     <div class="sub">Click any cell or entity. Layers drill down logically.</div>
     <button type="button" data-layer="valuechain" class="active"><span class="layer-num">1</span>Value chain</button>
-    <button type="button" data-layer="capability"><span class="layer-num">2</span>Business capabilities</button>
-    <button type="button" data-layer="asset"><span class="layer-num">3</span>Information assets</button>
-    <button type="button" data-layer="platform"><span class="layer-num">4</span>Platform overlay</button>
-    <button type="button" data-layer="datamaster"><span class="layer-num">5</span>Data Master SoR/MC</button>
-    <button type="button" data-layer="migration"><span class="layer-num">6</span>Migration journey</button>
+    <button type="button" data-layer="datamodel2"><span class="layer-num">2</span>Data Model 2.0 ERD</button>
+    <button type="button" data-layer="capability"><span class="layer-num">3</span>Business capabilities</button>
+    <button type="button" data-layer="asset"><span class="layer-num">4</span>Information assets</button>
+    <button type="button" data-layer="platform"><span class="layer-num">5</span>Platform overlay</button>
+    <button type="button" data-layer="datamaster"><span class="layer-num">6</span>Data Master SoR/MC</button>
+    <button type="button" data-layer="migration"><span class="layer-num">7</span>Migration journey</button>
   </nav>
 
   <main class="main" id="main"></main>
 
   <aside class="detail" id="detail">
-    <div class="empty" id="detail-empty">Select a cell (Capability / Business Object), entity, or SoR/MC cell to see Journey, Value Chain, Function, and cross-layer links.</div>
+    <div class="empty" id="detail-empty">Select a cell, ERD entity, capability entity, or SoR/MC cell to see definitions and cross-layer links.</div>
     <div id="detail-body" hidden></div>
   </aside>
 </div>
-
+<button type="button" class="erd-shot-exit" id="erd-shot-exit">Exit screenshot view</button>
 <script type="application/json" id="vc-published-data">
 {
   "version": 1,
@@ -571,37 +696,37 @@
   }
 
   const ENTITIES = {
-    registeredUser: { name: 'Registered User', ids: ['registeredUser', 'party'], also: ['party'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF CRM / Shopfront', object: true },
-    subscriber: { name: 'Subscriber', ids: ['subscriber', 'party'], also: ['party'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF CRM', object: true },
-    order: { name: 'Order', ids: ['order'], capability: 'Order Management', asset: 'Subscription Account Management', platform: 'Zuora', object: true },
-    subscription: { name: 'Subscription', ids: ['subscription', 'account', 'customerAsset'], also: ['account'], capability: 'Subscription Management', asset: 'Subscription Account Management', platform: 'Zuora', object: true },
-    entitlement: { name: 'Entitlement', ids: ['entitlement'], capability: 'Subscription Entitlements', asset: 'Entitlement Enforcement', platform: 'Zephr', object: true },
+    registeredUser: { name: 'Registered User', ids: ['registeredUser', 'party'], also: ['party'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF Consumer FSS', object: true },
+    subscriber: { name: 'Subscriber', ids: ['subscriber', 'party'], also: ['party'], capability: 'B2C Profile Management', asset: 'Customer Management', platform: 'SF Consumer FSS', object: true },
+    order: { name: 'Order', ids: ['order'], capability: 'Order Management', asset: 'Order Management', platform: 'Salesforce + CPQ (Sales Order) | Zuora (Billing Order)', object: true },
+    subscription: { name: 'Subscription', ids: ['subscription', 'account', 'customerAsset'], also: ['account'], capability: 'Subscription Management', asset: 'Subscription Account Management', platform: 'Zuora (Subscription)', object: true },
+    entitlement: { name: 'Entitlement', ids: ['entitlement'], capability: 'Subscription Entitlements', asset: 'Entitlement Management', platform: 'Zuora (ZEMS)  -  SoR; Zephr  -  enforcement', object: true },
     invoice: { name: 'Invoice', ids: ['invoice', 'billing'], also: ['billing'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
-    paymentReceipt: { name: 'Payment/Receipt', ids: ['paymentReceipt', 'billing', 'payment'], also: ['billing', 'payment'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora / Stripe', object: true },
-    payment: { name: 'Payment', ids: ['payment'], capability: 'Payments / Revenue Accounting', asset: 'Revenue Accounting', platform: 'Zuora / Stripe', object: true },
+    paymentReceipt: { name: 'Payment/Receipt', ids: ['paymentReceipt', 'billing', 'payment'], also: ['billing', 'payment'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora  -  SoR; Stripe  -  gateway', object: true },
+    payment: { name: 'Payment', ids: ['payment'], capability: 'Payments', asset: 'Payments', platform: 'Zuora  -  SoR; Stripe  -  gateway', object: true },
     experiment: { name: 'Experiment', ids: ['experiment', 'marketing'], also: ['marketing'], capability: 'Experimentation', asset: 'Marketing Management', platform: 'Optimizely', object: true },
     reward: { name: 'Reward', ids: ['reward', 'loyaltyReward'], also: ['loyaltyReward'], capability: 'Loyalty Management', asset: 'Loyalty', platform: 'Clock Rewards', object: true },
-    campaign: { name: 'Campaign', ids: ['campaign', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
-    targetAudience: { name: 'Target Audience', ids: ['targetAudience', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
-    marketingComm: { name: 'Marketing Comm', ids: ['marketingComm', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
+    campaign: { name: 'Campaign', ids: ['campaign', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMCA', object: true },
+    targetAudience: { name: 'Target Audience', ids: ['targetAudience', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMCA', object: true },
+    marketingComm: { name: 'Marketing Comm', ids: ['marketingComm', 'marketing'], also: ['marketing'], capability: 'Campaign Management', asset: 'Marketing Management', platform: 'SFMCA', object: true },
     externalUser: { name: 'External User', ids: ['externalUser'], capability: 'Identity Management', asset: 'Customer Management', platform: 'Auth0', object: true },
-    product: { name: 'Product', ids: ['product'], capability: 'Product Cat Mgmt', asset: 'Product & Offer Management', platform: 'Zuora', object: true },
-    promotion: { name: 'Promotion', ids: ['promotion', 'product', 'pricing'], also: ['product', 'pricing'], capability: 'Offer & Promotion Mgmt', asset: 'Product & Offer Management', platform: 'Future Subscription Platform', object: true },
-    offer: { name: 'Offer', ids: ['offer', 'product', 'engagement'], also: ['product', 'engagement'], capability: 'Offer & Promotion Mgmt / NBA', asset: 'Product & Offer Management', platform: 'ActionIQ / FSP', object: true },
+    product: { name: 'Product', ids: ['product'], capability: 'Product Cat Mgmt', asset: 'Product & Offer Management', platform: 'Zuora (commercial catalogue)', object: true },
+    promotion: { name: 'Promotion', ids: ['promotion', 'product', 'pricing'], also: ['product', 'pricing'], capability: 'Offer & Promotion Mgmt', asset: 'Product & Offer Management', platform: 'Zuora', object: true },
+    offer: { name: 'Offer', ids: ['offer', 'product', 'engagement'], also: ['product', 'engagement'], capability: 'Offer & Promotion Mgmt / NBA', asset: 'Product & Offer Management', platform: 'ActionIQ / Zuora', object: true },
     action: { name: 'Action', ids: ['action', 'engagement'], also: ['engagement'], capability: 'Next Best Action', asset: 'Engagement Management', platform: 'ActionIQ', object: true },
-    consent: { name: 'Consent & Preferences', ids: ['consent'], capability: 'Consent & Pref Mgmt', asset: 'Consent & Preference Management', platform: 'DCPM (TBC) / SF CRM', object: true },
-    party: { name: 'Party', ids: ['party'], capability: 'Customer Management', asset: 'Customer Management', platform: 'SF CRM', object: true },
-    contact: { name: 'Contact', ids: ['contact'], capability: 'Customer Management', asset: 'Customer Management', platform: 'SF CRM', object: true },
-    account: { name: 'Account', ids: ['account'], capability: 'Subscription Account Management', asset: 'Subscription Account Management', platform: 'Zuora', object: true },
-    customerAsset: { name: 'Customer Asset', ids: ['customerAsset'], capability: 'Subscription Account Management', asset: 'Subscription Account Management', platform: 'Zuora', object: true },
+    consent: { name: 'Consent & Preferences', ids: ['consent'], capability: 'Consent & Pref Mgmt', asset: 'Consent & Preference Management', platform: 'SF Consumer FSS  -  SoR; SFMCA + SFMCE  -  consumers', object: true },
+    party: { name: 'Party', ids: ['party'], capability: 'Customer Management', asset: 'Customer Management', platform: 'SF Consumer FSS', object: true },
+    contact: { name: 'Contact', ids: ['contact'], capability: 'Customer Management', asset: 'Customer Management', platform: 'SF Consumer FSS', object: true },
+    account: { name: 'Account', ids: ['account'], capability: 'Customer & Subscription Account Management', asset: 'Customer & Subscription Account Management', platform: 'SF Consumer FSS (CRM account) | Zuora (billing/subscription account)', object: true },
+    customerAsset: { name: 'Customer Asset', ids: ['customerAsset'], capability: 'Subscription Account Management', asset: 'Subscription Account Management', platform: 'Zuora (Subscription)', object: true },
     pricing: { name: 'Pricing', ids: ['pricing'], capability: 'Product & Offer Management', asset: 'Product & Offer Management', platform: 'Zuora', object: true },
-    inventory: { name: 'Inventory', ids: ['inventory'], capability: 'Product & Offer Management', asset: 'Product & Offer Management', platform: 'Zuora', object: true },
+    inventory: { name: 'Inventory', ids: ['inventory'], capability: 'Inventory Management', asset: 'Inventory Management', platform: 'Zuora (voucher stock) | Naviga (print supply) | WordPress CMS (articles)', object: true },
     billing: { name: 'Billing', ids: ['billing'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
-    support: { name: 'Support', ids: ['support'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
-    revenue: { name: 'Revenue', ids: ['revenue'], capability: 'Revenue Accounting', asset: 'Revenue Accounting', platform: 'Zuora', object: true },
+    support: { name: 'Support', ids: ['support'], capability: 'Assisted Care / Billing Support', asset: 'Customer Care & Billing Support', platform: 'SF Consumer FSS (case/care) | Zuora (billing disputes)', object: true },
+    revenue: { name: 'Revenue / General Ledger', ids: ['revenue'], capability: 'Revenue Accounting / GL', asset: 'General Ledger', platform: 'JDE', object: true },
     engagement: { name: 'Engagement', ids: ['engagement'], capability: 'Engagement Management', asset: 'Engagement Management', platform: 'ActionIQ', object: true },
-    marketing: { name: 'Marketing', ids: ['marketing'], capability: 'Marketing Management', asset: 'Marketing Management', platform: 'SFMC', object: true },
-    interaction: { name: 'Interaction', ids: ['interaction'], capability: 'Marketing Management', asset: 'Marketing Management', platform: 'SF CRM', object: true },
+    marketing: { name: 'Marketing', ids: ['marketing'], capability: 'Marketing Management', asset: 'Marketing Management', platform: 'SFMCA', object: true },
+    interaction: { name: 'Interaction', ids: ['interaction'], capability: 'Customer Interaction Management', asset: 'Customer Interaction Management', platform: 'SF Consumer FSS', object: true },
     distribution: { name: 'Distribution', ids: ['distribution'], capability: 'Distribution', asset: 'Distribution', platform: 'Naviga / Digital', object: true },
     loyaltyReward: { name: 'Loyalty & Reward', ids: ['loyaltyReward'], capability: 'Loyalty', asset: 'Loyalty', platform: 'Clock Rewards', object: true },
     ltv: { name: 'LTV', ids: ['ltv'], capability: 'Analytics & Insights', asset: 'Business Intelligence', platform: 'BigQuery / Looker', object: true },
@@ -610,30 +735,37 @@
     engagementMetric: { name: 'Engagement (metric)', ids: ['engagementMetric', 'engagement'], also: ['engagement'], capability: 'Analytics & Insights', asset: 'Business Intelligence', platform: 'BigQuery / Looker', object: true },
     voucher: { name: 'Voucher', ids: ['voucher'], capability: 'Product & Offer Management', asset: 'Product & Offer Management', platform: 'Zuora', object: true },
     ratePlan: { name: 'Rate Plan', ids: ['ratePlan'], capability: 'Billing Management', asset: 'Billing Management', platform: 'Zuora', object: true },
-    contract: { name: 'Contract', ids: ['contract'], capability: 'Engagement / Subscription', asset: 'Engagement Management', platform: 'Zuora', object: true },
+    contract: { name: 'Contract', ids: ['contract'], capability: 'Contract Management', asset: 'Contract Management', platform: 'Zuora (B2C) | Salesforce ZCPQ (B2B)', object: true },
     expense: { name: 'Expense', ids: ['expense'], capability: 'Expenses Accounting', asset: 'Expenses Accounting', platform: 'JDE', object: true },
     procurement: { name: 'Procurement', ids: ['procurement'], capability: 'Procurement', asset: 'Procurement', platform: 'JDE', object: true }
   };
 
-  // Bridge entities sit outside red outlines on the overlay slides
+  // Bridge entities sit outside red outlines on the overlay slides (none remaining after 2026-07-25 SoR reconcile)
   const BRIDGE_BY_LAYER = {
-    capability: ['contact', 'interaction', 'voucher', 'ratePlan', 'contract'],
-    asset: ['contact', 'interaction', 'voucher', 'ratePlan', 'contract', 'inventory'],
-    platform: ['contact', 'interaction', 'voucher', 'ratePlan', 'contract', 'order', 'inventory', 'payment']
+    capability: [],
+    asset: [],
+    platform: []
   };
   const STANDALONE_ENTITIES = BRIDGE_BY_LAYER.capability;
 
-  // Groups match capability / information-asset / platform overlay slides (entities inside red boxes only)
+  // Groups match capability / information-asset / platform overlay (aligned to curator SoR answers 2026-07-25)
   const CAPABILITY_GROUPS = [
     { id: 'consent', title: 'Consent & Preference Management', entities: ['consent'] },
-    { id: 'customer', title: 'Customer Management', entities: ['party'] },
-    { id: 'product', title: 'Product & Offer Management', entities: ['pricing', 'product', 'inventory'] },
+    { id: 'customer', title: 'Customer Management', entities: ['party', 'contact'] },
+    { id: 'interaction', title: 'Customer Interaction Management', entities: ['interaction'] },
+    { id: 'product', title: 'Product & Offer Management', entities: ['pricing', 'product', 'voucher'] },
+    { id: 'inventory', title: 'Inventory Management', entities: ['inventory'] },
     { id: 'marketing', title: 'Marketing Management', entities: ['marketing'] },
     { id: 'engagement', title: 'Engagement Management', entities: ['engagement'] },
-    { id: 'subscription', title: 'Subscription Account Management', entities: ['account', 'customerAsset', 'order'] },
-    { id: 'billing', title: 'Billing Management', entities: ['billing', 'support'] },
-    { id: 'revenue', title: 'Revenue Accounting', entities: ['payment', 'revenue'] },
-    { id: 'entitlement', title: 'Entitlement Enforcement', entities: ['entitlement'] },
+    { id: 'subscription', title: 'Subscription Account Management', entities: ['customerAsset'] },
+    { id: 'account', title: 'Customer & Subscription Account', entities: ['account'] },
+    { id: 'order', title: 'Order Management', entities: ['order'] },
+    { id: 'contract', title: 'Contract Management', entities: ['contract'] },
+    { id: 'billing', title: 'Billing Management', entities: ['billing', 'ratePlan'] },
+    { id: 'support', title: 'Assisted Care / Billing Support', entities: ['support'] },
+    { id: 'payment', title: 'Payments', entities: ['payment'] },
+    { id: 'revenue', title: 'General Ledger / Revenue', entities: ['revenue'] },
+    { id: 'entitlement', title: 'Entitlement Management (ZEMS)', entities: ['entitlement'] },
     { id: 'distribution', title: 'Distribution', entities: ['distribution'] },
     { id: 'expense', title: 'Expenses Accounting', entities: ['expense'] },
     { id: 'loyalty', title: 'Loyalty', entities: ['loyaltyReward'] },
@@ -642,14 +774,21 @@
 
   const ASSET_GROUPS = [
     { id: 'consent', title: 'Consent & Preference Management', entities: ['consent'] },
-    { id: 'customer', title: 'Customer Management', entities: ['party'] },
-    { id: 'product', title: 'Product & Offer Management', entities: ['pricing', 'product'] },
+    { id: 'customer', title: 'Customer Management', entities: ['party', 'contact'] },
+    { id: 'interaction', title: 'Customer Interaction Management', entities: ['interaction'] },
+    { id: 'product', title: 'Product & Offer Management', entities: ['pricing', 'product', 'voucher'] },
+    { id: 'inventory', title: 'Inventory Management', entities: ['inventory'] },
     { id: 'marketing', title: 'Marketing Management', entities: ['marketing'] },
     { id: 'engagement', title: 'Engagement Management', entities: ['engagement'] },
-    { id: 'subscription', title: 'Subscription Account Management', entities: ['account', 'customerAsset', 'order'] },
-    { id: 'billing', title: 'Billing Management', entities: ['billing', 'support'] },
-    { id: 'revenue', title: 'Revenue Accounting', entities: ['payment', 'revenue'] },
-    { id: 'entitlement', title: 'Entitlement Enforcement', entities: ['entitlement'] },
+    { id: 'subscription', title: 'Subscription Account Management', entities: ['customerAsset'] },
+    { id: 'account', title: 'Customer & Subscription Account', entities: ['account'] },
+    { id: 'order', title: 'Order Management', entities: ['order'] },
+    { id: 'contract', title: 'Contract Management', entities: ['contract'] },
+    { id: 'billing', title: 'Billing Management', entities: ['billing', 'ratePlan'] },
+    { id: 'support', title: 'Assisted Care / Billing Support', entities: ['support'] },
+    { id: 'payment', title: 'Payments', entities: ['payment'] },
+    { id: 'revenue', title: 'General Ledger / Revenue', entities: ['revenue'] },
+    { id: 'entitlement', title: 'Entitlement Management (ZEMS)', entities: ['entitlement'] },
     { id: 'distribution', title: 'Distribution', entities: ['distribution'] },
     { id: 'expense', title: 'Expenses Accounting', entities: ['expense'] },
     { id: 'loyalty', title: 'Loyalty', entities: ['loyaltyReward'] },
@@ -657,59 +796,519 @@
   ];
 
   const PLATFORM_GROUPS = [
-    { id: 'dcpm', title: 'DCPM - TBC (Consent & Preference Management)', entities: ['consent'] },
-    { id: 'sfcrm', title: 'SF CRM (Customer Management)', entities: ['party'] },
-    { id: 'zuora-prod', title: 'Zuora (Product & Offer Management)', entities: ['pricing', 'product'] },
-    { id: 'zuora-sub', title: 'Zuora (Subscription Account Management)', entities: ['account', 'customerAsset'] },
-    { id: 'zuora-bill', title: 'Zuora (Billing Management)', entities: ['billing', 'support'] },
-    { id: 'zuora-rev', title: 'Zuora (Revenue Accounting)', entities: ['revenue'] },
-    { id: 'actioniq', title: 'LCDP - ActionIQ (Engagement Management)', entities: ['engagement'] },
-    { id: 'sfmc', title: 'SFMC (Marketing Management)', entities: ['marketing'] },
-    { id: 'zephr', title: 'Zephr (Entitlement Enforcement)', entities: ['entitlement'] },
+    { id: 'consent-sfcrm', title: 'SF Consumer FSS (Consent SoR) | SFMCA + SFMCE (Consumers)', entities: ['consent'] },
+    { id: 'sfcrm', title: 'SF Consumer FSS (Customer Management)', entities: ['party', 'contact', 'interaction'] },
+    { id: 'account-split', title: 'Account: SF Consumer FSS (CRM) | Zuora (billing/subscription)', entities: ['account'] },
+    { id: 'order-split', title: 'Order: Salesforce + CPQ (Sales Order) | Zuora (Billing Order)', entities: ['order'] },
+    { id: 'contract-split', title: 'Contract: Zuora (B2C) | Salesforce ZCPQ (B2B)', entities: ['contract'] },
+    { id: 'inventory-split', title: 'Inventory: Zuora (voucher) | Naviga (print supply) | WordPress CMS (articles)', entities: ['inventory'] },
+    { id: 'zuora-prod', title: 'Zuora (Product & Offer  -  commercial catalogue SoR)', entities: ['pricing', 'product'] },
+    { id: 'zuora-voucher', title: 'Zuora (Voucher)', entities: ['voucher'] },
+    { id: 'zuora-sub', title: 'Zuora (Subscription / Customer Asset)', entities: ['customerAsset'] },
+    { id: 'zuora-bill', title: 'Zuora (Billing + Rate Plan)', entities: ['billing', 'ratePlan'] },
+    { id: 'zuora-pay', title: 'Zuora (Payment SoR) | Stripe (gateway)', entities: ['payment'] },
+    { id: 'support-split', title: 'Support: SF Consumer FSS (case/care) | Zuora (billing disputes)', entities: ['support'] },
+    { id: 'actioniq', title: 'ActionIQ (Engagement)', entities: ['engagement'] },
+    { id: 'sfmca', title: 'SFMCA (Marketing Management)', entities: ['marketing'] },
+    { id: 'zems', title: 'Zuora ZEMS (Entitlement SoR) | Zephr (Enforcement)', entities: ['entitlement'] },
     { id: 'naviga', title: 'Naviga / CAPI / Brightcove / Omny (Distribution)', entities: ['distribution'] },
-    { id: 'jde', title: 'JDE (Expenses / Procurement)', entities: ['expense', 'procurement'] },
-    { id: 'loyalty', title: 'Clock Rewards (Loyalty)', entities: ['loyaltyReward'] }
+    { id: 'jde', title: 'JDE (General Ledger / Expenses / Procurement)', entities: ['revenue', 'expense', 'procurement'] },
+    { id: 'loyalty', title: 'Clock Rewards (Loyalty)', entities: ['loyaltyReward'] },
+    { id: 'auth0', title: 'Auth0 (Identity)', entities: ['externalUser'] }
   ];
 
   const SOR_REG = {
     customerAcc: { label: 'Customer Acc. (email, FN/LN, postcode)', entity: 'party', cells: { sfcrm: 'SoR', auth0: 'MC', zephr: 'MC', zuora: 'X', ods: 'MC', sfmcA: 'X', sfmce: 'X' }},
     identity: { label: 'Identity', entity: 'externalUser', cells: { sfcrm: 'MC', auth0: 'SoR', zephr: 'MC?', zuora: 'X', ods: 'MC', sfmcA: 'X', sfmce: 'X' }},
-    preferences: { label: 'Preferences (marketing, NL, comms)', entity: 'consent', cells: { sfcrm: 'SoR', auth0: 'X', zephr: 'X', zuora: 'X', ods: 'MC', sfmcA: 'Ref', sfmce: 'MC' }}
+    preferences: { label: 'Preferences (marketing, NL, comms)', entity: 'consent', cells: { sfcrm: 'SoR', auth0: 'X', zephr: 'X', zuora: 'X', ods: 'MC', sfmcA: 'Consumer', sfmce: 'Consumer' }}
   };
 
   const SOR_SUB = {
     customerAcc: { label: 'Customer Acc.', entity: 'party', cells: { sfcrm: 'SoR', auth0: 'MC', zephr: 'MC', zuora: 'MC', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: '-' }},
-    billingAcc: { label: 'Billing Acc. (pay method)', entity: 'billing', cells: { sfcrm: 'X', auth0: 'X', zephr: 'X', zuora: 'SoR', ods: 'MC', sfmcA: 'Link CRM ID*', sfmce: 'X', naviga: '-' }},
-    product: { label: 'Product (pricing, content, entitlement)', entity: 'product', cells: { sfcrm: 'MC (B2B)', auth0: 'X', zephr: 'MC', zuora: 'SoR (Pricing+Digi)', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: 'SoR (Print)' }},
-    subscription: { label: 'Subscription', entity: 'subscription', cells: { sfcrm: 'MC', auth0: 'X', zephr: 'MC/Ref+Entitlements', zuora: 'SoR', ods: 'MC', sfmcA: '*', sfmce: 'X', naviga: '-' }},
-    deliveryAddr: { label: 'Delivery Address', entity: 'account', cells: { sfcrm: 'SoR (Address)', auth0: 'X', zephr: 'X', zuora: 'MC', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: 'MC' }},
-    billingAddr: { label: 'Billing Address', entity: 'account', cells: { sfcrm: 'SoR (Address)', auth0: 'X', zephr: 'X', zuora: 'MC', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: '-' }}
+    billingAcc: { label: 'Billing Acc. (pay method)', entity: 'billing', cells: { sfcrm: 'X', auth0: 'X', zephr: 'X', zuora: 'SoR', ods: 'MC', sfmcA: 'Link SF Consumer FSS ID*', sfmce: 'X', naviga: '-' }},
+    product: { label: 'Product (pricing, content, entitlement)', entity: 'product', cells: { sfcrm: 'MC (B2B)', auth0: 'X', zephr: 'MC', zuora: 'SoR (commercial)', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: '-' }},
+    subscription: { label: 'Subscription', entity: 'subscription', cells: { sfcrm: 'MC', auth0: 'X', zephr: 'Enforce ref', zuora: 'SoR', ods: 'MC', sfmcA: '*', sfmce: 'X', naviga: '-' }},
+    entitlement: { label: 'Entitlement (ZEMS)', entity: 'entitlement', cells: { sfcrm: 'X', auth0: 'X', zephr: 'Enforce', zuora: 'SoR (ZEMS)', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: '-' }},
+    deliveryAddr: { label: 'Delivery Address', entity: 'contact', cells: { sfcrm: 'SoR (Address)', auth0: 'X', zephr: 'X', zuora: 'MC', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: 'MC' }},
+    billingAddr: { label: 'Billing Address', entity: 'contact', cells: { sfcrm: 'SoR (Address)', auth0: 'X', zephr: 'X', zuora: 'MC', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: '-' }}
   };
 
   const SOR_COLS = ['sfcrm', 'auth0', 'zephr', 'zuora', 'ods', 'sfmcA', 'sfmce', 'naviga'];
-  const SOR_LABELS = { sfcrm: 'SF CRM', auth0: 'Auth0', zephr: 'Zephr', zuora: 'Zuora', ods: 'ODS', sfmcA: 'SF MCA', sfmce: 'SF MCE', naviga: 'Naviga' };
+  const SOR_LABELS = { sfcrm: 'SF Consumer FSS', auth0: 'Auth0', zephr: 'Zephr', zuora: 'Zuora', ods: 'ODS', sfmcA: 'SFMCA', sfmce: 'SFMCE', naviga: 'Naviga' };
 
   const MIG_ROWS = [
     { label: 'Cust Acc', entity: 'party', cells: { think: '12345678', auth0: 'JWT + Cust ID', sfcrm: 'Cust ID 12345678', zuora: 'Ext ID 12345678', zephrL: 'X', zephrN: '12345678', ods: '12345678 Migrate flag?', sfmcA: 'X', sfmce: 'update subs key', naviga: 'X', nq: '12345678 Migrated flag' }},
     { label: 'Bill Acc', entity: 'billing', cells: { think: 'X', auth0: 'X', sfcrm: 'MC', zuora: 'A00001', zephrL: 'X', zephrN: '?', ods: 'A00001', sfmcA: 'X', sfmce: 'X', naviga: 'X', nq: 'A00001' }},
-    { label: 'Subscription', entity: 'subscription', cells: { think: '45678111', auth0: 'X', sfcrm: 'MC (Sync)', zuora: 'Subs Id 45678111 (!)', zephrL: 'X', zephrN: '?', ods: '45678111 Zuora Subs Id', sfmcA: 'Ref To CRM', sfmce: 'X', naviga: 'X', nq: '45678111 History?' }},
-    { label: 'Meter Entitlements', entity: 'entitlement', cells: { think: '-', auth0: 'X', sfcrm: 'X', zuora: '-', zephrL: '-', zephrN: '-', ods: '-', sfmcA: 'X', sfmce: 'X', naviga: 'X', nq: '-' }},
-    { label: 'Payment Method', entity: 'payment', cells: { think: 'Token XYZ', zuora: 'Token XYZ', note: '* Need to consider failed payments' }},
+    { label: 'Subscription', entity: 'subscription', cells: { think: '45678111', auth0: 'X', sfcrm: 'MC (Sync)', zuora: 'Subs Id 45678111 (!)', zephrL: 'X', zephrN: '?', ods: '45678111 Zuora Subs Id', sfmcA: 'Ref To SF Consumer FSS', sfmce: 'X', naviga: 'X', nq: '45678111 History?' }},
+    { label: 'Entitlements (ZEMS)', entity: 'entitlement', cells: { think: '-', auth0: 'X', sfcrm: 'X', zuora: 'SoR (ZEMS)', zephrL: '-', zephrN: 'Enforce', ods: 'MC', sfmcA: 'X', sfmce: 'X', naviga: 'X', nq: '-' }},
+    { label: 'Payment Method', entity: 'payment', cells: { think: 'Token XYZ', zuora: 'Token XYZ (SoR)', note: '* Stripe is payment gateway only; payment method mastered in Zuora' }},
     { label: 'Refund', entity: 'billing', cells: { think: '-', zuora: '-' }},
     { label: 'Payment TX', entity: 'billing', cells: { zuora: 'drive catchup bill run' }},
-    { label: 'Preferences', entity: 'consent', cells: { sfcrm: 'Consent model, Newsletter prod/subs (legacy SF SoR)', ods: 'MC', sfmce: 'global opt-outs' }}
+    { label: 'Preferences', entity: 'consent', cells: { sfcrm: 'SoR (SF Consumer FSS)', ods: 'MC', sfmcA: 'Consumer', sfmce: 'Consumer / global opt-outs' }}
   ];
   const MIG_COLS = ['think', 'auth0', 'sfcrm', 'zuora', 'zephrL', 'zephrN', 'ods', 'sfmcA', 'sfmce', 'naviga', 'nq'];
-  const MIG_LABELS = { think: 'THINK', auth0: 'Auth0', sfcrm: 'SF CRM', zuora: 'Zuora', zephrL: 'Zephr (L)', zephrN: 'Zephr (N)', ods: 'ODS', sfmcA: 'SFMCA', sfmce: 'SFMCE', naviga: 'Naviga', nq: 'NQ' };
+  const MIG_LABELS = { think: 'THINK', auth0: 'Auth0', sfcrm: 'SF Consumer FSS', zuora: 'Zuora', zephrL: 'Zephr (L)', zephrN: 'Zephr (N)', ods: 'ODS', sfmcA: 'SFMCA', sfmce: 'SFMCE', naviga: 'Naviga', nq: 'NQ' };
 
   const LAYERS = {
     valuechain: { title: 'Consumer Journey / Value Chain', desc: 'Maps Functions to Journey stages and Value Chain transitions. Cells hold Capabilities and Business Objects (EIA slide).', img: 'fss-consumer-data-model-interactive/01-value-chain.png' },
+    datamodel2: {
+      title: 'Data Model 2.0',
+      desc: '',
+      img: 'fss-consumer-data-model-interactive/07-data-model-2-erd.png',
+    },
     capability: { title: 'Conceptual Data Model | Business Capabilities', desc: 'Data entities grouped by business capability. Supports the consumer domain value chain.', img: 'fss-consumer-data-model-interactive/02-capability-overlay.png' },
     asset: { title: 'Conceptual Data Model | Information Assets', desc: 'Same entities framed as enterprise information assets for IA portfolio modelling.', img: 'fss-consumer-data-model-interactive/03-information-asset-overlay.png' },
-    platform: { title: 'Conceptual Data Model | Platform Overlay', desc: 'Which target platform masters or holds each entity.', img: 'fss-consumer-data-model-interactive/04-platform-overlay.png' },
-    datamaster: { title: 'Data Master | SoR / MC Matrix', desc: 'Base position from 2026-06-30 workshop: registration vs subscription lifecycles.', img: 'fss-consumer-data-model-interactive/05-data-master-matrix.png' },
-    migration: { title: 'Migration Data Journey', desc: 'Sky News legacy subscriber example (D2). THINK ID preserved end-to-end.', img: 'fss-consumer-data-model-interactive/06-migration-sky-news.png' }
+    platform: { title: 'Conceptual Data Model | Platform Overlay', desc: 'Target platform mastery per entity (curator SoR answers 2026-07-25 override older overlay labels).', img: 'fss-consumer-data-model-interactive/04-platform-overlay.png' },
+    datamaster: { title: 'Data Master | SoR / MC Matrix', desc: 'Registration vs subscription SoR/MC matrix; cells updated to curator SoR answers 2026-07-25 (overrides 2026-06-30 workshop where they conflict).', img: 'fss-consumer-data-model-interactive/05-data-master-matrix.png' },
+    migration: { title: 'Migration Data Journey', desc: 'Sky News legacy subscriber example (D2). Labels aligned to SF Consumer FSS / ZEMS SoR (2026-07-25).', img: 'fss-consumer-data-model-interactive/06-migration-sky-news.png' }
   };
+
+  /** DRAFT Data Model 2.0 ERD catalogue (from whiteboard / target conceptual model). mapTo = existing ENTITIES key for cross-layer highlight. */
+  const DATA_MODEL_2 = {
+    status: 'DRAFT',
+    domains: [
+      {
+        id: 'customer',
+        title: 'Customer / identity',
+        entities: ['party', 'contact', 'account', 'consent'],
+      },
+      {
+        id: 'engagement',
+        title: 'Engagement & care',
+        entities: ['interaction', 'engagement', 'marketing', 'support'],
+      },
+      {
+        id: 'commercial',
+        title: 'Commercial lifecycle',
+        entities: ['contract', 'customerAsset', 'entitlement', 'ratePlan'],
+      },
+      {
+        id: 'product',
+        title: 'Product / offer',
+        entities: ['product', 'pricing', 'inventory', 'voucher', 'loyaltyReward'],
+      },
+      {
+        id: 'finance',
+        title: 'Commerce / finance',
+        entities: ['order', 'billing', 'payment', 'generalLedger'],
+      },
+    ],
+    entities: {
+      party: {
+        name: 'Party',
+        def: 'An entity that interacts with the business in some capacity (individual, organisation, or group).',
+        links: ['contact', 'consent', 'account', 'engagement'],
+        mapTo: 'party',
+        appLink: {
+          status: 'verified',
+          sor: 'SF Consumer FSS',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Party (customer hub).',
+        },
+      },
+      contact: {
+        name: 'Contact',
+        def: 'Individuals with whom the organisation interacts: contact details, preferences, roles, and relationship information.',
+        links: ['party', 'interaction'],
+        mapTo: 'contact',
+        appLink: {
+          status: 'verified',
+          sor: 'SF Consumer FSS',
+          verifiedOn: '2026-07-25',
+          note: 'Target SoR for Contact. Related address copies (not Contact SoR): Billing Address MC in Zuora; Delivery Address MC in Naviga (address SoR remains SF Consumer FSS unless stated otherwise).',
+          managedCopies: [
+            { subject: 'Billing Address', system: 'Zuora' },
+            { subject: 'Delivery Address', system: 'Naviga' },
+          ],
+        },
+      },
+      account: {
+        name: 'Account',
+        def: 'A specific relationship or interaction that a Party has with the business.',
+        links: ['party', 'contract', 'customerAsset', 'billing'],
+        mapTo: 'account',
+        appLink: {
+          status: 'verified',
+          sor: 'Split',
+          verifiedOn: '2026-07-25',
+          note: 'Split mastery: SF Consumer FSS = customer / CRM account; Zuora = billing / subscription account.',
+          roles: [
+            { role: 'Customer / CRM account', sor: 'SF Consumer FSS' },
+            { role: 'Billing / subscription account', sor: 'Zuora' },
+          ],
+          managedCopies: [
+            { subject: 'Billing Address', system: 'Zuora' },
+            { subject: 'Delivery Address', system: 'Naviga' },
+          ],
+        },
+      },
+      consent: {
+        name: 'Consent & Preferences',
+        def: 'Permissions and choices customers provide on how personal information is collected, used, and managed.',
+        links: ['party'],
+        mapTo: 'consent',
+        appLink: {
+          status: 'verified',
+          sor: 'SF Consumer FSS',
+          verifiedOn: '2026-07-25',
+          note: 'SF Consumer FSS is the master. SF Marketing Cloud Advanced and SF Marketing Cloud Engagement consume / use the data (not SoR).',
+          consumers: [
+            { system: 'SF Marketing Cloud Advanced (MCA)', role: 'Uses consent / preference data' },
+            { system: 'SF Marketing Cloud Engagement (MCE)', role: 'Uses consent / preference data' },
+          ],
+        },
+      },
+      interaction: {
+        name: 'Interaction',
+        def: 'Management of customer interactions, behaviours, and touchpoints.',
+        links: ['contact', 'marketing'],
+        mapTo: 'interaction',
+        appLink: {
+          status: 'verified',
+          sor: 'SF Consumer FSS',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Interaction.',
+        },
+      },
+      engagement: {
+        name: 'Engagement',
+        def: 'Actions or events with a party (e.g. website browsing, search, shopping cart).',
+        links: ['party', 'marketing'],
+        mapTo: 'engagement',
+        appLink: {
+          status: 'verified',
+          sor: 'ActionIQ',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Engagement.',
+        },
+      },
+      marketing: {
+        name: 'Marketing',
+        def: 'Campaign management including acquisition, renewal, reward, growth, and recovery journeys.',
+        links: ['interaction', 'engagement'],
+        mapTo: 'marketing',
+        appLink: {
+          status: 'verified',
+          sor: 'SFMCA (Salesforce Marketing Cloud Advanced)',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Marketing / campaign management.',
+        },
+      },
+      support: {
+        name: 'Support',
+        def: 'Assistance and guidance provided before, during, and after purchase.',
+        links: ['product', 'billing'],
+        mapTo: 'support',
+        appLink: {
+          status: 'verified',
+          sor: 'Split',
+          verifiedOn: '2026-07-25',
+          note: 'Split mastery: SF Consumer FSS = case / assisted care; Zuora = billing disputes and subscription support facts.',
+          roles: [
+            { role: 'Case / assisted care', sor: 'SF Consumer FSS' },
+            { role: 'Billing disputes / subscription support facts', sor: 'Zuora' },
+          ],
+        },
+      },
+      contract: {
+        name: 'Contract',
+        def: 'Legal agreement between parties outlining terms for sale of products or services.',
+        links: ['account', 'ratePlan', 'entitlement'],
+        mapTo: 'contract',
+        appLink: {
+          status: 'verified',
+          sor: 'Split',
+          verifiedOn: '2026-07-25',
+          note: 'B2C contracts mastered in Zuora. B2B contracts in Salesforce via Zuora Managed Package (ZCPQ).',
+          roles: [
+            { role: 'B2C contract', sor: 'Zuora' },
+            { role: 'B2B contract', sor: 'Salesforce (ZCPQ  -  Zuora Managed Package)' },
+          ],
+        },
+      },
+      customerAsset: {
+        name: 'Customer Asset',
+        def: 'Administering recurring subscription-based services or products through their lifecycle (acquisition to renewal or cancellation).',
+        links: ['account', 'ratePlan', 'entitlement', 'order', 'billing', 'product'],
+        mapTo: 'customerAsset',
+        appLink: {
+          status: 'verified',
+          sor: 'Zuora (Subscription)',
+          verifiedOn: '2026-07-25',
+          note: 'Customer Asset = Zuora Subscription (system of record).',
+        },
+      },
+      entitlement: {
+        name: 'Entitlement',
+        def: 'Access or services a customer is eligible to receive, based on asset, product, subscription, or contract.',
+        links: ['contract', 'customerAsset'],
+        mapTo: 'entitlement',
+        appLink: {
+          status: 'verified',
+          sor: 'Zuora (ZEMS)',
+          verifiedOn: '2026-07-25',
+          note: 'Entitlement mastered in Zuora Entitlement Management (ZEMS). Zephr enforces only.',
+        },
+      },
+      ratePlan: {
+        name: 'Rate Plan',
+        def: 'Billing model for a subscription product (fixed, variable, usage-based, frequency, fees).',
+        links: ['contract', 'customerAsset'],
+        mapTo: 'ratePlan',
+        appLink: {
+          status: 'verified',
+          sor: 'Zuora',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Rate Plan.',
+        },
+      },
+      product: {
+        name: 'Product',
+        def: 'Lifecycle of a product from inception through design, pricing, service, and disposal.',
+        links: ['pricing', 'order', 'inventory', 'customerAsset', 'support'],
+        mapTo: 'product',
+        appLink: {
+          status: 'verified',
+          sor: 'Zuora (commercial catalogue)',
+          verifiedOn: '2026-07-25',
+          note: 'Zuora holds the commercial catalogue (all commercial product SoR). Naviga is not Product SoR.',
+        },
+      },
+      pricing: {
+        name: 'Pricing',
+        def: 'Product or service prices, discounts, pricing rules, and related cost information.',
+        links: ['product'],
+        mapTo: 'pricing',
+        appLink: {
+          status: 'verified',
+          sor: 'Zuora',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Pricing.',
+        },
+      },
+      inventory: {
+        name: 'Inventory',
+        def: 'Items, products, or resources tracked as stock or supply at a point in time.',
+        links: ['product', 'voucher'],
+        mapTo: 'inventory',
+        appLink: {
+          status: 'verified',
+          sor: 'Split',
+          verifiedOn: '2026-07-25',
+          note: 'Split by inventory type: voucher/promo stock in Zuora; print supply in Naviga; news articles / content inventory in WordPress CMS.',
+          roles: [
+            { role: 'Voucher / promo code stock', sor: 'Zuora' },
+            { role: 'Print supply', sor: 'Naviga' },
+            { role: 'News articles / content inventory', sor: 'WordPress CMS' },
+          ],
+        },
+      },
+      voucher: {
+        name: 'Voucher',
+        def: 'Issuance, distribution, tracking, and redemption of vouchers or gift cards.',
+        links: ['inventory', 'loyaltyReward'],
+        mapTo: 'voucher',
+        appLink: {
+          status: 'verified',
+          sor: 'Zuora',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Voucher.',
+        },
+      },
+      loyaltyReward: {
+        name: 'Loyalty & Reward',
+        def: 'Program offering incentives, benefits, or discounts to members.',
+        links: ['voucher'],
+        mapTo: 'loyaltyReward',
+        appLink: {
+          status: 'verified',
+          sor: 'Clock Rewards',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Loyalty & Reward.',
+        },
+      },
+      order: {
+        name: 'Order',
+        def: 'Handling and administering orders for recurring goods or services in a subscription model.',
+        links: ['product', 'customerAsset', 'billing'],
+        mapTo: 'order',
+        appLink: {
+          status: 'verified',
+          sor: 'Split',
+          verifiedOn: '2026-07-25',
+          note: 'Split: Sales Order in Salesforce + CPQ; Billing Order in Zuora.',
+          roles: [
+            { role: 'Sales Order', sor: 'Salesforce + CPQ' },
+            { role: 'Billing Order', sor: 'Zuora' },
+          ],
+        },
+      },
+      billing: {
+        name: 'Billing',
+        def: 'Billing models to charge for one-time or recurring services (fixed, variable, or usage).',
+        links: ['account', 'customerAsset', 'support', 'payment', 'order'],
+        mapTo: 'billing',
+        appLink: {
+          status: 'verified',
+          sor: 'Zuora',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Billing.',
+        },
+      },
+      payment: {
+        name: 'Payment',
+        def: 'Payment of billed amounts (definition not supplied on source diagram).',
+        links: ['billing', 'generalLedger'],
+        mapTo: 'payment',
+        appLink: {
+          status: 'verified',
+          sor: 'Zuora',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for Payment. Stripe is payment gateway only.',
+        },
+      },
+      generalLedger: {
+        name: 'General Ledger',
+        def: 'Attribution, tracking, and recognition of company revenue.',
+        links: ['payment'],
+        mapTo: 'revenue',
+        appLink: {
+          status: 'verified',
+          sor: 'JDE',
+          verifiedOn: '2026-07-25',
+          note: 'Target system of record for General Ledger.',
+        },
+      },
+    },
+  };
+
+  /** Whiteboard-aligned default placement (Data Model 2.0 source ERD). */
+  const ERD_CANVAS = { w: 1560, h: 1060 };
+  const ERD_BOX = { w: 196, h: 124 };
+  /**
+   * Placement groups related entities so most relationships are one step apart:
+   * customer block top-left, Account as the hub, commercial/product band to the
+   * right, finance chain below. Column 3 row 3 stays empty as a routing channel.
+   */
+  const ERD_LAYOUT_DEFAULT = {
+    contact: { x: 24, y: 24 },
+    consent: { x: 284, y: 24 },
+    interaction: { x: 24, y: 196 },
+    party: { x: 284, y: 196 },
+    marketing: { x: 24, y: 368 },
+    engagement: { x: 284, y: 368 },
+    support: { x: 284, y: 540 },
+    account: { x: 544, y: 196 },
+    order: { x: 544, y: 540 },
+    billing: { x: 544, y: 712 },
+    customerAsset: { x: 804, y: 196 },
+    contract: { x: 804, y: 368 },
+    payment: { x: 804, y: 712 },
+    generalLedger: { x: 804, y: 884 },
+    product: { x: 1064, y: 24 },
+    entitlement: { x: 1064, y: 196 },
+    ratePlan: { x: 1064, y: 368 },
+    pricing: { x: 1324, y: 24 },
+    inventory: { x: 1324, y: 196 },
+    voucher: { x: 1324, y: 368 },
+    loyaltyReward: { x: 1324, y: 540 },
+  };
+  const ERD_LAYOUT_KEY = 'fss-ia-erd-layout-v2';
+  let ERD_LAYOUT = loadErdLayout();
+
+  /**
+   * Relationship catalogue with cardinality at each end (a-card | b-card).
+   * card values: '1' or '*'. Displayed as 1-1, 1-*, *-1, *-*.
+   * core: true = structural spine, drawn by default. Non-core relationships are
+   * real but secondary; they appear on selection or via "Show all relationships".
+   * (inferred from whiteboard crow's-foot patterns + domain norms where not labelled)
+   */
+  const ERD_RELS = [
+    { a: 'party', b: 'consent', card: '1-1', core: true },
+    { a: 'party', b: 'contact', card: '1-*', core: true },
+    { a: 'party', b: 'account', card: '1-*', core: true },
+    { a: 'party', b: 'engagement', card: '1-*', core: true },
+    { a: 'contact', b: 'interaction', card: '1-*', core: true },
+    { a: 'account', b: 'interaction', card: '1-*' },
+    { a: 'account', b: 'engagement', card: '1-*' },
+    { a: 'account', b: 'contract', card: '1-*', core: true },
+    { a: 'account', b: 'customerAsset', card: '1-*', core: true },
+    { a: 'account', b: 'billing', card: '1-1', core: true },
+    { a: 'account', b: 'support', card: '1-*', core: true },
+    { a: 'account', b: 'order', card: '1-*', core: true },
+    { a: 'account', b: 'payment', card: '1-*' },
+    { a: 'interaction', b: 'marketing', card: '*-*', core: true },
+    { a: 'engagement', b: 'marketing', card: '*-*', core: true },
+    { a: 'contract', b: 'ratePlan', card: '1-*', core: true },
+    { a: 'contract', b: 'entitlement', card: '1-*' },
+    { a: 'customerAsset', b: 'ratePlan', card: '1-*', core: true },
+    { a: 'customerAsset', b: 'entitlement', card: '1-*', core: true },
+    { a: 'customerAsset', b: 'order', card: '1-*' },
+    { a: 'customerAsset', b: 'billing', card: '1-*' },
+    { a: 'customerAsset', b: 'product', card: '*-1', core: true },
+    { a: 'ratePlan', b: 'entitlement', card: '*-*' },
+    { a: 'product', b: 'pricing', card: '1-*', core: true },
+    { a: 'product', b: 'inventory', card: '1-*', core: true },
+    { a: 'product', b: 'order', card: '1-*' },
+    { a: 'product', b: 'entitlement', card: '1-*', core: true },
+    { a: 'product', b: 'support', card: '1-*' },
+    { a: 'pricing', b: 'entitlement', card: '*-*' },
+    { a: 'inventory', b: 'voucher', card: '1-*', core: true },
+    { a: 'voucher', b: 'loyaltyReward', card: '*-*', core: true },
+    { a: 'voucher', b: 'order', card: '*-*' },
+    { a: 'order', b: 'billing', card: '1-*', core: true },
+    { a: 'order', b: 'payment', card: '1-*', core: true },
+    { a: 'order', b: 'entitlement', card: '*-*' },
+    { a: 'billing', b: 'support', card: '1-*' },
+    { a: 'billing', b: 'payment', card: '1-*', core: true },
+    { a: 'billing', b: 'entitlement', card: '*-*' },
+    { a: 'support', b: 'entitlement', card: '*-*' },
+    { a: 'payment', b: 'generalLedger', card: '*-1', core: true },
+  ];
+
+  function loadErdLayout() {
+    try {
+      const raw = localStorage.getItem(ERD_LAYOUT_KEY);
+      if (!raw) return { ...Object.fromEntries(Object.entries(ERD_LAYOUT_DEFAULT).map(([k, v]) => [k, { ...v }])) };
+      const parsed = JSON.parse(raw);
+      const out = {};
+      Object.keys(ERD_LAYOUT_DEFAULT).forEach((id) => {
+        const p = parsed[id];
+        out[id] = p && Number.isFinite(p.x) && Number.isFinite(p.y)
+          ? { x: p.x, y: p.y }
+          : { ...ERD_LAYOUT_DEFAULT[id] };
+      });
+      return out;
+    } catch (e) {
+      return { ...Object.fromEntries(Object.entries(ERD_LAYOUT_DEFAULT).map(([k, v]) => [k, { ...v }])) };
+    }
+  }
+
+  function saveErdLayout() {
+    try { localStorage.setItem(ERD_LAYOUT_KEY, JSON.stringify(ERD_LAYOUT)); } catch (e) { /* ignore */ }
+  }
+
+  function resetErdLayout() {
+    ERD_LAYOUT = { ...Object.fromEntries(Object.entries(ERD_LAYOUT_DEFAULT).map(([k, v]) => [k, { ...v }])) };
+    try { localStorage.removeItem(ERD_LAYOUT_KEY); } catch (e) { /* ignore */ }
+  }
+
+  /** Keep entity.links in sync with ERD_RELS for detail-panel navigation. */
+  (function syncErdLinksFromRels() {
+    Object.keys(DATA_MODEL_2.entities).forEach((id) => {
+      DATA_MODEL_2.entities[id].links = [];
+    });
+    ERD_RELS.forEach((r) => {
+      if (!DATA_MODEL_2.entities[r.a] || !DATA_MODEL_2.entities[r.b]) return;
+      if (!DATA_MODEL_2.entities[r.a].links.includes(r.b)) DATA_MODEL_2.entities[r.a].links.push(r.b);
+      if (!DATA_MODEL_2.entities[r.b].links.includes(r.a)) DATA_MODEL_2.entities[r.b].links.push(r.a);
+    });
+  })();
+
+  let erdArrangeMode = false;
+  let erdShotMode = false;
+  let erdShowAllRels = false;
+  let erdShowCardLabels = true;
 
   let currentLayer = 'valuechain';
   let selection = null;
@@ -908,6 +1507,7 @@
 
   function renderStandaloneBar(mode) {
     const list = BRIDGE_BY_LAYER[mode] || STANDALONE_ENTITIES;
+    if (!list || !list.length) return '';
     let html = '<div class="standalone-bar"><h4>Bridge entities (outside red outlines on slide)</h4>';
     list.forEach(eid => {
       const e = ENTITIES[eid];
@@ -995,19 +1595,486 @@
     return html;
   }
 
+  function clearSelection() {
+    selection = null;
+    detailEmpty.hidden = false;
+    detailBody.hidden = true;
+    detailBody.innerHTML = '';
+    detailPanel.classList.remove('open');
+    if (currentLayer === 'datamodel2') redrawErdEdges();
+    else highlightSelection();
+  }
+
+  function erdCardParts(card) {
+    const parts = String(card || '1-*').split('-');
+    return { a: parts[0] === '*' ? '*' : '1', b: parts[1] === '*' ? '*' : '1' };
+  }
+
+  function erdRelsFor(id) {
+    return ERD_RELS.filter((r) => r.a === id || r.b === id).map((r) => {
+      const parts = erdCardParts(r.card);
+      if (r.a === id) return { other: r.b, card: parts.a + '-' + parts.b, toward: parts.b };
+      return { other: r.a, card: parts.b + '-' + parts.a, toward: parts.a };
+    });
+  }
+
+  function erdRect(id) {
+    const p = ERD_LAYOUT[id] || ERD_LAYOUT_DEFAULT[id];
+    return { x: p.x, y: p.y, w: ERD_BOX.w, h: ERD_BOX.h };
+  }
+
+  function erdCentre(id) {
+    const r = erdRect(id);
+    return { x: r.x + r.w / 2, y: r.y + r.h / 2 };
+  }
+
+  /** Relationships drawn right now: core spine, plus everything on the selected entity. */
+  function erdVisibleRels() {
+    const focus = selection && selection.erdId ? selection.erdId : null;
+    return ERD_RELS.filter((r) => {
+      if (!ERD_LAYOUT[r.a] || !ERD_LAYOUT[r.b]) return false;
+      if (erdShowAllRels || r.core) return true;
+      return focus === r.a || focus === r.b;
+    });
+  }
+
+  /** Which box side an edge should leave from, based on relative position. */
+  function erdSideFor(fromId, toId) {
+    const A = erdCentre(fromId);
+    const B = erdCentre(toId);
+    const dx = B.x - A.x;
+    const dy = B.y - A.y;
+    if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? 'r' : 'l';
+    return dy >= 0 ? 'b' : 't';
+  }
+
+  /**
+   * Spread every edge on a given side across that side, so hub entities fan out
+   * instead of all lines converging on one point.
+   */
+  function erdPorts(rels) {
+    const buckets = {};
+    rels.forEach((r, i) => {
+      const sideA = erdSideFor(r.a, r.b);
+      const sideB = erdSideFor(r.b, r.a);
+      (buckets[r.a + '|' + sideA] = buckets[r.a + '|' + sideA] || []).push({ i, id: r.a, other: r.b, side: sideA });
+      (buckets[r.b + '|' + sideB] = buckets[r.b + '|' + sideB] || []).push({ i, id: r.b, other: r.a, side: sideB });
+    });
+
+    const ports = {};
+    Object.keys(buckets).forEach((key) => {
+      const list = buckets[key];
+      const rect = erdRect(list[0].id);
+      const horizontal = list[0].side === 't' || list[0].side === 'b';
+      list.sort((p, q) => {
+        const cp = erdCentre(p.other);
+        const cq = erdCentre(q.other);
+        return horizontal ? cp.x - cq.x : cp.y - cq.y;
+      });
+      list.forEach((p, k) => {
+        const t = (k + 1) / (list.length + 1);
+        let pt;
+        let normal;
+        if (p.side === 'l') { pt = { x: rect.x, y: rect.y + rect.h * t }; normal = { x: -1, y: 0 }; }
+        else if (p.side === 'r') { pt = { x: rect.x + rect.w, y: rect.y + rect.h * t }; normal = { x: 1, y: 0 }; }
+        else if (p.side === 't') { pt = { x: rect.x + rect.w * t, y: rect.y }; normal = { x: 0, y: -1 }; }
+        else { pt = { x: rect.x + rect.w * t, y: rect.y + rect.h }; normal = { x: 0, y: 1 }; }
+        ports[p.i + '|' + p.id] = { pt, normal, side: p.side };
+      });
+    });
+    return ports;
+  }
+
+  function erdSegHitsRect(x1, y1, x2, y2, r, pad) {
+    const rx1 = r.x - pad;
+    const ry1 = r.y - pad;
+    const rx2 = r.x + r.w + pad;
+    const ry2 = r.y + r.h + pad;
+    if (Math.abs(x1 - x2) < 0.5) {
+      if (x1 <= rx1 || x1 >= rx2) return false;
+      return Math.max(y1, y2) > ry1 && Math.min(y1, y2) < ry2;
+    }
+    if (y1 <= ry1 || y1 >= ry2) return false;
+    return Math.max(x1, x2) > rx1 && Math.min(x1, x2) < rx2;
+  }
+
+  /** Gutter centre lines between box columns / rows, used as routing channels. */
+  function erdChannels() {
+    const xs = [];
+    const ys = [];
+    Object.keys(ERD_LAYOUT_DEFAULT).forEach((id) => {
+      const r = erdRect(id);
+      xs.push([r.x, r.x + r.w]);
+      ys.push([r.y, r.y + r.h]);
+    });
+    function gaps(ranges, limit) {
+      const starts = ranges.map((p) => p[0]).sort((a, b) => a - b);
+      const ends = ranges.map((p) => p[1]).sort((a, b) => a - b);
+      const out = [];
+      starts.forEach((s) => {
+        const before = ends.filter((e) => e <= s);
+        const prev = before.length ? before[before.length - 1] : 0;
+        if (s - prev > 16) out.push((prev + s) / 2);
+      });
+      const last = ends[ends.length - 1];
+      if (limit - last > 16) out.push((last + limit) / 2);
+      return [...new Set(out.map((v) => Math.round(v)))];
+    }
+    return { xs: gaps(xs, ERD_CANVAS.w), ys: gaps(ys, ERD_CANVAS.h) };
+  }
+
+  function erdPathCost(pts, aId, bId, ids) {
+    let cost = 0;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const [x1, y1] = pts[i];
+      const [x2, y2] = pts[i + 1];
+      cost += Math.abs(x2 - x1) + Math.abs(y2 - y1);
+      ids.forEach((id) => {
+        if (id === aId || id === bId) return;
+        if (erdSegHitsRect(x1, y1, x2, y2, erdRect(id), 5)) cost += 8000;
+      });
+    }
+    return cost + (pts.length - 2) * 70;
+  }
+
+  function erdDedupe(pts) {
+    const out = [];
+    pts.forEach((p) => {
+      const last = out[out.length - 1];
+      if (!last || Math.abs(last[0] - p[0]) > 0.5 || Math.abs(last[1] - p[1]) > 0.5) out.push(p);
+    });
+    return out;
+  }
+
+  /** Pick the orthogonal route with fewest box crossings, then fewest bends / shortest. */
+  function erdRoute(rel, portA, portB, channels, ids) {
+    const stub = 22;
+    const a = portA.pt;
+    const b = portB.pt;
+    const sa = [a.x + portA.normal.x * stub, a.y + portA.normal.y * stub];
+    const sb = [b.x + portB.normal.x * stub, b.y + portB.normal.y * stub];
+
+    const candidates = [];
+    const midX = (sa[0] + sb[0]) / 2;
+    const midY = (sa[1] + sb[1]) / 2;
+
+    const xChannels = [midX, ...channels.xs];
+    const yChannels = [midY, ...channels.ys];
+
+    yChannels.forEach((y) => {
+      candidates.push([[a.x, a.y], sa, [sa[0], y], [sb[0], y], sb, [b.x, b.y]]);
+    });
+    xChannels.forEach((x) => {
+      candidates.push([[a.x, a.y], sa, [x, sa[1]], [x, sb[1]], sb, [b.x, b.y]]);
+    });
+    candidates.push([[a.x, a.y], sa, [sb[0], sa[1]], sb, [b.x, b.y]]);
+    candidates.push([[a.x, a.y], sa, [sa[0], sb[1]], sb, [b.x, b.y]]);
+
+    let best = null;
+    let bestCost = Infinity;
+    candidates.forEach((raw) => {
+      const pts = erdDedupe(raw);
+      let ok = true;
+      for (let i = 0; i < pts.length - 1; i++) {
+        if (Math.abs(pts[i][0] - pts[i + 1][0]) > 0.5 && Math.abs(pts[i][1] - pts[i + 1][1]) > 0.5) ok = false;
+      }
+      if (!ok) return;
+      const cost = erdPathCost(pts, rel.a, rel.b, ids);
+      if (cost < bestCost) {
+        bestCost = cost;
+        best = pts;
+      }
+    });
+    return best || erdDedupe([[a.x, a.y], sa, sb, [b.x, b.y]]);
+  }
+
+  /** Crow's foot (many) or bar (one) at a port, opening toward the entity box. */
+  function erdMarkerPath(kind, port) {
+    const { pt, normal } = port;
+    const nx = normal.x;
+    const ny = normal.y;
+    const px = -ny;
+    const py = nx;
+    if (kind === '*') {
+      const tipX = pt.x + nx * 12;
+      const tipY = pt.y + ny * 12;
+      return `M ${tipX} ${tipY} L ${pt.x + px * 6} ${pt.y + py * 6}`
+        + ` M ${tipX} ${tipY} L ${pt.x - px * 6} ${pt.y - py * 6}`
+        + ` M ${tipX} ${tipY} L ${pt.x} ${pt.y}`;
+    }
+    const bx = pt.x + nx * 9;
+    const by = pt.y + ny * 9;
+    return `M ${bx + px * 6} ${by + py * 6} L ${bx - px * 6} ${by - py * 6}`;
+  }
+
+  function erdLongestSegmentMid(pts) {
+    let best = { len: -1, x: pts[0][0], y: pts[0][1], horizontal: true };
+    for (let i = 0; i < pts.length - 1; i++) {
+      const dx = Math.abs(pts[i + 1][0] - pts[i][0]);
+      const dy = Math.abs(pts[i + 1][1] - pts[i][1]);
+      const len = dx + dy;
+      if (len > best.len) {
+        best = {
+          len,
+          x: (pts[i][0] + pts[i + 1][0]) / 2,
+          y: (pts[i][1] + pts[i + 1][1]) / 2,
+          horizontal: dx >= dy,
+        };
+      }
+    }
+    return best;
+  }
+
+  function renderErdEdgesSvg() {
+    const rels = erdVisibleRels();
+    const ports = erdPorts(rels);
+    const channels = erdChannels();
+    const ids = Object.keys(ERD_LAYOUT_DEFAULT);
+    let edges = '';
+
+    rels.forEach((r, i) => {
+      const portA = ports[i + '|' + r.a];
+      const portB = ports[i + '|' + r.b];
+      if (!portA || !portB) return;
+      const parts = erdCardParts(r.card);
+      const pts = erdRoute(r, portA, portB, channels, ids);
+      const d = pts.map((p, k) => `${k ? 'L' : 'M'} ${p[0]} ${p[1]}`).join(' ');
+      const mid = erdLongestSegmentMid(pts);
+      const secondary = r.core ? '' : ' secondary';
+      edges += `<g class="erd-edge-g${secondary}" data-a="${esc(r.a)}" data-b="${esc(r.b)}" data-card="${esc(r.card)}">
+        <path class="erd-edge" d="${d}" />
+        <path class="erd-edge" d="${erdMarkerPath(parts.a, portA)}" />
+        <path class="erd-edge" d="${erdMarkerPath(parts.b, portB)}" />
+        ${erdShowCardLabels
+          ? `<text class="erd-card-label" x="${mid.horizontal ? mid.x : mid.x + 2}" y="${mid.horizontal ? mid.y - 5 : mid.y}" text-anchor="middle">${esc(r.card)}</text>`
+          : ''}
+      </g>`;
+    });
+    return edges;
+  }
+
+  function redrawErdEdges() {
+    const svg = document.getElementById('erd-edges');
+    if (!svg) return;
+    svg.innerHTML = renderErdEdgesSvg();
+    updateErdCounts();
+    highlightSelection();
+  }
+
+  function updateErdCounts() {
+    const el = document.getElementById('erd-rel-count');
+    if (!el) return;
+    const shown = erdVisibleRels().length;
+    el.textContent = shown === ERD_RELS.length
+      ? ERD_RELS.length + ' relationships (all)'
+      : shown + ' of ' + ERD_RELS.length + ' relationships shown';
+  }
+
+  /** SoR pill for ERD nodes; Split entities expand to role -> system lines. */
+  function erdSorMarkup(appLink) {
+    if (!appLink || appLink.status !== 'verified' || !appLink.sor) return '';
+    const roles = Array.isArray(appLink.roles) ? appLink.roles : [];
+    if (String(appLink.sor).toLowerCase() === 'split' && roles.length) {
+      const title = appLink.note || roles.map((r) => r.role + ' -> ' + r.sor).join('; ');
+      const parts = roles.map((r) => `<span class="sor-part">${esc(r.sor)}: ${esc(r.role)}</span>`).join('');
+      return `<span class="sor split" title="${esc(title)}"><span class="sor-head">Split</span>${parts}</span>`;
+    }
+    return `<span class="sor" title="${esc(appLink.note || appLink.sor)}">${esc(appLink.sor)}</span>`;
+  }
+
+  function renderDataModel2() {
+    let nodes = '';
+    Object.keys(ERD_LAYOUT_DEFAULT).forEach((id) => {
+      const e = DATA_MODEL_2.entities[id];
+      if (!e) return;
+      const pos = ERD_LAYOUT[id] || ERD_LAYOUT_DEFAULT[id];
+      const mapTo = e.mapTo || id;
+      const defClamp = e.appLink && String(e.appLink.sor).toLowerCase() === 'split' ? 2 : 3;
+      nodes += `<button type="button" class="erd-node${erdArrangeMode ? ' arrange' : ''}" data-erd="${esc(id)}" data-e="${esc(mapTo)}" style="left:${pos.x}px;top:${pos.y}px;width:${ERD_BOX.w}px;min-height:${ERD_BOX.h}px">
+        <div class="nm">${esc(e.name)}</div>
+        <div class="df" style="-webkit-line-clamp:${defClamp}">${esc(e.def)}</div>
+        ${erdSorMarkup(e.appLink)}
+      </button>`;
+    });
+
+    const coreCount = ERD_RELS.filter((r) => r.core).length;
+    return `<div class="erd-wrap">
+      <div class="erd-chrome">
+        <div class="erd-toolbar">
+          <button type="button" id="erd-clear">Clear selection</button>
+          <button type="button" id="erd-showall" class="${erdShowAllRels ? 'on' : ''}">Show all relationships</button>
+          <button type="button" id="erd-labels" class="${erdShowCardLabels ? 'on' : ''}">Cardinality labels</button>
+          <button type="button" id="erd-shot" class="${erdShotMode ? 'on' : ''}">Screenshot view</button>
+          <button type="button" id="erd-arrange" class="${erdArrangeMode ? 'on' : ''}">Arrange entities</button>
+          <button type="button" id="erd-reset-layout">Reset layout</button>
+        </div>
+        <div class="erd-legend">
+          <span><i></i> Entity</span>
+          <span>Crow-foot = many (*); bar = one (1)</span>
+          <span>Dashed = secondary relationship</span>
+          <span>Green pill = verified SoR (Split lists each system)</span>
+          <span>${Object.keys(DATA_MODEL_2.entities).length} entities</span>
+          <span id="erd-rel-count">${erdShowAllRels ? ERD_RELS.length + ' relationships (all)' : coreCount + ' of ' + ERD_RELS.length + ' relationships shown'}</span>
+        </div>
+      </div>
+      <div class="erd-scroll">
+        <div class="erd-canvas${erdArrangeMode ? ' arrange-on' : ''}" id="erd-canvas" style="width:${ERD_CANVAS.w}px;height:${ERD_CANVAS.h}px">
+          <svg class="erd-edges-svg" id="erd-edges" viewBox="0 0 ${ERD_CANVAS.w} ${ERD_CANVAS.h}" width="${ERD_CANVAS.w}" height="${ERD_CANVAS.h}" aria-hidden="true">${renderErdEdgesSvg()}</svg>
+          ${nodes}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function setErdShotMode(on) {
+    erdShotMode = !!on;
+    document.body.classList.toggle('erd-shot', erdShotMode);
+    const btn = document.getElementById('erd-shot');
+    if (btn) btn.classList.toggle('on', erdShotMode);
+
+    // Scale the canvas to the window so the whole diagram fits one capture.
+    const canvas = document.getElementById('erd-canvas');
+    if (!canvas) return;
+    if (erdShotMode) {
+      const scale = Math.min(1, (window.innerWidth - 40) / ERD_CANVAS.w);
+      canvas.style.transformOrigin = 'top left';
+      canvas.style.transform = `scale(${scale})`;
+      canvas.style.margin = '0';
+      canvas.style.marginBottom = ((scale - 1) * ERD_CANVAS.h) + 'px';
+    } else {
+      canvas.style.transform = '';
+      canvas.style.transformOrigin = '';
+      canvas.style.margin = '';
+      canvas.style.marginBottom = '';
+    }
+  }
+
+  function bindErdInteractions() {
+    const canvas = document.getElementById('erd-canvas');
+    if (!canvas) return;
+
+    document.getElementById('erd-clear')?.addEventListener('click', () => clearSelection());
+    document.getElementById('erd-shot')?.addEventListener('click', () => {
+      setErdShotMode(!erdShotMode);
+    });
+    document.getElementById('erd-showall')?.addEventListener('click', (ev) => {
+      erdShowAllRels = !erdShowAllRels;
+      ev.currentTarget.classList.toggle('on', erdShowAllRels);
+      redrawErdEdges();
+    });
+    document.getElementById('erd-labels')?.addEventListener('click', (ev) => {
+      erdShowCardLabels = !erdShowCardLabels;
+      ev.currentTarget.classList.toggle('on', erdShowCardLabels);
+      redrawErdEdges();
+    });
+    document.getElementById('erd-arrange')?.addEventListener('click', () => {
+      erdArrangeMode = !erdArrangeMode;
+      document.getElementById('erd-arrange')?.classList.toggle('on', erdArrangeMode);
+      canvas.classList.toggle('arrange-on', erdArrangeMode);
+      canvas.querySelectorAll('.erd-node').forEach((n) => n.classList.toggle('arrange', erdArrangeMode));
+    });
+    document.getElementById('erd-reset-layout')?.addEventListener('click', () => {
+      resetErdLayout();
+      renderLayer();
+    });
+
+    canvas.addEventListener('click', (ev) => {
+      if (ev.target === canvas || ev.target.id === 'erd-edges' || ev.target.closest('.erd-edge-g')) {
+        clearSelection();
+      }
+    });
+
+    let drag = null;
+    canvas.querySelectorAll('.erd-node').forEach((node) => {
+      node.addEventListener('click', (ev) => {
+        if (node.dataset.didDrag === '1') {
+          node.dataset.didDrag = '0';
+          ev.preventDefault();
+          return;
+        }
+        ev.stopPropagation();
+        const erdId = node.dataset.erd;
+        if (selection && selection.erdId === erdId) {
+          clearSelection();
+          return;
+        }
+        const ent = DATA_MODEL_2.entities[erdId];
+        showDetail({
+          type: 'erd',
+          erdId,
+          entityId: ent?.mapTo || node.dataset.e || erdId,
+          title: ent?.name || erdId,
+        });
+      });
+
+      node.addEventListener('pointerdown', (ev) => {
+        if (!erdArrangeMode || ev.button !== 0) return;
+        ev.preventDefault();
+        const id = node.dataset.erd;
+        const pos = ERD_LAYOUT[id];
+        drag = {
+          id,
+          node,
+          startX: ev.clientX,
+          startY: ev.clientY,
+          origX: pos.x,
+          origY: pos.y,
+          moved: false,
+        };
+        node.classList.add('dragging');
+        node.setPointerCapture(ev.pointerId);
+      });
+
+      node.addEventListener('pointermove', (ev) => {
+        if (!drag || drag.node !== node) return;
+        const dx = ev.clientX - drag.startX;
+        const dy = ev.clientY - drag.startY;
+        if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+        const x = Math.max(0, Math.min(ERD_CANVAS.w - ERD_BOX.w, drag.origX + dx));
+        const y = Math.max(0, Math.min(ERD_CANVAS.h - ERD_BOX.h, drag.origY + dy));
+        ERD_LAYOUT[drag.id] = { x, y };
+        node.style.left = x + 'px';
+        node.style.top = y + 'px';
+        redrawErdEdges();
+      });
+
+      node.addEventListener('pointerup', (ev) => {
+        if (!drag || drag.node !== node) return;
+        node.classList.remove('dragging');
+        try { node.releasePointerCapture(ev.pointerId); } catch (e) { /* ignore */ }
+        if (drag.moved) {
+          node.dataset.didDrag = '1';
+          saveErdLayout();
+        }
+        drag = null;
+      });
+    });
+  }
+
   function renderLayer() {
     const L = LAYERS[currentLayer];
+    const layerKeys = Object.keys(LAYERS);
     let body = '';
     if (currentLayer === 'valuechain') body = renderValueChain();
+    else if (currentLayer === 'datamodel2') body = renderDataModel2();
     else if (currentLayer === 'capability') body = renderCapGroups('capability');
     else if (currentLayer === 'asset') body = renderAssetLayer();
     else if (currentLayer === 'platform') body = renderCapGroups('platform');
     else if (currentLayer === 'datamaster') body = renderDataMaster();
     else if (currentLayer === 'migration') body = renderMigration();
 
+    if (currentLayer !== 'datamodel2') setErdShotMode(false);
+
+    const draftBadge = L.draft ? '<span class="draft-pill">DRAFT</span>' : '';
+    const refLabel = currentLayer === 'datamodel2'
+      ? 'Show reference whiteboard image (source ERD)'
+      : 'Show reference slide image';
+    const refAlt = currentLayer === 'datamodel2'
+      ? 'Reference whiteboard: Data Model 2.0 source ERD'
+      : 'Reference slide';
     main.innerHTML = `
-      <div class="breadcrumb">Layer <strong>${Object.keys(LAYERS).indexOf(currentLayer) + 1}</strong> of 6</div>
-      <div class="layer-head"><h2>${esc(L.title)}</h2><p>${esc(L.desc)}</p></div>
+      <div class="breadcrumb">Layer <strong>${layerKeys.indexOf(currentLayer) + 1}</strong> of ${layerKeys.length}</div>
+      <div class="layer-head"><h2>${esc(L.title)}${draftBadge}</h2>${L.desc ? `<p>${esc(L.desc)}</p>` : ''}</div>
       ${body}
       <div class="admin-footer">
         <p class="vc-ed-admin-note">Admin</p>
@@ -1020,15 +2087,16 @@
           <p class="admin-pass-err" id="admin-pass-err" hidden>Incorrect password</p>
         </div>
         <div id="admin-tools" class="admin-tools" hidden>
-          <label class="admin-muted-control"><input type="checkbox" id="show-ref" /> Show reference slide image</label>
+          <label class="admin-muted-control"><input type="checkbox" id="show-ref" /> ${esc(refLabel)}</label>
           <button type="button" class="admin-lock-btn" id="admin-lock-btn">Lock</button>
-          <img class="ref-img" id="ref-img" src="${esc(L.img)}" alt="Reference slide" />
+          <img class="ref-img" id="ref-img" src="${esc(L.img)}" alt="${esc(refAlt)}" />
           <div id="vc-editor-slot"></div>
         </div>
       </div>
     `;
     bindAdminFooter(L);
     bindClicks();
+    if (currentLayer === 'datamodel2') bindErdInteractions();
     highlightSelection();
   }
 
@@ -1039,9 +2107,42 @@
     detailPanel.classList.add('open');
 
     const e = payload.entityId ? ENTITIES[payload.entityId] : null;
-    let html = `<h2>${esc(payload.title || (e && e.name) || 'Detail')}</h2>`;
+    const erd = payload.erdId ? DATA_MODEL_2.entities[payload.erdId] : null;
+    let html = `<h2>${esc(payload.title || (erd && erd.name) || (e && e.name) || 'Detail')}</h2>`;
 
-    if (payload.type === 'vc') {
+    if (payload.type === 'erd' && erd) {
+      html += `<dl>
+        <dt>Status</dt><dd><strong>DRAFT</strong>  -  Data Model 2.0 target conceptual entity</dd>
+        <dt>Definition</dt><dd>${esc(erd.def)}</dd>
+        <dt>Related entities (diagram)</dt><dd><ul class="erd-rel-list">${
+          erdRelsFor(payload.erdId).map((r) => {
+            const rel = DATA_MODEL_2.entities[r.other];
+            return `<li><button type="button" class="entity-chip" data-erd-goto="${esc(r.other)}" style="margin:0">${esc(rel ? rel.name : r.other)}</button> <span style="color:var(--muted);font-size:11px">${esc(r.card)}</span></li>`;
+          }).join('')
+        }</ul></dd>
+        <dt>Application / SoR link</dt><dd>${
+          erd.appLink && erd.appLink.status === 'verified'
+            ? `<strong>SoR: ${esc(erd.appLink.sor)}</strong>${
+                Array.isArray(erd.appLink.roles) && erd.appLink.roles.length
+                  ? `  -  ${esc(erd.appLink.roles.map((r) => r.sor + ' (' + r.role + ')').join(' | '))}`
+                  : ''
+              }${erd.appLink.note ? `  -  ${esc(erd.appLink.note)}` : ''} <span class="draft-pill" style="margin-left:6px;background:#e8f6ef;border-color:#b8dfc8;color:#1f5c3f">VERIFIED</span>${
+                Array.isArray(erd.appLink.roles) && erd.appLink.roles.length
+                  ? `<ul class="erd-rel-list" style="margin-top:8px">${erd.appLink.roles.map((r) => `<li>${esc(r.role)} -> SoR ${esc(r.sor)}</li>`).join('')}</ul>`
+                  : ''
+              }${
+                Array.isArray(erd.appLink.managedCopies) && erd.appLink.managedCopies.length
+                  ? `<ul class="erd-rel-list" style="margin-top:8px">${erd.appLink.managedCopies.map((mc) => `<li>MC  -  ${esc(mc.subject)}: ${esc(mc.system)}</li>`).join('')}</ul>`
+                  : ''
+              }${
+                Array.isArray(erd.appLink.consumers) && erd.appLink.consumers.length
+                  ? `<ul class="erd-rel-list" style="margin-top:8px">${erd.appLink.consumers.map((c) => `<li>Consumer  -  ${esc(c.system)}${c.role ? `: ${esc(c.role)}` : ''}</li>`).join('')}</ul>`
+                  : ''
+              }`
+            : 'Not verified yet  -  next step after you approve entity clusters.'
+        }</dd>
+      </dl>`;
+    } else if (payload.type === 'vc') {
       const st = STAGES.find(s => s.id === payload.stage);
       html += `<dl>
         <dt>Journey</dt><dd>${esc(st?.label || payload.stage)}</dd>
@@ -1063,7 +2164,7 @@
       </dl>`;
     }
 
-    if (e) {
+    if (e && payload.type !== 'erd') {
       const related = relatedIds(payload.entityId).filter((id) => id !== payload.entityId && ENTITIES[id]);
       html += `<dl>
         <dt>Business capability</dt><dd>${esc(e.capability)}</dd>
@@ -1071,10 +2172,15 @@
         <dt>Platform (overlay)</dt><dd>${esc(e.platform)}</dd>
         ${related.length ? `<dt>Also highlights</dt><dd>${esc(related.map((id) => ENTITIES[id].name).join(', '))}</dd>` : ''}
       </dl>`;
+    } else if (e && payload.type === 'erd') {
+      html += `<dl>
+        <dt>Linked overlay entity</dt><dd>${esc(e.capability)}  |  ${esc(e.platform)}</dd>
+      </dl>`;
     }
 
     html += `<div class="actions">
       <button type="button" data-goto="valuechain">Value chain</button>
+      <button type="button" data-goto="datamodel2">Data Model 2.0</button>
       <button type="button" data-goto="capability">Capabilities</button>
       <button type="button" data-goto="asset">Information assets</button>
       <button type="button" data-goto="platform">Platforms</button>
@@ -1093,12 +2199,48 @@
         }
       });
     });
-    highlightSelection();
+    detailBody.querySelectorAll('[data-erd-goto]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.erdGoto;
+        const node = DATA_MODEL_2.entities[id];
+        if (!node) return;
+        showDetail({
+          type: 'erd',
+          erdId: id,
+          entityId: node.mapTo || id,
+          title: node.name,
+        });
+      });
+    });
+    if (currentLayer === 'datamodel2') redrawErdEdges();
+    else highlightSelection();
   }
 
   function highlightSelection() {
-    document.querySelectorAll('.sel').forEach(el => el.classList.remove('sel'));
-    if (!selection || !selection.entityId) return;
+    document.querySelectorAll('.sel, .rel, .dim').forEach(el => {
+      el.classList.remove('sel', 'rel', 'dim');
+    });
+    if (!selection) return;
+    if (selection.erdId) {
+      const erd = DATA_MODEL_2.entities[selection.erdId];
+      const related = new Set([selection.erdId, ...(erd?.links || [])]);
+      document.querySelectorAll('.erd-node').forEach((el) => {
+        const id = el.dataset.erd;
+        if (id === selection.erdId) el.classList.add('sel');
+        else if (related.has(id)) el.classList.add('rel');
+        else el.classList.add('dim');
+      });
+      document.querySelectorAll('.erd-edge-g').forEach((g) => {
+        const hit = (g.dataset.a === selection.erdId && related.has(g.dataset.b))
+          || (g.dataset.b === selection.erdId && related.has(g.dataset.a));
+        g.querySelectorAll('.erd-edge, .erd-card-label').forEach((el) => {
+          if (hit) el.classList.add('rel');
+          else el.classList.add('dim');
+        });
+      });
+      if (currentLayer === 'datamodel2') return;
+    }
+    if (!selection.entityId) return;
     const ids = relatedIds(selection.entityId);
     ids.forEach((id) => {
       document.querySelectorAll(`[data-e="${id}"]`).forEach(el => el.classList.add('sel'));
@@ -1142,6 +2284,19 @@
         showDetail({ type: 'entity', entityId: chip.dataset.e, title: ENTITIES[chip.dataset.e]?.name });
       });
     });
+    main.querySelectorAll('.erd-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const erdId = card.dataset.erd;
+        const node = DATA_MODEL_2.entities[erdId];
+        showDetail({
+          type: 'erd',
+          erdId,
+          entityId: node?.mapTo || card.dataset.e || erdId,
+          title: node?.name || erdId,
+        });
+      });
+    });
+    // .erd-node clicks are bound in bindErdInteractions (supports toggle deselect + drag)
     main.querySelectorAll('.cap-group').forEach(grp => {
       grp.addEventListener('click', ev => {
         if (ev.target.classList.contains('entity-chip')) return;
@@ -1170,6 +2325,17 @@
 
   document.querySelectorAll('.nav button').forEach(btn => {
     btn.addEventListener('click', () => switchLayer(btn.dataset.layer));
+  });
+
+  document.getElementById('erd-shot-exit')?.addEventListener('click', () => {
+    setErdShotMode(false);
+  });
+
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape') {
+      if (erdShotMode) setErdShotMode(false);
+      else if (selection) clearSelection();
+    }
   });
 
   async function bootstrap() {
