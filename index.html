@@ -427,11 +427,10 @@
     <div class="sub">Click any cell or entity. Layers drill down logically.</div>
     <button type="button" data-layer="valuechain" class="active"><span class="layer-num">1</span>Value chain</button>
     <button type="button" data-layer="datamodel2"><span class="layer-num">2</span>Data Model 2.0 ERD</button>
-    <button type="button" data-layer="capability"><span class="layer-num">3</span>Business capabilities</button>
-    <button type="button" data-layer="asset"><span class="layer-num">4</span>Information assets</button>
-    <button type="button" data-layer="platform"><span class="layer-num">5</span>Platform overlay</button>
-    <button type="button" data-layer="datamaster"><span class="layer-num">6</span>Data Master SoR/MC</button>
-    <button type="button" data-layer="migration"><span class="layer-num">7</span>Migration journey</button>
+    <button type="button" data-layer="capability"><span class="layer-num">3</span>Business Capabilities &amp; Information Assets</button>
+    <button type="button" data-layer="platform"><span class="layer-num">4</span>Platform overlay</button>
+    <button type="button" data-layer="datamaster"><span class="layer-num">5</span>Data Master SoR/MC</button>
+    <button type="button" data-layer="migration"><span class="layer-num">6</span>Migration journey</button>
   </nav>
 
   <main class="main" id="main"></main>
@@ -743,36 +742,12 @@
   // Bridge entities sit outside red outlines on the overlay slides (none remaining after 2026-07-25 SoR reconcile)
   const BRIDGE_BY_LAYER = {
     capability: [],
-    asset: [],
     platform: []
   };
   const STANDALONE_ENTITIES = BRIDGE_BY_LAYER.capability;
 
-  // Groups match capability / information-asset / platform overlay (aligned to curator SoR answers 2026-07-25)
+  // Groups match capability / information-asset overlay (identical EIA boundaries; aligned to curator SoR 2026-07-25)
   const CAPABILITY_GROUPS = [
-    { id: 'consent', title: 'Consent & Preference Management', entities: ['consent'] },
-    { id: 'customer', title: 'Customer Management', entities: ['party', 'contact'] },
-    { id: 'interaction', title: 'Customer Interaction Management', entities: ['interaction'] },
-    { id: 'product', title: 'Product & Offer Management', entities: ['pricing', 'product', 'voucher'] },
-    { id: 'inventory', title: 'Inventory Management', entities: ['inventory'] },
-    { id: 'marketing', title: 'Marketing Management', entities: ['marketing'] },
-    { id: 'engagement', title: 'Engagement Management', entities: ['engagement'] },
-    { id: 'subscription', title: 'Subscription Account Management', entities: ['customerAsset'] },
-    { id: 'account', title: 'Customer & Subscription Account', entities: ['account'] },
-    { id: 'order', title: 'Order Management', entities: ['order'] },
-    { id: 'contract', title: 'Contract Management', entities: ['contract'] },
-    { id: 'billing', title: 'Billing Management', entities: ['billing', 'ratePlan'] },
-    { id: 'support', title: 'Assisted Care / Billing Support', entities: ['support'] },
-    { id: 'payment', title: 'Payments', entities: ['payment'] },
-    { id: 'revenue', title: 'General Ledger / Revenue', entities: ['revenue'] },
-    { id: 'entitlement', title: 'Entitlement Management (ZEMS)', entities: ['entitlement'] },
-    { id: 'distribution', title: 'Distribution', entities: ['distribution'] },
-    { id: 'expense', title: 'Expenses Accounting', entities: ['expense'] },
-    { id: 'loyalty', title: 'Loyalty', entities: ['loyaltyReward'] },
-    { id: 'procurement', title: 'Procurement', entities: ['procurement'] }
-  ];
-
-  const ASSET_GROUPS = [
     { id: 'consent', title: 'Consent & Preference Management', entities: ['consent'] },
     { id: 'customer', title: 'Customer Management', entities: ['party', 'contact'] },
     { id: 'interaction', title: 'Customer Interaction Management', entities: ['interaction'] },
@@ -856,8 +831,15 @@
       desc: '',
       img: 'fss-consumer-data-model-interactive/07-data-model-2-erd.png',
     },
-    capability: { title: 'Conceptual Data Model | Business Capabilities', desc: 'Data entities grouped by business capability. Supports the consumer domain value chain.', img: 'fss-consumer-data-model-interactive/02-capability-overlay.png' },
-    asset: { title: 'Conceptual Data Model | Information Assets', desc: 'Same entities framed as enterprise information assets for IA portfolio modelling.', img: 'fss-consumer-data-model-interactive/03-information-asset-overlay.png' },
+    capability: {
+      title: 'Business Capabilities & Information Assets',
+      desc: 'Data entities grouped by business capability. Same groupings are the EIA information-asset view (overlays were identical).',
+      img: 'fss-consumer-data-model-interactive/02-capability-overlay.png',
+      imgs: [
+        'fss-consumer-data-model-interactive/02-capability-overlay.png',
+        'fss-consumer-data-model-interactive/03-information-asset-overlay.png',
+      ],
+    },
     platform: { title: 'Conceptual Data Model | Platform Overlay', desc: 'Target platform mastery per entity (curator SoR answers 2026-07-25 override older overlay labels).', img: 'fss-consumer-data-model-interactive/04-platform-overlay.png' },
     datamaster: { title: 'Data Master | SoR / MC Matrix', desc: 'Registration vs subscription SoR/MC matrix; cells updated to curator SoR answers 2026-07-25 (overrides 2026-06-30 workshop where they conflict).', img: 'fss-consumer-data-model-interactive/05-data-master-matrix.png' },
     migration: { title: 'Migration Data Journey', desc: 'Sky News legacy subscriber example (D2). Labels aligned to SF Consumer FSS / ZEMS SoR (2026-07-25).', img: 'fss-consumer-data-model-interactive/06-migration-sky-news.png' }
@@ -1368,10 +1350,10 @@
 
   function mountAdminTools(L) {
     const showRef = document.getElementById('show-ref');
-    const refImg = document.getElementById('ref-img');
-    if (showRef && refImg) {
+    const refImgs = document.querySelectorAll('.ref-img');
+    if (showRef && refImgs.length) {
       showRef.addEventListener('change', function () {
-        refImg.classList.toggle('show', this.checked);
+        refImgs.forEach((img) => img.classList.toggle('show', this.checked));
       });
     }
     if (currentLayer === 'valuechain') {
@@ -1531,19 +1513,6 @@
     html += '</div>';
     html += renderStandaloneBar(mode);
     return html;
-  }
-
-  function renderAssetLayer() {
-    let html = '<div class="cap-grid">';
-    ASSET_GROUPS.forEach(g => {
-      html += `<div class="cap-group asset" data-group="${esc(g.id)}" data-mode="asset"><h3>${esc(g.title)}</h3>`;
-      g.entities.forEach(eid => {
-        const e = ENTITIES[eid];
-        if (e) html += `<span class="entity-chip" data-e="${eid}">${esc(e.name)}</span>`;
-      });
-      html += '</div>';
-    });
-    return html + '</div>' + renderStandaloneBar('asset');
   }
 
   function renderSoRTable(section, data, cols) {
@@ -2058,7 +2027,6 @@
     if (currentLayer === 'valuechain') body = renderValueChain();
     else if (currentLayer === 'datamodel2') body = renderDataModel2();
     else if (currentLayer === 'capability') body = renderCapGroups('capability');
-    else if (currentLayer === 'asset') body = renderAssetLayer();
     else if (currentLayer === 'platform') body = renderCapGroups('platform');
     else if (currentLayer === 'datamaster') body = renderDataMaster();
     else if (currentLayer === 'migration') body = renderMigration();
@@ -2068,10 +2036,16 @@
     const draftBadge = L.draft ? '<span class="draft-pill">DRAFT</span>' : '';
     const refLabel = currentLayer === 'datamodel2'
       ? 'Show reference whiteboard image (source ERD)'
-      : 'Show reference slide image';
+      : currentLayer === 'capability'
+        ? 'Show reference slide images (capability + asset overlays)'
+        : 'Show reference slide image';
     const refAlt = currentLayer === 'datamodel2'
       ? 'Reference whiteboard: Data Model 2.0 source ERD'
       : 'Reference slide';
+    const refSources = Array.isArray(L.imgs) && L.imgs.length ? L.imgs : [L.img];
+    const refImgsHtml = refSources.map((src, i) =>
+      `<img class="ref-img" id="ref-img${i ? '-' + i : ''}" src="${esc(src)}" alt="${esc(refAlt)}${refSources.length > 1 ? ' ' + (i + 1) : ''}" />`
+    ).join('\n          ');
     main.innerHTML = `
       <div class="breadcrumb">Layer <strong>${layerKeys.indexOf(currentLayer) + 1}</strong> of ${layerKeys.length}</div>
       <div class="layer-head"><h2>${esc(L.title)}${draftBadge}</h2>${L.desc ? `<p>${esc(L.desc)}</p>` : ''}</div>
@@ -2089,7 +2063,7 @@
         <div id="admin-tools" class="admin-tools" hidden>
           <label class="admin-muted-control"><input type="checkbox" id="show-ref" /> ${esc(refLabel)}</label>
           <button type="button" class="admin-lock-btn" id="admin-lock-btn">Lock</button>
-          <img class="ref-img" id="ref-img" src="${esc(L.img)}" alt="${esc(refAlt)}" />
+          ${refImgsHtml}
           <div id="vc-editor-slot"></div>
         </div>
       </div>
@@ -2180,8 +2154,7 @@
     html += `<div class="actions">
       <button type="button" data-goto="valuechain">Value chain</button>
       <button type="button" data-goto="datamodel2">Data Model 2.0</button>
-      <button type="button" data-goto="capability">Capabilities</button>
-      <button type="button" data-goto="asset">Information assets</button>
+      <button type="button" data-goto="capability">Capabilities &amp; assets</button>
       <button type="button" data-goto="platform">Platforms</button>
       <button type="button" data-goto="datamaster">SoR / MC</button>
       <button type="button" data-goto="migration">Migration</button>
@@ -2317,6 +2290,7 @@
   }
 
   function switchLayer(id) {
+    if (id === 'asset') id = 'capability';
     currentLayer = id;
     document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.layer === id));
     renderLayer();
@@ -2365,9 +2339,13 @@
     }
 
     const urlParams = new URLSearchParams(location.search);
-    if (urlParams.get('layer') && LAYERS[urlParams.get('layer')]) {
-      currentLayer = urlParams.get('layer');
-      document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.layer === currentLayer));
+    if (urlParams.get('layer')) {
+      let layerId = urlParams.get('layer');
+      if (layerId === 'asset') layerId = 'capability';
+      if (LAYERS[layerId]) {
+        currentLayer = layerId;
+        document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.layer === currentLayer));
+      }
     }
     renderLayer();
     if (urlParams.get('e') && ENTITIES[urlParams.get('e')]) {
