@@ -58,6 +58,11 @@
     .layer-head p { margin: 0; color: var(--muted); max-width: 52em; }
     .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
     .toolbar label { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .toolbar button {
+      font-size: 12px; padding: 5px 10px; border-radius: 5px; border: 1px solid var(--line);
+      background: #fff; cursor: pointer; color: var(--ink);
+    }
+    .toolbar button:hover { border-color: var(--accent); color: var(--accent); }
     .ref-img { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; margin-top: 10px; display: none; }
     .ref-img.show { display: block; }
     .admin-footer {
@@ -1456,6 +1461,7 @@
     if (stages.length) STAGES = stages;
 
     let html = '<div class="panel">';
+    html += `<div class="toolbar"><button type="button" id="vc-clear">Clear selection</button></div>`;
     html += `<div class="vc-key">
       <span class="vc-key-title">Key</span>
       <div class="vc-key-sample">
@@ -2460,6 +2466,7 @@
   }
 
   function bindClicks() {
+    document.getElementById('vc-clear')?.addEventListener('click', () => clearSelection());
     main.querySelectorAll('.vc-cell:not(.empty)').forEach(cell => {
       cell.addEventListener('click', () => {
         const eid = cell.dataset.e;
