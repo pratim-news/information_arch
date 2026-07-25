@@ -184,6 +184,7 @@
     .cap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
     .cap-group { border: 2px solid var(--cap); border-radius: 8px; padding: 10px; background: #fff; cursor: pointer; }
     .cap-group:hover, .cap-group.sel { box-shadow: 0 0 0 2px var(--accent); }
+    .cap-group.dim { opacity: .38; }
     .cap-group h3 { margin: 0 0 8px; font-size: 12px; color: var(--cap); text-transform: uppercase; letter-spacing: .03em; }
     .cap-group.asset h3 { color: #6b2d8a; }
     .cap-group.plat h3 { color: var(--accent); }
@@ -1563,6 +1564,36 @@
     return CAPABILITY_GROUPS.find((g) => g.entities.some((e) => rel.has(e))) || null;
   }
 
+  // Platform overlay group for an entity (same membership rules as capability).
+  function platformGroupForEntity(entityId) {
+    if (!entityId) return null;
+    const exact = PLATFORM_GROUPS.find((g) => g.entities.includes(entityId));
+    if (exact) return exact;
+    const rel = new Set(relatedIds(entityId));
+    return PLATFORM_GROUPS.find((g) => g.entities.some((e) => rel.has(e))) || null;
+  }
+
+  // SoR / MC matrix rows that reference this entity (or a related id).
+  function sorHitsForEntity(entityId) {
+    if (!entityId) return [];
+    const hits = [];
+    const scan = (section, data) => {
+      Object.values(data).forEach((row) => {
+        if (entitiesRelated(entityId, row.entity)) hits.push({ section, label: row.label, entity: row.entity });
+      });
+    };
+    scan('Registration', SOR_REG);
+    scan('Subscription', SOR_SUB);
+    return hits;
+  }
+
+  // Migration journey rows that reference this entity (or a related id).
+  function migHitsForEntity(entityId) {
+    if (!entityId) return [];
+    return MIG_ROWS.filter((row) => entitiesRelated(entityId, row.entity))
+      .map((row) => ({ label: row.label, entity: row.entity }));
+  }
+
   // Value-chain stages (labels) where an entity (or its related ids) appears in a cell.
   function vcStageLabelsForEntity(entityId) {
     if (!entityId) return [];
@@ -1589,6 +1620,7 @@
     if (pendingFocus.erdId) el = main.querySelector(`.erd-node[data-erd="${pendingFocus.erdId}"]`);
     else if (pendingFocus.group) el = main.querySelector(`.cap-group[data-group="${pendingFocus.group}"]`);
     else if (pendingFocus.vc) el = main.querySelector('.vc-cell.sel:not(.empty)');
+    else if (pendingFocus.matrix) el = main.querySelector('.sor-cell.sel, .entity-col.sel, .sel');
     if (!el) el = main.querySelector('.erd-node.sel, .cap-group.sel, .vc-cell.sel, .sel');
     pendingFocus = null;
     if (el && typeof el.scrollIntoView === 'function') {
@@ -1609,10 +1641,17 @@
         if (erdId) keep.erdId = erdId;
       }
     }
+    let focusGroup = null;
+    if (layerId === 'capability') {
+      focusGroup = opts.group || (keep && capGroupForEntity(keep.entityId) && capGroupForEntity(keep.entityId).id);
+    } else if (layerId === 'platform') {
+      focusGroup = opts.group || (keep && platformGroupForEntity(keep.entityId) && platformGroupForEntity(keep.entityId).id);
+    }
     pendingFocus = {
       erdId: layerId === 'datamodel2' ? (keep && keep.erdId) : null,
-      group: layerId === 'capability' ? (opts.group || (keep && capGroupForEntity(keep.entityId) && capGroupForEntity(keep.entityId).id)) : null,
+      group: focusGroup,
       vc: layerId === 'valuechain',
+      matrix: layerId === 'datamaster' || layerId === 'migration',
     };
     switchLayer(layerId);
     if (keep) {
@@ -1648,6 +1687,20 @@
     if (erdTarget && currentLayer !== 'datamodel2') {
       const node = DATA_MODEL_2.entities[erdTarget];
       links.push(`<button type="button" class="trail-link" data-jump="datamodel2" data-jump-erd="${esc(erdTarget)}">Data Model 2.0 &middot; ${esc(node ? node.name : erdTarget)}</button>`);
+    }
+    const plat = platformGroupForEntity(trailEntity);
+    if (plat && currentLayer !== 'platform') {
+      links.push(`<button type="button" class="trail-link" data-jump="platform" data-jump-group="${esc(plat.id)}">Platform &middot; ${esc(plat.title)}</button>`);
+    }
+    const sorHits = sorHitsForEntity(trailEntity);
+    if (sorHits.length && currentLayer !== 'datamaster') {
+      const labels = sorHits.slice(0, 3).map((h) => h.label).join(', ');
+      links.push(`<button type="button" class="trail-link" data-jump="datamaster">SoR / MC &middot; ${esc(labels)}${sorHits.length > 3 ? '&hellip;' : ''}</button>`);
+    }
+    const migHits = migHitsForEntity(trailEntity);
+    if (migHits.length && currentLayer !== 'migration') {
+      const labels = migHits.slice(0, 3).map((h) => h.label).join(', ');
+      links.push(`<button type="button" class="trail-link" data-jump="migration">Migration &middot; ${esc(labels)}${migHits.length > 3 ? '&hellip;' : ''}</button>`);
     }
     if (!links.length) return '';
     return `<dl><dt>Appears across layers</dt><dd class="trail-links">${links.join('')}</dd></dl>`;
@@ -2391,11 +2444,18 @@
     }
 
     const ids = relatedIds(selection.entityId);
-    ids.forEach((id) => {
-      document.querySelectorAll(`[data-e="${id}"]`).forEach(el => el.classList.add('sel'));
+    // Capability / platform / SoR / migration: bidirectional related-id match on data-e nodes.
+    document.querySelectorAll('.entity-chip[data-e], .sor-cell[data-e], .entity-col[data-e]').forEach((el) => {
+      if (entitiesRelated(selection.entityId, el.dataset.e)) el.classList.add('sel');
     });
     document.querySelectorAll('.cap-group').forEach((grp) => {
-      if (ids.some((id) => grp.querySelector(`[data-e="${id}"]`))) grp.classList.add('sel');
+      const hit = [...grp.querySelectorAll('[data-e]')].some((el) => entitiesRelated(selection.entityId, el.dataset.e));
+      if (hit) grp.classList.add('sel');
+      else if (currentLayer === 'capability' || currentLayer === 'platform') grp.classList.add('dim');
+    });
+    // Keep legacy exact-id highlight for any other data-e surfaces.
+    ids.forEach((id) => {
+      document.querySelectorAll(`[data-e="${id}"]`).forEach((el) => el.classList.add('sel'));
     });
   }
 
