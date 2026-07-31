@@ -26,14 +26,14 @@
     body { margin: 0; font: 14px/1.45 "Segoe UI", Arial, sans-serif; color: var(--ink); background: var(--bg); }
     a { color: var(--accent); }
     .app { display: grid; grid-template-columns: var(--nav-w) 1fr var(--detail-w); min-height: 100vh; transition: grid-template-columns .2s ease; }
-    .app.nav-collapsed { grid-template-columns: 0 1fr var(--detail-w); }
-    .app.detail-collapsed { grid-template-columns: var(--nav-w) 1fr 0; }
-    .app.nav-collapsed.detail-collapsed { grid-template-columns: 0 1fr 0; }
+    body.nav-collapsed .app { grid-template-columns: 0 1fr var(--detail-w); }
+    body.detail-collapsed .app { grid-template-columns: var(--nav-w) 1fr 0; }
+    body.nav-collapsed.detail-collapsed .app { grid-template-columns: 0 1fr 0; }
     .nav {
       background: var(--stage); color: #fff; padding: 16px 12px; overflow-y: auto;
       min-width: 0; transition: padding .2s ease, opacity .2s ease;
     }
-    .app.nav-collapsed .nav { padding: 0; opacity: 0; pointer-events: none; overflow: hidden; }
+    body.nav-collapsed .nav { padding: 0; opacity: 0; pointer-events: none; overflow: hidden; }
     .nav h1 { font-size: 15px; margin: 0 0 4px; line-height: 1.3; }
     .nav .sub { font-size: 11px; opacity: .75; margin-bottom: 16px; }
     .nav button {
@@ -49,7 +49,7 @@
       overflow-y: auto; position: sticky; top: 0; height: 100vh; min-width: 0;
       transition: padding .2s ease, opacity .2s ease, border-color .2s ease;
     }
-    .app.detail-collapsed .detail {
+    body.detail-collapsed .detail {
       padding: 0; opacity: 0; pointer-events: none; overflow: hidden; border-left-color: transparent;
     }
     .panel-toggle {
@@ -60,9 +60,9 @@
     }
     .panel-toggle:hover { background: var(--accent-soft); }
     .panel-toggle-nav { left: calc(var(--nav-w) - 11px); border-radius: 0 6px 6px 0; }
-    .app.nav-collapsed .panel-toggle-nav { left: 0; }
+    body.nav-collapsed .panel-toggle-nav { left: 0; }
     .panel-toggle-detail { right: calc(var(--detail-w) - 11px); border-radius: 6px 0 0 6px; }
-    .app.detail-collapsed .panel-toggle-detail { right: 0; }
+    body.detail-collapsed .panel-toggle-detail { right: 0; }
     .detail h2 { font-size: 16px; margin: 0 0 8px; color: var(--accent); }
     .detail .empty { color: var(--muted); font-size: 13px; margin-top: 40px; text-align: center; }
     .detail dl { margin: 12px 0 0; font-size: 13px; }
@@ -250,12 +250,14 @@
     .breadcrumb strong { color: var(--accent); }
     @media (max-width: 1100px) {
       .app { grid-template-columns: 1fr; }
-      .app.nav-collapsed, .app.detail-collapsed, .app.nav-collapsed.detail-collapsed { grid-template-columns: 1fr; }
+      body.nav-collapsed .app,
+      body.detail-collapsed .app,
+      body.nav-collapsed.detail-collapsed .app { grid-template-columns: 1fr; }
       .nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px; }
-      .app.nav-collapsed .nav { display: none; }
+      body.nav-collapsed .nav { display: none; }
       .nav button { width: auto; }
       .detail { position: fixed; right: 0; top: 0; width: min(100%, 360px); z-index: 10; box-shadow: -4px 0 20px rgba(0,0,0,.12); transform: translateX(100%); transition: transform .2s; }
-      .app.detail-collapsed .detail { transform: translateX(100%); opacity: 1; padding: 16px; pointer-events: auto; }
+      body.detail-collapsed .detail { transform: translateX(100%); opacity: 1; padding: 16px; pointer-events: auto; }
       .panel-toggle { display: none; }
       .detail.open { transform: translateX(0); }
     }
@@ -1475,43 +1477,43 @@
   function savePanelPrefs() {
     try {
       localStorage.setItem(PANEL_PREF_KEY, JSON.stringify({
-        nav: appEl.classList.contains('nav-collapsed'),
-        detail: appEl.classList.contains('detail-collapsed'),
+        nav: document.body.classList.contains('nav-collapsed'),
+        detail: document.body.classList.contains('detail-collapsed'),
       }));
     } catch (e) { /* ignore */ }
   }
   function applyPanelPrefs() {
     const p = loadPanelPrefs();
-    appEl.classList.toggle('nav-collapsed', p.nav);
-    appEl.classList.toggle('detail-collapsed', p.detail);
+    document.body.classList.toggle('nav-collapsed', p.nav);
+    document.body.classList.toggle('detail-collapsed', p.detail);
     refreshPanelToggleLabels();
   }
   function refreshPanelToggleLabels() {
     const navBtn = document.getElementById('toggle-nav');
     const detBtn = document.getElementById('toggle-detail');
     if (navBtn) {
-      const collapsed = appEl.classList.contains('nav-collapsed');
+      const collapsed = document.body.classList.contains('nav-collapsed');
       navBtn.innerHTML = collapsed ? '&raquo;' : '&laquo;';
       navBtn.title = collapsed ? 'Expand left panel' : 'Collapse left panel';
     }
     if (detBtn) {
-      const collapsed = appEl.classList.contains('detail-collapsed');
+      const collapsed = document.body.classList.contains('detail-collapsed');
       detBtn.innerHTML = collapsed ? '&laquo;' : '&raquo;';
       detBtn.title = collapsed ? 'Expand right panel' : 'Collapse right panel';
     }
   }
   function setDetailCollapsed(on) {
-    appEl.classList.toggle('detail-collapsed', !!on);
+    document.body.classList.toggle('detail-collapsed', !!on);
     savePanelPrefs();
     refreshPanelToggleLabels();
   }
   document.getElementById('toggle-nav')?.addEventListener('click', () => {
-    appEl.classList.toggle('nav-collapsed');
+    document.body.classList.toggle('nav-collapsed');
     savePanelPrefs();
     refreshPanelToggleLabels();
   });
   document.getElementById('toggle-detail')?.addEventListener('click', () => {
-    appEl.classList.toggle('detail-collapsed');
+    document.body.classList.toggle('detail-collapsed');
     savePanelPrefs();
     refreshPanelToggleLabels();
   });
@@ -2420,7 +2422,7 @@
     detailBody.hidden = false;
     detailPanel.classList.add('open');
     // Selecting something should reveal the right panel if the user had collapsed it.
-    if (appEl.classList.contains('detail-collapsed')) setDetailCollapsed(false);
+    if (document.body.classList.contains('detail-collapsed')) setDetailCollapsed(false);
 
     const e = payload.entityId ? ENTITIES[payload.entityId] : null;
     const erd = payload.erdId ? DATA_MODEL_2.entities[payload.erdId] : null;
