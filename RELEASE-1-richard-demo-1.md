@@ -13,10 +13,10 @@ Frozen baseline of the Consumer 2.0 Information Architecture interactive app for
 
 | Audience | Repo | Commit (short) | URL |
 |----------|------|----------------|-----|
-| Public sandbox | `pratim-news/information_arch` | `728cc3e` | https://pratim-news.github.io/information_arch/ |
-| NCA internal | `newscorpaus/fss-ia` | `4272b74` | https://ubiquitous-adventure-5wl58go.pages.github.io/ |
+| Public sandbox | `pratim-news/information_arch` | `62489e2` | https://pratim-news.github.io/information_arch/ |
+| NCA internal | `newscorpaus/fss-ia` | `5e62481` | https://ubiquitous-adventure-5wl58go.pages.github.io/ |
 
-Git tags (both deploy repos): `release-1-richard-demo-1`
+Git tags (both deploy repos): `release-1-richard-demo-1` (points at the commits above; app HTML bytes unchanged from `728cc3e` / `4272b74`, docs-only delta).
 
 ## Canonical source (wiki working copy)
 
