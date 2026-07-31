@@ -2,6 +2,8 @@
 
 Working copy of the interactive data model (original remains in `outcome/`).
 
+**Current baseline:** [Release 1 — Richard demo 1](./RELEASE-1-richard-demo-1.md) (`release-1-richard-demo-1`, 2026-08-01).
+
 ## Quick start (view)
 
 Open `fss-consumer-data-model-interactive.html` in a browser.
@@ -13,8 +15,7 @@ Layers:
 3. **Business Capabilities & Information Assets** - merged capability/asset overlay (identical EIA groupings); Admin can show both source PNGs
 4. Platform overlay (interactive groups override older PNG workshop labels)
 5. Data Master SoR/MC (matrix cells updated 2026-07-25)
-6. Migration journey
-
+6. Migration journey (Admin unlock only)
 Deep-link: `?layer=datamodel2` (legacy `?layer=asset` redirects to capabilities)
 
 **Cross-layer links:** selecting any entity/cell shows an "Appears across layers" trail in the detail panel with click-through links to its Value chain stages, Business Capability group, and Data Model 2.0 entity. Jumping keeps the selection, highlights the target, and scrolls it into view.
