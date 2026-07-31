@@ -95,6 +95,14 @@
     .admin-pass-err[hidden] { display: none !important; }
     .admin-tools { display: block; }
     .admin-tools[hidden] { display: none !important; }
+    .nav button.nav-admin-only { display: none; }
+    .nav.admin-open button.nav-admin-only { display: block; }
+    .admin-tools .admin-layer-btn {
+      display: block; margin-top: 10px; font-size: 12px; padding: 6px 10px;
+      border-radius: 5px; border: 1px solid var(--line); background: #fff;
+      color: var(--accent); cursor: pointer;
+    }
+    .admin-tools .admin-layer-btn:hover { border-color: var(--accent); }
     .admin-lock-btn {
       font-size: 10px; padding: 0; border: 0; background: transparent;
       color: #9aa5b1; cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
@@ -446,7 +454,7 @@
     <button type="button" data-layer="capability"><span class="layer-num">3</span>Business Capabilities &amp; Information Assets</button>
     <button type="button" data-layer="platform"><span class="layer-num">4</span>Platform overlay</button>
     <button type="button" data-layer="datamaster"><span class="layer-num">5</span>Data Master SoR/MC</button>
-    <button type="button" data-layer="migration"><span class="layer-num">6</span>Migration journey</button>
+    <button type="button" data-layer="migration" class="nav-admin-only"><span class="layer-num">A</span>Migration journey</button>
   </nav>
 
   <main class="main" id="main"></main>
@@ -1336,12 +1344,25 @@
     } catch (e) { /* ignore */ }
   }
 
+  function syncAdminNavVisibility() {
+    const nav = document.querySelector('.nav');
+    if (!nav) return;
+    const open = isAdminUnlocked();
+    nav.classList.toggle('admin-open', open);
+    // If admin locks while on Migration, leave that layer.
+    if (!open && currentLayer === 'migration') {
+      currentLayer = 'datamaster';
+      document.querySelectorAll('.nav button').forEach((b) => b.classList.toggle('active', b.dataset.layer === currentLayer));
+    }
+  }
+
   function bindAdminFooter(L) {
     const unlocked = isAdminUnlocked();
     const gate = document.getElementById('admin-gate');
     const tools = document.getElementById('admin-tools');
     if (!gate || !tools) return;
 
+    syncAdminNavVisibility();
     gate.hidden = unlocked;
     tools.hidden = !unlocked;
 
@@ -1358,6 +1379,7 @@
         if (val === ADMIN_PASSWORD) {
           setAdminUnlocked(true);
           if (err) err.hidden = true;
+          syncAdminNavVisibility();
           bindAdminFooter(L);
           mountAdminTools(L);
         } else {
@@ -1370,6 +1392,7 @@
     mountAdminTools(L);
     document.getElementById('admin-lock-btn')?.addEventListener('click', () => {
       setAdminUnlocked(false);
+      syncAdminNavVisibility();
       renderLayer();
     });
   }
@@ -1382,6 +1405,9 @@
         refImgs.forEach((img) => img.classList.toggle('show', this.checked));
       });
     }
+    document.getElementById('admin-open-migration')?.addEventListener('click', () => {
+      switchLayer('migration');
+    });
     if (currentLayer === 'valuechain') {
       const slot = document.getElementById('vc-editor-slot');
       if (slot && typeof FSS_VC !== 'undefined') {
@@ -1704,7 +1730,7 @@
       links.push(`<button type="button" class="trail-link" data-jump="datamaster">SoR / MC &middot; ${esc(labels)}${sorHits.length > 3 ? '&hellip;' : ''}</button>`);
     }
     const migHits = migHitsForEntity(trailEntity);
-    if (migHits.length && currentLayer !== 'migration') {
+    if (migHits.length && currentLayer !== 'migration' && isAdminUnlocked()) {
       const labels = migHits.slice(0, 3).map((h) => h.label).join(', ');
       links.push(`<button type="button" class="trail-link" data-jump="migration">Migration &middot; ${esc(labels)}${migHits.length > 3 ? '&hellip;' : ''}</button>`);
     }
@@ -2247,7 +2273,7 @@
 
   function renderLayer() {
     const L = LAYERS[currentLayer];
-    const layerKeys = Object.keys(LAYERS);
+    const publicKeys = Object.keys(LAYERS).filter((k) => k !== 'migration');
     let body = '';
     if (currentLayer === 'valuechain') body = renderValueChain();
     else if (currentLayer === 'datamodel2') body = renderDataModel2();
@@ -2271,8 +2297,11 @@
     const refImgsHtml = refSources.map((src, i) =>
       `<img class="ref-img" id="ref-img${i ? '-' + i : ''}" src="${esc(src)}" alt="${esc(refAlt)}${refSources.length > 1 ? ' ' + (i + 1) : ''}" />`
     ).join('\n          ');
+    const crumb = currentLayer === 'migration'
+      ? 'Admin layer &middot; Migration journey'
+      : `Layer <strong>${publicKeys.indexOf(currentLayer) + 1}</strong> of ${publicKeys.length}`;
     main.innerHTML = `
-      <div class="breadcrumb">Layer <strong>${layerKeys.indexOf(currentLayer) + 1}</strong> of ${layerKeys.length}</div>
+      <div class="breadcrumb">${crumb}</div>
       <div class="layer-head"><h2>${esc(L.title)}${draftBadge}</h2>${L.desc ? `<p>${esc(L.desc)}</p>` : ''}</div>
       ${body}
       <div class="admin-footer">
@@ -2287,6 +2316,7 @@
         </div>
         <div id="admin-tools" class="admin-tools" hidden>
           <label class="admin-muted-control"><input type="checkbox" id="show-ref" /> ${esc(refLabel)}</label>
+          <button type="button" class="admin-layer-btn" id="admin-open-migration">Open Migration journey</button>
           <button type="button" class="admin-lock-btn" id="admin-lock-btn">Lock</button>
           ${refImgsHtml}
           <div id="vc-editor-slot"></div>
@@ -2535,8 +2565,13 @@
 
   function switchLayer(id) {
     if (id === 'asset') id = 'capability';
+    if (id === 'migration' && !isAdminUnlocked()) {
+      // Migration is admin-only; ignore until unlocked.
+      return;
+    }
     currentLayer = id;
     document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.layer === id));
+    syncAdminNavVisibility();
     renderLayer();
   }
 
@@ -2586,11 +2621,13 @@
     if (urlParams.get('layer')) {
       let layerId = urlParams.get('layer');
       if (layerId === 'asset') layerId = 'capability';
+      if (layerId === 'migration' && !isAdminUnlocked()) layerId = 'datamaster';
       if (LAYERS[layerId]) {
         currentLayer = layerId;
         document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.layer === currentLayer));
       }
     }
+    syncAdminNavVisibility();
     renderLayer();
     if (urlParams.get('e') && ENTITIES[urlParams.get('e')]) {
       showDetail({ type: 'entity', entityId: urlParams.get('e'), title: ENTITIES[urlParams.get('e')].name });
