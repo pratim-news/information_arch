@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-26",
+  "updated": "2026-09-16",
   "stages": [
     { "id": "attract", "label": "ATTRACT", "valueChain": "Prospect to Registered User" },
     { "id": "acquire", "label": "ACQUIRE", "valueChain": "Registered User to Subscriber" },
@@ -56,22 +56,24 @@
       }
     },
     {
-      "id": "loyalty",
-      "label": "Loyalty",
-      "sub": "Clock Rewards",
-      "cells": {
-        "retain": [{ "cap": "Loyalty Management", "obj": "Reward", "entity": "reward" }]
-      }
-    },
-    {
       "id": "marketing",
       "label": "Marketing Automation",
-      "sub": "Salesforce (SFMCA)",
+      "sub": "Salesforce (SFMCA), AIQ",
       "spans": [
         {
           "from": "attract",
           "to": "leave",
-          "blocks": [{ "cap": "Campaign Management", "obj": "Campaign, Target Audience, Marketing Comm", "entity": "campaign" }]
+          "blocks": [{ "cap": "Campaign Management", "obj": "Campaign, Target Audience, Marketing Comm, Always on Marketing Journeys, Service Comms", "entity": "campaign" }]
+        },
+        {
+          "from": "attract",
+          "to": "subscribe",
+          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
+        },
+        {
+          "from": "bill",
+          "to": "retain",
+          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
         }
       ]
     },
@@ -165,7 +167,7 @@
     {
       "id": "bi",
       "label": "Business Intelligence",
-      "sub": "Google BigQuery & Looker",
+      "sub": "Google BigQuery & Looker, Power BI, Verity, Audience Insights",
       "spans": [
         {
           "from": "attract",

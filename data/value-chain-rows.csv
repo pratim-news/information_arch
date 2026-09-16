@@ -4,12 +4,11 @@ row_order,row_id,label,sub
 3,assisted,Assisted Care,Salesforce & Genesys
 4,paywall,Paywall,Zephr
 5,experiment,Experimentation,Optimizely
-6,loyalty,Loyalty,Clock Rewards
-7,marketing,Marketing Automation,Salesforce (SFMCA)
-8,identity,Identity,Okta | Auth0
-9,crm,CRM Consumer FSS,Salesforce
-10,fsp,Subscription & Billing,Zuora
-11,stripe,Payment Gateway,Stripe
-12,cdp,CDP,ActionIQ
-13,naviga,Print Delivery,Naviga
-14,bi,Business Intelligence,Google BigQuery & Looker
+6,marketing,Marketing Automation,"Salesforce (SFMCA), AIQ"
+7,identity,Identity,Okta | Auth0
+8,crm,CRM Consumer FSS,Salesforce
+9,fsp,Subscription & Billing,Zuora
+10,stripe,Payment Gateway,Stripe
+11,cdp,CDP,ActionIQ
+12,naviga,Print Delivery,Naviga
+13,bi,Business Intelligence,"Google BigQuery & Looker, Power BI, Verity, Audience Insights"

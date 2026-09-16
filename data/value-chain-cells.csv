@@ -6,8 +6,9 @@ shopfront,span,bill,retain,1,Billing Management,"Invoice, Payment/Receipt",invoi
 paywall,span,attract,leave,1,Subscription Entitlements,Entitlement,entitlement
 experiment,span,attract,acquire,1,Experimentation,Experiment,experiment
 experiment,single,retain,,1,Experimentation,Experiment,experiment
-loyalty,single,retain,,1,Loyalty Management,Reward,reward
-marketing,span,attract,leave,1,Campaign Management,"Campaign, Target Audience, Marketing Comm",campaign
+marketing,span,attract,leave,1,Campaign Management,"Campaign, Target Audience, Marketing Comm, Always on Marketing Journeys, Service Comms",campaign
+marketing,span,attract,subscribe,2,Next Best Action / Offer / Personalisation,"Offer, Action",offer
+marketing,span,bill,retain,3,Next Best Action / Offer / Personalisation,"Offer, Action",offer
 identity,span,attract,leave,1,Identity Management,"External User, Internal User",externalUser
 crm,single,attract,,1,B2C Profile Mgmt,Registered User,registeredUser
 crm,single,acquire,,1,Consent & Pref Mgmt,Consent & Preferences,consent

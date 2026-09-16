@@ -177,7 +177,12 @@
     .vc-grid .func-hdr {
       background: #e8eef5; padding: 8px; font-weight: 600; display: flex; flex-direction: column; justify-content: center;
     }
-    .vc-grid .func-hdr small { font-weight: 400; color: var(--muted); font-size: 10px; }
+    .vc-grid .func-hdr small { font-weight: 400; color: var(--muted); font-size: 10px; overflow-wrap: break-word; }
+    .vc-row-body {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
     .vc-cell {
       background: #fafcfe; border: 1px solid var(--line); padding: 6px; min-height: 52px;
       cursor: pointer; transition: background .15s, box-shadow .15s;
@@ -498,7 +503,7 @@
 <script type="application/json" id="vc-published-data">
 {
   "version": 1,
-  "updated": "2026-07-26",
+  "updated": "2026-09-16",
   "stages": [
     { "id": "attract", "label": "ATTRACT", "valueChain": "Prospect to Registered User" },
     { "id": "acquire", "label": "ACQUIRE", "valueChain": "Registered User to Subscriber" },
@@ -554,22 +559,24 @@
       }
     },
     {
-      "id": "loyalty",
-      "label": "Loyalty",
-      "sub": "Clock Rewards",
-      "cells": {
-        "retain": [{ "cap": "Loyalty Management", "obj": "Reward", "entity": "reward" }]
-      }
-    },
-    {
       "id": "marketing",
       "label": "Marketing Automation",
-      "sub": "Salesforce (SFMCA)",
+      "sub": "Salesforce (SFMCA), AIQ",
       "spans": [
         {
           "from": "attract",
           "to": "leave",
-          "blocks": [{ "cap": "Campaign Management", "obj": "Campaign, Target Audience, Marketing Comm", "entity": "campaign" }]
+          "blocks": [{ "cap": "Campaign Management", "obj": "Campaign, Target Audience, Marketing Comm, Always on Marketing Journeys, Service Comms", "entity": "campaign" }]
+        },
+        {
+          "from": "attract",
+          "to": "subscribe",
+          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
+        },
+        {
+          "from": "bill",
+          "to": "retain",
+          "blocks": [{ "cap": "Next Best Action / Offer / Personalisation", "obj": "Offer, Action", "entity": "offer" }]
         }
       ]
     },
@@ -663,7 +670,7 @@
     {
       "id": "bi",
       "label": "Business Intelligence",
-      "sub": "Google BigQuery & Looker",
+      "sub": "Google BigQuery & Looker, Power BI, Verity, Audience Insights",
       "spans": [
         {
           "from": "attract",
@@ -735,7 +742,8 @@
     VC_ROWS = (doc.rows || []).map((row) => {
       const base = { id: row.id, label: row.label, sub: row.sub || '' };
       if (row.useShopfrontTemplate) {
-        return { ...base, stages: tplStages(tpl), spans: compileSpans(tpl) };
+        const spans = compileSpans(tpl);
+        return { ...base, stages: tplStages(tpl), spans, spanLaneCount: assignSpanLanes(spans) };
       }
       const stages = {};
       Object.keys(row.cells || {}).forEach((stageId) => {
@@ -743,7 +751,8 @@
         if (!blocks || !blocks.length) return;
         stages[stageId] = blocks.length === 1 ? block(blocks[0]) : { multi: blocks.map(block) };
       });
-      return { ...base, stages, spans: compileSpans(row) };
+      const spans = compileSpans(row);
+      return { ...base, stages, spans, spanLaneCount: assignSpanLanes(spans) };
     });
   }
 
@@ -1567,6 +1576,29 @@
     return `<div class="cap">${esc(c.cap)}</div>${objHtml(c.obj)}`;
   }
 
+  function vcSpansOverlap(a, b) {
+    const setB = new Set((b && b.spanStages) || []);
+    return ((a && a.spanStages) || []).some((id) => setB.has(id));
+  }
+
+  function assignSpanLanes(spans) {
+    if (typeof FSS_VC !== 'undefined' && typeof FSS_VC.assignSpanLanes === 'function') {
+      return FSS_VC.assignSpanLanes(spans);
+    }
+    const list = spans || [];
+    const lanes = [];
+    list.forEach((sp) => {
+      let lane = 0;
+      for (; lane < lanes.length; lane++) {
+        if (lanes[lane].every((other) => !vcSpansOverlap(sp, other))) break;
+      }
+      if (lane === lanes.length) lanes.push([]);
+      lanes[lane].push(sp);
+      sp.lane = lane;
+    });
+    return Math.max(1, lanes.length);
+  }
+
   function renderValueChain() {
     // Prefer live document stages so Value Chain labels never drop during compile/field renames
     const stages = normalizeStages((vcDocument && vcDocument.stages && vcDocument.stages.length) ? vcDocument.stages : STAGES);
@@ -1602,28 +1634,42 @@
       const spans = (row.spans && row.spans.length)
         ? row.spans
         : (row.spanStages && row.spanStages.length ? [{ spanStages: row.spanStages, cell: row.cell }] : []);
-      const covered = new Set();
-      spans.forEach((sp) => (sp.spanStages || []).forEach((id) => covered.add(id)));
-      stages.forEach(st => {
-        const startSpan = spans.find((sp) => sp.spanStages && sp.spanStages[0] === st.id);
-        if (startSpan) {
-          const c = startSpan.cell || {};
-          const ents = cellEntityIds(c);
-          const start = stageCol(startSpan.spanStages[0]);
-          const end = stageCol(startSpan.spanStages[startSpan.spanStages.length - 1]) + 1;
-          const spanCls = (startSpan.spanStages.length > 1) ? ' vc-span' : '';
-          html += `<div class="vc-cell${spanCls}" style="grid-row:${gridRow};grid-column:${start}/${end}" data-e="${esc(ents[0] || '')}" data-entities="${esc(ents.join(','))}" data-stage="${esc(st.id)}" data-func="${esc(row.id)}">${cellHtml(c, row)}</div>`;
-          return;
-        }
-        if (covered.has(st.id)) return;
-        const c = rs[st.id];
-        const col = stageCol(st.id);
-        if (!c) html += `<div class="vc-cell empty" style="grid-row:${gridRow};grid-column:${col}"></div>`;
-        else {
-          const ents = cellEntityIds(c);
-          html += `<div class="vc-cell" style="grid-row:${gridRow};grid-column:${col}" data-e="${esc(ents[0] || '')}" data-entities="${esc(ents.join(','))}" data-stage="${st.id}" data-func="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
-        }
+      const laneCount = assignSpanLanes(spans);
+      const n = stages.length;
+      html += `<div class="vc-row-body" style="grid-row:${gridRow};grid-column:2 / -1;grid-template-columns:repeat(${n}, minmax(100px, 1fr));grid-template-rows:repeat(${laneCount}, auto)">`;
+      const occupied = new Set();
+      const coveredAny = new Set();
+      spans.forEach((sp, si) => {
+        const ids = sp.spanStages || [];
+        ids.forEach((id) => coveredAny.add(id));
+        if (!ids.length) return;
+        const start = stages.findIndex((s) => s.id === ids[0]) + 1;
+        const end = stages.findIndex((s) => s.id === ids[ids.length - 1]) + 2;
+        if (start < 1 || end < 2) return;
+        const lane = sp.lane || 0;
+        const c = sp.cell || {};
+        const ents = cellEntityIds(c);
+        const spanCls = ids.length > 1 ? ' vc-span' : '';
+        html += `<div class="vc-cell${spanCls}" style="grid-row:${lane + 1};grid-column:${start}/${end}" data-e="${esc(ents[0] || '')}" data-entities="${esc(ents.join(','))}" data-stage="${esc(ids[0])}" data-func="${esc(row.id)}" data-span-idx="${si}">${cellHtml(c, row)}</div>`;
+        ids.forEach((id) => occupied.add(lane + ':' + id));
       });
+      for (let lane = 0; lane < laneCount; lane++) {
+        stages.forEach((st, i) => {
+          if (occupied.has(lane + ':' + st.id)) return;
+          const col = i + 1;
+          if (lane === 0 && !coveredAny.has(st.id)) {
+            const c = rs[st.id];
+            if (!c) html += `<div class="vc-cell empty" style="grid-row:1;grid-column:${col}"></div>`;
+            else {
+              const ents = cellEntityIds(c);
+              html += `<div class="vc-cell" style="grid-row:1;grid-column:${col}" data-e="${esc(ents[0] || '')}" data-entities="${esc(ents.join(','))}" data-stage="${st.id}" data-func="${esc(row.id)}">${cellHtml(c, row, st.id)}</div>`;
+            }
+          } else {
+            html += `<div class="vc-cell empty" style="grid-row:${lane + 1};grid-column:${col}"></div>`;
+          }
+        });
+      }
+      html += '</div>';
     });
     html += '</div></div>';
     return html;
@@ -2595,11 +2641,16 @@
           const spans = (row.spans && row.spans.length)
             ? row.spans
             : (row.spanStages ? [{ spanStages: row.spanStages, cell: row.cell }] : []);
-          const hit = spans.find((sp) => (sp.spanStages || []).includes(st));
-          if (hit) stageData = hit.cell;
-          else {
-            const rs = rowStages(row);
-            stageData = rs && rs[st];
+          const spanIdx = cell.dataset.spanIdx;
+          if (spanIdx !== undefined && spanIdx !== '' && spans[Number(spanIdx)]) {
+            stageData = spans[Number(spanIdx)].cell;
+          } else {
+            const hit = spans.find((sp) => (sp.spanStages || []).includes(st));
+            if (hit) stageData = hit.cell;
+            else {
+              const rs = rowStages(row);
+              stageData = rs && rs[st];
+            }
           }
         }
         const entityId = eid || (stageData && (stageData.e || (stageData.multi && stageData.multi[0].e)));

@@ -69,6 +69,27 @@
     }).filter((s) => s.spanStages.length);
   }
 
+  function spansOverlap(a, b) {
+    const setB = new Set((b && b.spanStages) || []);
+    return ((a && a.spanStages) || []).some((id) => setB.has(id));
+  }
+
+  // Greedy lanes so overlapping Function-row bands stack (e.g. Campaign Management + NBA).
+  function assignSpanLanes(spans) {
+    const list = spans || [];
+    const lanes = [];
+    list.forEach((sp) => {
+      let lane = 0;
+      for (; lane < lanes.length; lane++) {
+        if (lanes[lane].every((other) => !spansOverlap(sp, other))) break;
+      }
+      if (lane === lanes.length) lanes.push([]);
+      lanes[lane].push(sp);
+      sp.lane = lane;
+    });
+    return Math.max(1, lanes.length);
+  }
+
   function compileCells(cells) {
     const stages = {};
     Object.keys(cells || {}).forEach((stageId) => {
@@ -80,10 +101,12 @@
   }
 
   function compileShopfrontRow(base, tpl, STAGES) {
+    const spans = compileSpans(STAGES, normalizeSpans(tpl));
     return {
       ...base,
       stages: templateToStages(tpl),
-      spans: compileSpans(STAGES, normalizeSpans(tpl)),
+      spans,
+      spanLaneCount: assignSpanLanes(spans),
     };
   }
 
@@ -99,10 +122,12 @@
     const VC_ROWS = (data.rows || []).map((row) => {
       const base = { id: row.id, label: row.label, sub: row.sub || '' };
       if (row.useShopfrontTemplate) return compileShopfrontRow(base, tpl, STAGES);
+      const spans = compileSpans(STAGES, normalizeSpans(row));
       return {
         ...base,
         stages: compileCells(row.cells),
-        spans: compileSpans(STAGES, normalizeSpans(row)),
+        spans,
+        spanLaneCount: assignSpanLanes(spans),
       };
     });
 
@@ -612,6 +637,7 @@
   global.FSS_VC = {
     DATA_URL,
     compile,
+    assignSpanLanes,
     loadPublished,
     loadDraft,
     saveDraft,
